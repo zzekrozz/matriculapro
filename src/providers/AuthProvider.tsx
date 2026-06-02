@@ -5,6 +5,7 @@ import {
 } from 'react';
 import type { User, Session } from '@supabase/supabase-js';
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser';
+import { getPublicSupabaseHost } from '@/lib/env';
 import type { AccessLevel } from '@/providers/AccessProvider';
 
 export interface UserProfile {
@@ -42,6 +43,27 @@ const PROFILE_STORAGE_KEYS = [
   'mpro:founder-alias',
   'mpro:founder-display-mode',
 ];
+const PROFILE_QUERY_RETRIES = 2;
+
+function wait(ms: number) {
+  return new Promise(resolve => window.setTimeout(resolve, ms));
+}
+
+function logProfileQueryResult(label: string, data: UserProfile | null, error: {
+  code?: string;
+  message: string;
+  details?: string;
+} | null) {
+  console.log(`${label} data`, data);
+  if (error) {
+    console.log(
+      `${label} error code/message/details`,
+      error.code ?? 'no-code',
+      error.message,
+      error.details ?? 'no-details',
+    );
+  }
+}
 
 function writeProfileAccess(profile: UserProfile) {
   if (typeof document === 'undefined') return;
@@ -110,60 +132,82 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     userId: string,
     email?: string | null,
   ): Promise<UserProfile | null> => {
+    console.log('[AUTH] supabase host', getPublicSupabaseHost());
     console.log('[AUTH] fetchProfile start', { userId, email: email ?? null });
     const supabase = createSupabaseBrowserClient();
 
     try {
-      let profileData: UserProfile | null = null;
-      let profileError: { code?: string; message: string } | null = null;
+      for (let attempt = 0; attempt <= PROFILE_QUERY_RETRIES; attempt += 1) {
+        const { data: authData, error: authError } = await supabase.auth.getUser();
+        const sessionUser = authData.user;
 
-      const byIdResult = await supabase
-        .from('profiles')
-        .select('id, email, display_name, access_level, founder_number, created_at')
-        .eq('id', userId)
-        .maybeSingle();
+        console.log('[AUTH] session user id', sessionUser?.id ?? userId);
+        console.log('[AUTH] session email', sessionUser?.email ?? email ?? 'null');
+        if (authError) {
+          console.log(
+            '[AUTH] session user error code/message/details',
+            authError.code ?? 'no-code',
+            authError.message,
+            authError.name ?? 'no-details',
+          );
+        }
 
-      if (byIdResult.error) {
-        profileError = byIdResult.error;
-      } else if (byIdResult.data) {
-        profileData = byIdResult.data as UserProfile;
-      }
+        const resolvedUserId = sessionUser?.id ?? userId;
+        const resolvedEmail = sessionUser?.email ?? email ?? null;
 
-      if (!profileData && email) {
-        console.log('[AUTH] fetchProfile fallback=email', email);
-        const byEmailResult = await supabase
+        console.log('[PROFILE] query by id start', { attempt, userId: resolvedUserId });
+        const byIdResult = await supabase
           .from('profiles')
           .select('id, email, display_name, access_level, founder_number, created_at')
-          .ilike('email', email)
+          .eq('id', resolvedUserId)
           .maybeSingle();
 
-        if (byEmailResult.error) {
-          profileError = byEmailResult.error;
-        } else if (byEmailResult.data) {
-          profileData = byEmailResult.data as UserProfile;
-        }
-      }
+        const byIdData = byIdResult.data as UserProfile | null;
+        logProfileQueryResult('[PROFILE] query by id', byIdData, byIdResult.error);
 
-      if (!profileData) {
-        if (profileError) {
-          console.error('[AUTH] profile error', profileError);
+        if (byIdData) {
+          console.log('[PROFILE] resolved access_level', byIdData.access_level);
+          writeProfileAccess(byIdData);
+          setProfile(byIdData);
+          return byIdData;
+        }
+
+        if (resolvedEmail) {
+          console.log('[PROFILE] fallback by email start', { attempt, email: resolvedEmail });
+          const byEmailResult = await supabase
+            .from('profiles')
+            .select('id, email, display_name, access_level, founder_number, created_at')
+            .ilike('email', resolvedEmail)
+            .maybeSingle();
+
+          const byEmailData = byEmailResult.data as UserProfile | null;
+          logProfileQueryResult('[PROFILE] fallback by email', byEmailData, byEmailResult.error);
+
+          if (byEmailData) {
+            console.log('[PROFILE] resolved access_level', byEmailData.access_level);
+            writeProfileAccess(byEmailData);
+            setProfile(byEmailData);
+            return byEmailData;
+          }
+        }
+
+        const hadQueryError = !!byIdResult.error;
+        if (attempt < PROFILE_QUERY_RETRIES && !hadQueryError) {
+          console.warn('[PROFILE] no profile resolved yet, retrying after auth sync', { attempt });
+          await wait(150 * (attempt + 1));
+          continue;
+        }
+
+        if (byIdResult.error) {
+          console.error('[AUTH] profile error', byIdResult.error);
         } else {
-          console.warn('[AUTH] profile error', 'profile not found');
+          console.warn('[AUTH] profile error', 'profile not found or blocked by RLS');
         }
-        setProfile(null);
-        return null;
+        break;
       }
 
-      console.log(
-        '[AUTH] profile loaded',
-        `email=${profileData.email}`,
-        `access_level=${profileData.access_level}`,
-        `founder_number=${profileData.founder_number ?? 'null'}`,
-      );
-
-      writeProfileAccess(profileData);
-      setProfile(profileData);
-      return profileData;
+      setProfile(null);
+      return null;
     } catch (error) {
       console.error('[AUTH] profile error', error);
       setProfile(null);
@@ -182,6 +226,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    console.log('[AUTH] supabase host', getPublicSupabaseHost());
     console.log('[AUTH] user loaded', nextSession.user.email ?? nextSession.user.id);
     const loadedProfile = await fetchProfile(nextSession.user.id, nextSession.user.email);
     if (!loadedProfile) {
@@ -223,6 +268,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = useCallback(async (email: string, password: string): Promise<SignInResult> => {
     console.log('[LOGIN] start', email);
+    console.log('[AUTH] supabase host', getPublicSupabaseHost());
     setLoading(true);
     const supabase = createSupabaseBrowserClient();
 
@@ -250,12 +296,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         };
       }
 
-      console.log('[LOGIN] user id', data.session.user.id);
+      const { data: verifiedUserData, error: verifiedUserError } = await supabase.auth.getUser();
+      const resolvedUser = verifiedUserData.user ?? data.session.user;
+      if (verifiedUserError) {
+        console.log(
+          '[AUTH] session user error code/message/details',
+          verifiedUserError.code ?? 'no-code',
+          verifiedUserError.message,
+          verifiedUserError.name ?? 'no-details',
+        );
+      }
+
+      console.log('[LOGIN] user id', resolvedUser.id);
+      console.log('[AUTH] session user id', resolvedUser.id);
+      console.log('[AUTH] session email', resolvedUser.email ?? email);
       setSession(data.session);
-      setUser(data.session.user);
+      setUser(resolvedUser);
 
       console.log('[LOGIN] fetching profile');
-      const loadedProfile = await fetchProfile(data.session.user.id, data.session.user.email);
+      const loadedProfile = await fetchProfile(resolvedUser.id, resolvedUser.email ?? email);
 
       if (!loadedProfile) {
         console.error('[LOGIN] error', 'profile not found');
