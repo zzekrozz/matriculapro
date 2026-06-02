@@ -16,29 +16,37 @@ export function LoginForm({ nextUrl = '/app/dashboard' }: LoginFormProps) {
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const safeNextUrl =
+    nextUrl.startsWith('/') && !nextUrl.startsWith('//')
+      ? nextUrl
+      : null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
+
     setError(null);
     setLoading(true);
     console.log('[LOGIN] form submit for:', email);
 
-    const { error: err } = await signIn(email, password);
+    try {
+      const result = await signIn(email, password);
 
-    if (err) {
-      console.log('[LOGIN] form got error:', err);
-      setError(err);
+      if (result.error) {
+        console.log('[LOGIN] form got error:', result.error);
+        setError(result.error);
+        return;
+      }
+
+      const redirectTo = safeNextUrl ?? result.redirectTo ?? '/app/dashboard';
+      console.log('[LOGIN] redirecting to:', redirectTo);
+      window.location.replace(redirectTo);
+    } catch (err) {
+      console.error('[LOGIN] form exception:', err);
+      setError('No se ha podido iniciar sesión. Inténtalo de nuevo.');
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // Login correcto — fetchProfile se dispara via onAuthStateChange en AuthProvider.
-    // Redirigir con replace para forzar recarga completa del servidor (cookie actualizada).
-    console.log('[LOGIN] redirecting to:', nextUrl);
-    window.location.replace(nextUrl);
-    // Desbloquear botón tras 8s por si la navegación falla
-    setTimeout(() => setLoading(false), 8000);
   };
 
   return (
@@ -48,8 +56,12 @@ export function LoginForm({ nextUrl = '/app/dashboard' }: LoginFormProps) {
           Email
         </label>
         <input
-          type="email" value={email} onChange={e => setEmail(e.target.value)}
-          required autoComplete="email" placeholder="tu@email.com"
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+          placeholder="tu@email.com"
           className="w-full px-3.5 py-2.5 rounded-lg text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors"
         />
       </div>
@@ -60,14 +72,20 @@ export function LoginForm({ nextUrl = '/app/dashboard' }: LoginFormProps) {
         </label>
         <div className="relative">
           <input
-            type={showPw ? 'text' : 'password'} value={password}
+            type={showPw ? 'text' : 'password'}
+            value={password}
             onChange={e => setPassword(e.target.value)}
-            required autoComplete="current-password" placeholder="••••••••"
+            required
+            autoComplete="current-password"
+            placeholder="••••••••"
             className="w-full px-3.5 py-2.5 rounded-lg text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors pr-10"
           />
-          <button type="button" onClick={() => setShowPw(v => !v)}
+          <button
+            type="button"
+            onClick={() => setShowPw(v => !v)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-ink transition-colors"
-            aria-label={showPw ? 'Ocultar contraseña' : 'Mostrar contraseña'}>
+            aria-label={showPw ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+          >
             {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
           </button>
         </div>
@@ -79,9 +97,12 @@ export function LoginForm({ nextUrl = '/app/dashboard' }: LoginFormProps) {
         </div>
       )}
 
-      <button type="submit" disabled={loading || !email || !password}
-        className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-[13.5px] font-medium transition-transform hover:scale-[1.01] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 bg-ink text-white shadow-soft-md">
-        {loading ? <><Loader2 size={14} className="animate-spin" /> Entrando…</> : 'Entrar'}
+      <button
+        type="submit"
+        disabled={loading || !email || !password}
+        className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-[13.5px] font-medium transition-transform hover:scale-[1.01] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 bg-ink text-white shadow-soft-md"
+      >
+        {loading ? <><Loader2 size={14} className="animate-spin" /> Entrando...</> : 'Entrar'}
       </button>
 
       <p className="text-center text-[12px] text-muted">

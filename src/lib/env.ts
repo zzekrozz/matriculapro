@@ -24,6 +24,14 @@
 export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 export const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
 
+export function getPublicSupabaseHost(): string {
+  try {
+    return SUPABASE_URL ? new URL(SUPABASE_URL).host : 'missing-supabase-url';
+  } catch {
+    return 'invalid-supabase-url';
+  }
+}
+
 /**
  * URL del Payment Link de Stripe para Founder Beta.
  * Viene de NEXT_PUBLIC_STRIPE_FOUNDERS_URL.

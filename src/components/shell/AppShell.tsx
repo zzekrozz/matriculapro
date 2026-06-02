@@ -234,13 +234,14 @@ function SidebarLevelBadge({ level, founderNumber, onUpgrade }: {
     );
   }
   if (level === 'founder' || level === 'full') {
+    const levelLabel = level === 'full' ? 'Full' : 'Founder';
     return (
       <div className="rounded-lg p-2.5 border"
            style={{ borderColor: 'rgba(200, 134, 46, 0.4)', background: 'rgba(200, 134, 46, 0.12)' }}>
         <div className="flex items-center gap-2">
           <Crown size={12} className="text-accent shrink-0" />
           <div className="flex-1 min-w-0">
-            <div className="text-[10px] tracking-[0.18em] uppercase font-semibold text-accent">Founder</div>
+            <div className="text-[10px] tracking-[0.18em] uppercase font-semibold text-accent">{levelLabel}</div>
             <div className="text-[11px] text-white font-mono mt-0.5">
               {founderNumber !== null ? formatFounderNumber(founderNumber) : '—'}
             </div>
@@ -257,9 +258,10 @@ function AccessBadge({ level, founderNumber }: {
   founderNumber: number | null;
 }) {
   if (level === 'founder' || level === 'full') {
+    const label = level === 'full' ? 'Full' : 'Founder';
     return (
       <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-1 rounded-full bg-accent/15 text-accent-deep">
-        <Crown size={10} /> {founderNumber !== null ? formatFounderNumber(founderNumber) : 'Founder'}
+        <Crown size={10} /> {founderNumber !== null ? `${label} ${formatFounderNumber(founderNumber)}` : label}
       </span>
     );
   }

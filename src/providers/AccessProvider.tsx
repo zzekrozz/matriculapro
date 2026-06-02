@@ -33,74 +33,94 @@ interface AccessContextValue {
 
 const AccessContext = createContext<AccessContextValue | null>(null);
 const FIRST_FOUNDER_NUMBER = 2;
+const ACCESS_COOKIE = 'mpro:access-level';
+const FOUNDER_COOKIE = 'mpro:founder-number';
+
+function syncAccessCookie(level: AccessLevel, founderNumber: number | null) {
+  if (typeof document === 'undefined') return;
+
+  const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `${ACCESS_COOKIE}=${level};path=/;expires=${expires};SameSite=Lax`;
+
+  if (founderNumber != null) {
+    document.cookie = `${FOUNDER_COOKIE}=${founderNumber};path=/;expires=${expires};SameSite=Lax`;
+  } else {
+    document.cookie = `${FOUNDER_COOKIE}=;path=/;max-age=0;SameSite=Lax`;
+  }
+}
 
 export function AccessProvider({ children }: { children: ReactNode }) {
   const { profile, user, loading: authLoading } = useAuth();
 
-  const [localLevel, setLocalLevel, hydrated] = usePersistentState<AccessLevel>(
-    'mpro:access-level',
-    'visitor',
-  );
+  const [localLevel, setLocalLevel, hydrated] = usePersistentState<AccessLevel>('mpro:access-level', 'visitor');
   const [founderNumber, setFounderNumber] = usePersistentState<number | null>('mpro:founder-number', null);
   const [founderAlias, setFounderAliasRaw] = usePersistentState<string | null>('mpro:founder-alias', null);
   const [founderDisplayMode, setFounderDisplayModeRaw] = usePersistentState<
     'name' | 'initials' | 'alias' | 'anonymous'
   >('mpro:founder-display-mode', 'alias');
 
-  // Sincronizar localStorage y cookie cuando llegue el perfil de Supabase
   useEffect(() => {
-    if (profile) {
-      console.log('[ACCESS] profile received, access_level:', profile.access_level, 'founder_number:', profile.founder_number);
-      setLocalLevel(profile.access_level);
-      if (profile.founder_number) setFounderNumber(profile.founder_number);
-      if (typeof document !== 'undefined') {
-        const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString();
-        document.cookie = `mpro:access-level=${profile.access_level};path=/;expires=${expires};SameSite=Lax`;
+    if (!profile) return;
+
+    console.log('[ACCESS] profile', profile.access_level, profile.founder_number ?? 'null');
+    setLocalLevel(profile.access_level);
+    setFounderNumber(profile.founder_number ?? null);
+    syncAccessCookie(profile.access_level, profile.founder_number ?? null);
+  }, [profile, setFounderNumber, setLocalLevel]);
+
+  const resolution = useMemo<{
+    level: AccessLevel;
+    founderNumber: number | null;
+    source: 'profile' | 'localStorage' | 'cookie' | 'demo';
+  }>(() => {
+    if (user && profile) {
+      return {
+        level: profile.access_level,
+        founderNumber: profile.founder_number ?? null,
+        source: 'profile' as const,
+      };
+    }
+
+    if (!user && localLevel !== 'visitor') {
+      return {
+        level: localLevel,
+        founderNumber,
+        source: 'localStorage' as const,
+      };
+    }
+
+    if (!user && typeof document !== 'undefined') {
+      const cookieValue = document.cookie
+        .split('; ')
+        .find(chunk => chunk.startsWith(`${ACCESS_COOKIE}=`))
+        ?.split('=')[1];
+
+      if (cookieValue === 'explorer' || cookieValue === 'founder' || cookieValue === 'full') {
+        return {
+          level: cookieValue,
+          founderNumber,
+          source: 'cookie' as const,
+        };
       }
     }
-  }, [profile, setLocalLevel, setFounderNumber]);
 
-  // Nivel efectivo — lógica de prioridad clara:
-  // 1. Perfil Supabase cargado → es la fuente de verdad absoluta
-  // 2. Auth cargando → usar localStorage para evitar parpadeo
-  // 3. Usuario autenticado sin perfil aún → explorer mínimo (si localStorage = visitor) o localStorage
-  // 4. Sin usuario → localStorage (puede ser explorer/founder en modo dev, o visitor)
-  const effectiveLevel: AccessLevel = (() => {
-    if (profile) {
-      // Supabase es la fuente de verdad
-      return profile.access_level;
-    }
-    if (authLoading) {
-      // Todavía cargando — no mostrar nada definitivo, usar lo que tengamos
-      return localLevel;
-    }
-    if (user) {
-      // Sesión activa pero perfil no cargado aún (puede ocurrir muy brevemente)
-      // Si localStorage tiene un nivel no-visitor, respetarlo (puede ser que el perfil
-      // tarda un render en llegar). Si era visitor, dar explorer como mínimo.
-      return localLevel === 'visitor' ? 'explorer' : localLevel;
-    }
-    // Sin sesión: modo demo local o visitor
-    return localLevel;
-  })();
+    return {
+      level: 'visitor' as AccessLevel,
+      founderNumber: null,
+      source: user ? 'profile' as const : 'demo' as const,
+    };
+  }, [founderNumber, localLevel, profile, user]);
 
-  const effectiveFounderNumber = profile?.founder_number ?? founderNumber;
-
-  // Log para diagnóstico
   useEffect(() => {
-    console.log(
-      `[ACCESS] resolved level=${effectiveLevel}` +
-      ` | user=${user?.email ?? 'none'}` +
-      ` | profile=${profile?.access_level ?? 'null'}` +
-      ` | localLevel=${localLevel}` +
-      ` | authLoading=${authLoading}` +
-      ` | founderNumber=${effectiveFounderNumber}`
-    );
-  });
+    console.log('[ACCESS] user', user?.email ?? 'none');
+    console.log('[ACCESS] profile', profile?.access_level ?? 'null');
+    console.log('[ACCESS] source=' + resolution.source);
+    console.log('[ACCESS] resolved level=' + resolution.level);
+  }, [profile, resolution.level, resolution.source, user]);
 
   const value = useMemo<AccessContextValue>(() => {
-    const isFounderOrFull = effectiveLevel === 'founder' || effectiveLevel === 'full';
-    const isExplorer = effectiveLevel === 'explorer';
+    const isFounderOrFull = resolution.level === 'founder' || resolution.level === 'full';
+    const isExplorer = resolution.level === 'explorer';
     const isFounder = isFounderOrFull;
 
     const canAccessModule = (moduleId: string): boolean => {
@@ -109,41 +129,38 @@ export function AccessProvider({ children }: { children: ReactNode }) {
       return false;
     };
 
-    const syncCookie = (lvl: AccessLevel) => {
-      if (typeof document !== 'undefined') {
-        const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString();
-        document.cookie = `mpro:access-level=${lvl};path=/;expires=${expires};SameSite=Lax`;
-      }
-    };
-
     return {
-      level: effectiveLevel,
-      founderNumber: effectiveFounderNumber,
+      level: resolution.level,
+      founderNumber: resolution.founderNumber,
       founderAlias,
       founderDisplayMode,
-      hydrated,
-      setLevel: (lvl: AccessLevel) => {
-        setLocalLevel(lvl);
-        syncCookie(lvl);
+      hydrated: hydrated && !authLoading,
+      setLevel: (level: AccessLevel) => {
+        if (user) return;
+        setLocalLevel(level);
+        syncAccessCookie(level, level === 'founder' || level === 'full' ? founderNumber : null);
       },
       activateFounder: ({ alias } = {}) => {
-        const num = effectiveFounderNumber ?? FIRST_FOUNDER_NUMBER;
-        setFounderNumber(num);
+        if (user && profile) {
+          return profile.founder_number ?? FIRST_FOUNDER_NUMBER;
+        }
+
+        const nextFounderNumber = founderNumber ?? FIRST_FOUNDER_NUMBER;
+        setFounderNumber(nextFounderNumber);
         if (alias) setFounderAliasRaw(alias);
         setLocalLevel('founder');
-        syncCookie('founder');
-        return num;
+        syncAccessCookie('founder', nextFounderNumber);
+        return nextFounderNumber;
       },
       setFounderAlias: setFounderAliasRaw,
       setFounderDisplayMode: setFounderDisplayModeRaw,
       reset: () => {
+        if (user) return;
         setLocalLevel('visitor');
         setFounderNumber(null);
         setFounderAliasRaw(null);
         setFounderDisplayModeRaw('alias');
-        if (typeof document !== 'undefined') {
-          document.cookie = 'mpro:access-level=;path=/;max-age=0;SameSite=Lax';
-        }
+        syncAccessCookie('visitor', null);
       },
       isExplorer,
       isFounder,
@@ -156,8 +173,19 @@ export function AccessProvider({ children }: { children: ReactNode }) {
       canAccessModule,
     };
   }, [
-    effectiveLevel, effectiveFounderNumber, founderAlias, founderDisplayMode, hydrated,
-    setLocalLevel, setFounderNumber, setFounderAliasRaw, setFounderDisplayModeRaw,
+    founderAlias,
+    authLoading,
+    founderDisplayMode,
+    founderNumber,
+    hydrated,
+    profile,
+    resolution.founderNumber,
+    resolution.level,
+    setFounderAliasRaw,
+    setFounderDisplayModeRaw,
+    setFounderNumber,
+    setLocalLevel,
+    user,
   ]);
 
   return <AccessContext.Provider value={value}>{children}</AccessContext.Provider>;

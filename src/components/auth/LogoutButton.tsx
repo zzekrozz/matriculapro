@@ -10,20 +10,27 @@ export function LogoutButton({ className }: { className?: string }) {
 
   const handleLogout = async () => {
     if (loading) return;
+
     setLoading(true);
-    console.log('[LOGOUT] button clicked');
-    await signOut().catch(err => console.warn('[LOGOUT] signOut error:', err));
-    console.log('[LOGOUT] redirecting to /');
-    window.location.replace('/');
+
+    try {
+      await signOut();
+      window.location.replace('/');
+    } catch (err) {
+      console.error('[LOGOUT] error', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <button
       onClick={handleLogout}
       disabled={loading}
-      className={className ?? 'text-[10.5px] text-muted hover:text-white flex items-center gap-1.5 px-3 py-1 transition-colors'}>
+      className={className ?? 'text-[10.5px] text-muted hover:text-white flex items-center gap-1.5 px-3 py-1 transition-colors'}
+    >
       {loading ? <Loader2 size={11} className="animate-spin" /> : <LogOut size={11} />}
-      {loading ? 'Cerrando…' : 'Cerrar sesión'}
+      {loading ? 'Cerrando...' : 'Cerrar sesión'}
     </button>
   );
 }
