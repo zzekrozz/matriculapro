@@ -3,7 +3,6 @@
 import { Lock, Crown, ChevronRight, Sparkles, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useAccess } from '@/providers/AccessProvider';
-import { useFounderModal } from '@/providers/FounderModalProvider';
 
 interface ModuleGateProps {
   requiresFounder?: boolean;
@@ -25,7 +24,6 @@ export function ModuleGate({
   children,
 }: ModuleGateProps) {
   const { isFounder, canAccessModule, hydrated } = useAccess();
-  const { openFounderModal } = useFounderModal();
 
   if (!hydrated) return <>{children}</>;
   if (!requiresFounder || isFounder) return <>{children}</>;
@@ -55,7 +53,7 @@ export function ModuleGate({
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 mb-2">
                 <span className="text-[10.5px] font-mono tracking-wider text-muted">{moduleCode}</span>
                 <span className="inline-flex items-center gap-1 text-[9.5px] tracking-[0.04em] uppercase px-1.5 py-0.5 rounded font-semibold bg-accent-soft text-accent-deep">
-                  <Crown size={9} /> Disponible para Founder Beta
+                  <Crown size={9} /> Disponible en Founder Alpha
                 </span>
               </div>
 
@@ -72,12 +70,12 @@ export function ModuleGate({
               </p>
 
               <div className="flex items-center justify-center gap-2 flex-wrap mb-2">
-                <button
-                  onClick={openFounderModal}
+                <Link
+                  href="/#precios"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-[13.5px] font-medium transition-transform hover:scale-[1.02] bg-ink text-white shadow-soft-md"
                 >
-                  <Crown size={14} className="text-accent" /> Comprar acceso Founder
-                </button>
+                  <Crown size={14} className="text-accent" /> Ver precios Founder
+                </Link>
                 <Link
                   href="/auth/login"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-[13px] bg-bg-deep text-ink-soft hover:bg-line transition-colors"
@@ -85,9 +83,7 @@ export function ModuleGate({
                   Iniciar sesión <ChevronRight size={13} />
                 </Link>
               </div>
-              <p className="text-[10.5px] text-muted">
-                Pago único · acceso de por vida
-              </p>
+              <p className="text-[10.5px] text-muted">Precio Alpha · acceso temprano con futuras actualizaciones</p>
             </div>
           </div>
 
@@ -101,7 +97,7 @@ export function ModuleGate({
                 'Ficha técnica 3D interactiva',
                 'Recorrido ITV completo (11 pasos)',
                 'Checklists pre-ITV y pre-DGT',
-                'Casos prácticos con 5 escenarios reales',
+                'Casos prácticos con escenarios reales',
                 'Biblioteca de documentos y plantillas',
               ].map((b, i) => (
                 <li key={i} className="flex items-start gap-2 text-[12.5px] text-ink-soft leading-relaxed">

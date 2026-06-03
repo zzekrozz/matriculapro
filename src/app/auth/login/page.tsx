@@ -38,8 +38,8 @@ function LoginContent() {
 
       <p className="text-center mt-4 sm:mt-5 text-[11.5px] text-muted leading-relaxed px-2">
         ¿Sin acceso todavía?{' '}
-        <Link href="/acceso-founder" className="text-accent-deep hover:underline">
-          Acceso Founder Beta · 49 €
+        <Link href="/#precios" className="text-accent-deep hover:underline">
+          Ver precios Founder
         </Link>
       </p>
     </div>
@@ -49,11 +49,13 @@ function LoginContent() {
 export default function LoginPage() {
   return (
     <div className="min-h-screen bg-bg flex items-center justify-center px-4 py-6 sm:py-10">
-      <Suspense fallback={
-        <div className="flex items-center gap-2 text-muted text-[13px]">
-          <Loader2 size={16} className="animate-spin" /> Cargando…
-        </div>
-      }>
+      <Suspense
+        fallback={
+          <div className="flex items-center gap-2 text-muted text-[13px]">
+            <Loader2 size={16} className="animate-spin" /> Cargando...
+          </div>
+        }
+      >
         <LoginContent />
       </Suspense>
     </div>

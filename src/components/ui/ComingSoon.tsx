@@ -54,7 +54,7 @@ export function ComingSoon({ code, title, description, iconName }: ComingSoonPro
               Próximamente.
             </h2>
             <p className="mt-3 text-[13.5px] leading-relaxed text-ink-soft">
-              Esta pieza está disponible con acceso Founder Beta. Estamos puliendo la interacción para que sea tan útil como las que ya has probado.
+              Esta pieza está disponible con acceso Founder Alpha. Estamos puliendo la interacción para que sea tan útil como las que ya has probado.
             </p>
             <Link href="/app/recorrido-itv"
               className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[12.5px] font-medium bg-accent text-ink hover:scale-[1.02] transition-transform">

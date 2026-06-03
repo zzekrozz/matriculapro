@@ -35,12 +35,11 @@ function RegisterContent() {
         ) : (
           <>
             <h1 className="font-serif text-ink leading-[1.1] tracking-tight mb-1" style={{ fontSize: 28 }}>
-              Crea tu acceso.
+              Activa tu acceso Founder.
             </h1>
             <p className="text-[13px] text-ink-soft mb-6">
-              Explora MatriculaPRO en modo demo.{' '}
-              <Link href="/#precios" className="text-accent-deep hover:underline">Acceso Founder Beta · 49 €</Link>{' '}
-              para acceso completo.
+              Esta pantalla es para activar tu acceso después del pago. Si todavía no has pagado, compra primero el{' '}
+              <Link href="/#precios" className="text-accent-deep hover:underline">Acceso Founder Alpha · 49 €</Link>.
             </p>
           </>
         )}
@@ -55,8 +54,7 @@ function RegisterContent() {
           </>
         ) : (
           <>
-            Al registrarte aceptas el{' '}
-            <Link href="/legal/aviso-formativo" className="hover:underline">aviso formativo</Link>.
+            Si ya tienes cuenta, <Link href="/auth/login" className="hover:underline">inicia sesión</Link>.
           </>
         )}
       </p>
@@ -67,11 +65,13 @@ function RegisterContent() {
 export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-bg flex items-center justify-center px-4 py-6 sm:py-10">
-      <Suspense fallback={
-        <div className="flex items-center gap-2 text-muted text-[13px]">
-          <Loader2 size={16} className="animate-spin" /> Cargando…
-        </div>
-      }>
+      <Suspense
+        fallback={
+          <div className="flex items-center gap-2 text-muted text-[13px]">
+            <Loader2 size={16} className="animate-spin" /> Cargando...
+          </div>
+        }
+      >
         <RegisterContent />
       </Suspense>
     </div>

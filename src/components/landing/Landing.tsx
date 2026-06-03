@@ -69,7 +69,7 @@ const NavBar: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
           <Link href={buyHref}
             className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full text-[12px] sm:text-[12.5px] font-medium transition-transform hover:scale-[1.02] whitespace-nowrap"
             style={{ background: tokens.color.ink, color: '#fff', boxShadow: tokens.shadow.md }}>
-            Acceso Founder Beta · 49 € <ChevronRight size={13} />
+            Ver precios Founder <ChevronRight size={13} />
           </Link>
         </div>
       </div>
@@ -107,21 +107,28 @@ const Hero: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
               style={{ background: tokens.color.accentSoft, border: `1px solid ${tokens.color.accent}` }}>
               <Sparkles size={11} style={{ color: tokens.color.accentDeep }} />
               <span className="text-[10.5px] tracking-[0.18em] uppercase font-semibold" style={{ color: tokens.color.accentDeep }}>
-                Acceso Fundador Beta · 49 €
+                Fase Alpha · Founder 49 €
               </span>
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
               style={{ fontFamily: 'Instrument Serif, serif', fontSize: 'clamp(40px, 5.5vw, 72px)', color: tokens.color.ink, letterSpacing: '-0.02em', lineHeight: 1.02 }}>
-              Aprende a <span style={{ fontStyle: 'italic', color: tokens.color.accent }}>matricular</span> coches importados <span style={{ fontStyle: 'italic' }}>practicando</span> antes de tocar Hacienda, ITV o DGT.
+              Matricula tu coche importado en España con una <span style={{ fontStyle: 'italic', color: tokens.color.accent }}>guía paso a paso</span>.
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
               className="mt-5 sm:mt-6 text-[14.5px] sm:text-[15.5px] lg:text-[17px] leading-relaxed max-w-[560px]"
               style={{ color: tokens.color.inkSoft }}>
-              MatriculaPRO es una <strong style={{ color: tokens.color.ink }}>plataforma interactiva con simuladores, checklists y recorridos guiados</strong> para entender el proceso de matriculación en España paso a paso. No es un PDF ni un curso barato — es una herramienta práctica que crece contigo.
+              MatriculaPRO reúne la ruta completa, checklists, simuladores, documentos y recorridos guiados para ayudarte a entender qué hacer antes de comprar, en ITV, Hacienda y DGT.
+            </motion.p>
+
+            <motion.p
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }}
+              className="mt-3 text-[13px] sm:text-[13.5px] leading-relaxed max-w-[560px]"
+              style={{ color: tokens.color.muted }}>
+              Estás entrando en fase Alpha: el producto aún está creciendo, pero los fundadores acceden por menos y reciben las actualizaciones futuras.
             </motion.p>
 
             <motion.div
@@ -130,12 +137,17 @@ const Hero: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
               <Link href={buyHref}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full text-[14px] font-medium transition-transform hover:scale-[1.02]"
                 style={{ background: tokens.color.ink, color: '#fff', boxShadow: tokens.shadow.md }}>
-                <Sparkles size={14} /> Acceso Founder Beta · 49 €
+                <Sparkles size={14} /> Ver acceso Founder
+              </Link>
+              <Link href={demoHref}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full text-[14px] font-medium"
+                style={{ background: 'transparent', color: tokens.color.ink, border: `1px solid ${tokens.color.line}` }}>
+                <Play size={14} /> Probar demo gratis
               </Link>
               <Link href="/auth/login"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full text-[14px] font-medium"
                 style={{ background: 'transparent', color: tokens.color.ink, border: `1px solid ${tokens.color.line}` }}>
-                Ya tengo cuenta / Iniciar sesion
+                Ya tengo cuenta · Iniciar sesión
               </Link>
             </motion.div>
 
@@ -1053,14 +1065,14 @@ const SocialProofSection = () => (
               className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-[13.5px] font-medium transition-transform hover:scale-[1.02]"
               style={{ background: tokens.color.ink, color: '#fff', boxShadow: tokens.shadow.md }}
             >
-              Quiero acceder a MatriculaPRO <ChevronRight size={14} />
+              Ver precios Founder <ChevronRight size={14} />
             </a>
             <Link
-              href="/acceso-founder"
+              href="/#precios"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-[13px] font-medium"
               style={{ background: 'transparent', color: tokens.color.ink, border: `1px solid ${tokens.color.line}` }}
             >
-              Ver acceso Founder Beta <ArrowUpRight size={13} />
+              Ver acceso Founder <ArrowUpRight size={13} />
             </Link>
           </div>
 
@@ -1181,24 +1193,24 @@ const FinalCTA: React.FC<CTAProps> = ({ demoHref, buyHref }) => (
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-5"
                style={{ background: 'rgba(200,134,46,0.18)', color: tokens.color.accent }}>
             <Zap size={11} />
-            <span className="text-[10.5px] tracking-[0.18em] uppercase font-semibold">Acceso Fundador Beta · 49 €</span>
+            <span className="text-[10.5px] tracking-[0.18em] uppercase font-semibold">Fase Alpha · Founder 49 €</span>
           </div>
           <h2 className="max-w-[620px] mx-auto" style={{ fontFamily: 'Instrument Serif, serif', fontSize: 'clamp(32px, 4vw, 52px)', color: '#fff', letterSpacing: '-0.01em', lineHeight: 1.05 }}>
-            No entres a Hacienda, ITV o DGT <span style={{ fontStyle: 'italic', color: tokens.color.accent }}>a ciegas</span>.
+            MatriculaPRO te guía paso a paso para matricular coches importados en España.
           </h2>
           <p className="mt-5 max-w-[520px] mx-auto text-[15px] leading-relaxed" style={{ color: '#B4BECE' }}>
-            Practica primero. Llega preparado. Aprende haciendo, no leyendo.
+            Reduce errores, entiende cada fase y prepara mejor ITV, Hacienda y DGT con una plataforma guiada en fase Alpha.
           </p>
           <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
             <a href="#precios"
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-[14px] font-medium transition-transform hover:scale-[1.02]"
               style={{ background: tokens.color.accent, color: tokens.color.ink, boxShadow: tokens.shadow.md }}>
-              Entrar como fundador · 49 € <ChevronRight size={14} />
+              Ver precios Founder <ChevronRight size={14} />
             </a>
             <Link href={demoHref}
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-[14px]"
               style={{ background: 'transparent', color: '#fff', border: `1px solid rgba(255,255,255,0.3)` }}>
-              <Play size={13} /> Probar demo primero
+              <Play size={13} /> Probar demo gratis
             </Link>
           </div>
           <div className="mt-4 flex justify-center">
@@ -1207,7 +1219,7 @@ const FinalCTA: React.FC<CTAProps> = ({ demoHref, buyHref }) => (
               style={{ color: 'rgba(255,255,255,0.5)' }}
               onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.85)')}
               onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.5)')}>
-              Ya tengo acceso Founder · Iniciar sesión
+              Ya tengo cuenta · Iniciar sesión
             </Link>
           </div>
         </div>

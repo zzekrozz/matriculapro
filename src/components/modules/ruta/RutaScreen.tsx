@@ -151,8 +151,8 @@ export function RutaScreen() {
                     </div>
                     <p className="text-[13px] text-ink-soft mb-4 max-w-[380px]">
                       {phase.id === 'pagos'
-                        ? 'La Fase 2 (pagos y tasas) está disponible con acceso Founder Beta.'
-                        : 'La Fase 3 (DGT y placas) está disponible con acceso Founder Beta.'}
+                        ? 'La Fase 2 (pagos y tasas) está disponible con acceso Founder Alpha.'
+                        : 'La Fase 3 (DGT y placas) está disponible con acceso Founder Alpha.'}
                     </p>
                     <button onClick={openFounderModal}
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[12.5px] font-medium bg-ink text-white hover:scale-[1.02] transition-transform">

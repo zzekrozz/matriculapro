@@ -119,7 +119,7 @@ export function FounderGarage({ variant = 'page' }: FounderGarageProps) {
               href={STRIPE_FOUNDERS_URL}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[13px] font-medium transition-transform hover:scale-[1.02] bg-accent text-ink whitespace-nowrap shrink-0"
             >
-              <Crown size={13} /> Ver acceso Founder Beta <ArrowUpRight size={13} />
+              <Crown size={13} /> Ver precios Founder <ArrowUpRight size={13} />
             </a>
           )}
         </div>
