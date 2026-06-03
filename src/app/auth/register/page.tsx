@@ -13,8 +13,8 @@ function RegisterContent() {
     searchParams.get('from') === 'acceso-founder';
 
   return (
-    <div className="w-full max-w-[440px]">
-      <div className="text-center mb-8">
+    <div className="w-full max-w-[460px]">
+      <div className="text-center mb-6 sm:mb-8">
         <Link href="/" className="inline-flex items-baseline gap-1.5">
           <span className="text-[9.5px] tracking-[0.22em] uppercase text-muted">Ivan Imports ·</span>
           <span className="font-serif italic text-2xl text-ink">Matricula</span>
@@ -22,7 +22,7 @@ function RegisterContent() {
         </Link>
       </div>
 
-      <div className="rounded-[20px] p-7 lg:p-8 bg-surface border border-line shadow-soft-md">
+      <div className="rounded-[20px] p-5 sm:p-7 lg:p-8 bg-surface border border-line shadow-soft-md">
         {isFounderContext ? (
           <>
             <h1 className="font-serif text-ink leading-[1.1] tracking-tight mb-1" style={{ fontSize: 28 }}>
@@ -47,7 +47,7 @@ function RegisterContent() {
         <RegisterForm isFounderContext={isFounderContext} />
       </div>
 
-      <p className="text-center mt-5 text-[11.5px] text-muted leading-relaxed">
+      <p className="text-center mt-4 sm:mt-5 text-[11.5px] text-muted leading-relaxed px-2">
         {isFounderContext ? (
           <>
             ¿Ya tienes cuenta?{' '}
@@ -66,7 +66,7 @@ function RegisterContent() {
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-bg flex items-center justify-center px-4 py-6 sm:py-10">
       <Suspense fallback={
         <div className="flex items-center gap-2 text-muted text-[13px]">
           <Loader2 size={16} className="animate-spin" /> Cargando…

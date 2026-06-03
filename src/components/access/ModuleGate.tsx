@@ -33,13 +33,13 @@ export function ModuleGate({
 
   return (
     <div className="min-h-screen bg-bg">
-      <div className="px-5 lg:px-8 pt-6 pb-12 max-w-[1100px] mx-auto">
+      <div className="px-4 sm:px-5 lg:px-8 pt-6 pb-12 max-w-[1100px] mx-auto">
         <Link href="/app/dashboard" className="mb-5 inline-flex items-center gap-2 text-[12.5px] text-muted hover:text-ink">
           ← Volver al centro de control
         </Link>
 
         <div className="rounded-[24px] overflow-hidden bg-surface border border-line shadow-soft-md">
-          <div className="p-7 lg:p-10 border-b border-line text-center relative">
+          <div className="p-5 sm:p-7 lg:p-10 border-b border-line text-center relative">
             <div className="absolute -top-32 -right-20 w-[400px] h-[400px] rounded-full opacity-15 blur-3xl bg-accent pointer-events-none" />
             <div className="relative">
               <div className="relative w-20 h-20 mx-auto mb-5">
@@ -52,7 +52,7 @@ export function ModuleGate({
                 </div>
               </div>
 
-              <div className="flex items-center justify-center gap-2 mb-2 flex-wrap">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 mb-2">
                 <span className="text-[10.5px] font-mono tracking-wider text-muted">{moduleCode}</span>
                 <span className="inline-flex items-center gap-1 text-[9.5px] tracking-[0.04em] uppercase px-1.5 py-0.5 rounded font-semibold bg-accent-soft text-accent-deep">
                   <Crown size={9} /> Disponible para Founder Beta
@@ -74,13 +74,13 @@ export function ModuleGate({
               <div className="flex items-center justify-center gap-2 flex-wrap mb-2">
                 <button
                   onClick={openFounderModal}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[13.5px] font-medium transition-transform hover:scale-[1.02] bg-ink text-white shadow-soft-md"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-[13.5px] font-medium transition-transform hover:scale-[1.02] bg-ink text-white shadow-soft-md"
                 >
                   <Crown size={14} className="text-accent" /> Comprar acceso Founder
                 </button>
                 <Link
                   href="/auth/login"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[13px] bg-bg-deep text-ink-soft hover:bg-line transition-colors"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-[13px] bg-bg-deep text-ink-soft hover:bg-line transition-colors"
                 >
                   Iniciar sesión <ChevronRight size={13} />
                 </Link>
@@ -91,7 +91,7 @@ export function ModuleGate({
             </div>
           </div>
 
-          <div className="p-7 lg:p-10">
+          <div className="p-5 sm:p-7 lg:p-10">
             <div className="flex items-center gap-1.5 mb-3 text-[10px] tracking-[0.22em] uppercase text-accent-deep">
               <Sparkles size={11} /> Con acceso Founder desbloqueas
             </div>

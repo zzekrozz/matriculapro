@@ -6,7 +6,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   ChevronRight, Check, X, Play, ArrowUpRight, Sparkles, Lock,
   Calculator, ScrollText, Car, Wrench, Stamp, Route, FileText, Phone,
-  CheckCircle2, MousePointer2, Zap,
+  CheckCircle2, MousePointer2, Zap, MonitorSmartphone,
   Plus, Shield, Clock, Users, type LucideIcon
 } from 'lucide-react';
 import { tokens } from '@/lib/tokens';
@@ -40,7 +40,7 @@ const NavBar: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
               backdropFilter: scrolled ? 'blur(12px)' : 'none',
               borderBottom: scrolled ? `1px solid ${tokens.color.line}` : '1px solid transparent',
             }}>
-      <div className="max-w-[1280px] mx-auto px-5 lg:px-8 h-[72px] flex items-center justify-between">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-5 lg:px-8 h-[68px] sm:h-[72px] flex items-center justify-between gap-3">
         <a href="#" className="flex items-baseline gap-2">
           <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tokens.color.muted }}>Ivan Imports ·</span>
           <span style={{ fontFamily: 'Instrument Serif, serif', fontSize: 26, lineHeight: 1, color: tokens.color.ink, fontStyle: 'italic' }}>Matricula</span>
@@ -55,7 +55,7 @@ const NavBar: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
           <a href="#faq" className="hover:text-[#0B1F3A]">FAQ</a>
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <Link href="/auth/login"
             className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-[12px] transition-colors"
             style={{ background: tokens.color.bgDeep, color: tokens.color.inkSoft }}>
@@ -66,11 +66,11 @@ const NavBar: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
             style={{ background: tokens.color.bgDeep, color: tokens.color.inkSoft }}>
             <Play size={11} /> Demo gratis
           </Link>
-          <a href="#precios"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[12.5px] font-medium transition-transform hover:scale-[1.02]"
+          <Link href={buyHref}
+            className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full text-[12px] sm:text-[12.5px] font-medium transition-transform hover:scale-[1.02] whitespace-nowrap"
             style={{ background: tokens.color.ink, color: '#fff', boxShadow: tokens.shadow.md }}>
-            Entrar como Founder <ChevronRight size={13} />
-          </a>
+            Founder Beta · 49 € <ChevronRight size={13} />
+          </Link>
         </div>
       </div>
     </header>
@@ -85,7 +85,7 @@ const Hero: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
   const heroY = useTransform(scrollY, [0, 400], [0, -50]);
 
   return (
-    <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-32" style={{ background: tokens.color.bg }}>
+    <section className="relative overflow-hidden pt-8 pb-16 sm:pt-12 sm:pb-20 lg:pt-20 lg:pb-32" style={{ background: tokens.color.bg }}>
       {/* Decorative grid background */}
       <svg className="absolute inset-0 w-full h-full opacity-[0.4]" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -97,13 +97,13 @@ const Hero: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
       </svg>
       <div className="absolute top-[-200px] right-[-100px] w-[500px] h-[500px] rounded-full opacity-30 blur-3xl" style={{ background: 'radial-gradient(circle, #C8862E 0%, transparent 70%)' }} />
 
-      <motion.div style={{ y: heroY }} className="relative max-w-[1280px] mx-auto px-5 lg:px-8">
-        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 items-center">
+      <motion.div style={{ y: heroY }} className="relative max-w-[1280px] mx-auto px-4 sm:px-5 lg:px-8">
+        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-8 lg:gap-16 items-center">
           {/* LEFT: copy */}
           <div>
             <motion.div
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4 sm:mb-6"
               style={{ background: tokens.color.accentSoft, border: `1px solid ${tokens.color.accent}` }}>
               <Sparkles size={11} style={{ color: tokens.color.accentDeep }} />
               <span className="text-[10.5px] tracking-[0.18em] uppercase font-semibold" style={{ color: tokens.color.accentDeep }}>
@@ -119,30 +119,45 @@ const Hero: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
 
             <motion.p
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-6 text-[15.5px] lg:text-[17px] leading-relaxed max-w-[560px]"
+              className="mt-5 sm:mt-6 text-[14.5px] sm:text-[15.5px] lg:text-[17px] leading-relaxed max-w-[560px]"
               style={{ color: tokens.color.inkSoft }}>
               MatriculaPRO es una <strong style={{ color: tokens.color.ink }}>plataforma interactiva con simuladores, checklists y recorridos guiados</strong> para entender el proceso de matriculación en España paso a paso. No es un PDF ni un curso barato — es una herramienta práctica que crece contigo.
             </motion.p>
 
             <motion.div
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-8 flex items-center gap-3 flex-wrap">
-              <Link href={demoHref}
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-[14px] font-medium transition-transform hover:scale-[1.02]"
+              className="mt-7 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-wrap max-w-[560px]">
+              <Link href={buyHref}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full text-[14px] font-medium transition-transform hover:scale-[1.02]"
                 style={{ background: tokens.color.ink, color: '#fff', boxShadow: tokens.shadow.md }}>
-                <Play size={14} /> Probar demo gratis
+                <Sparkles size={14} /> Acceder a Founder Beta · 49 €
               </Link>
-              <a href="#precios"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-[14px] font-medium"
-                style={{ background: 'transparent', color: tokens.color.ink, border: `1px solid ${tokens.color.ink}` }}>
-                Ver qué incluye <ChevronRight size={14} />
-              </a>
+              <Link href="/auth/login"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full text-[14px] font-medium"
+                style={{ background: 'transparent', color: tokens.color.ink, border: `1px solid ${tokens.color.line}` }}>
+                Ya tengo cuenta / Iniciar sesion
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.36 }}
+              className="mt-3 sm:mt-4 inline-flex lg:hidden max-w-[520px] items-start gap-2 rounded-2xl px-3.5 py-2.5 text-[12px] leading-relaxed"
+              style={{
+                background: 'rgba(255,255,255,0.72)',
+                border: `1px solid ${tokens.color.line}`,
+                color: tokens.color.inkSoft,
+                boxShadow: tokens.shadow.sm,
+              }}>
+              <MonitorSmartphone size={15} className="shrink-0 mt-0.5" style={{ color: tokens.color.accentDeep }} />
+              <span>Mejor experiencia en ordenador o tablet.</span>
+
+
             </motion.div>
 
             {/* Mini trust strip */}
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.5 }}
-              className="mt-8 flex items-center gap-5 text-[11.5px]" style={{ color: tokens.color.muted }}>
+              className="mt-6 sm:mt-8 flex flex-wrap items-center gap-3 sm:gap-5 text-[11px] sm:text-[11.5px]" style={{ color: tokens.color.muted }}>
               <div className="flex items-center gap-1.5"><Shield size={12} style={{ color: tokens.color.ok }} /> Pago único</div>
               <div className="flex items-center gap-1.5"><Clock size={12} style={{ color: tokens.color.ok }} /> Acceso inmediato</div>
               <div className="flex items-center gap-1.5"><Sparkles size={12} style={{ color: tokens.color.accent }} /> Actualizaciones gratuitas</div>
@@ -152,7 +167,7 @@ const Hero: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
           {/* RIGHT: mockup */}
           <motion.div
             initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative">
+            className="relative max-w-[540px] w-full mx-auto lg:max-w-none">
             <HeroMockup />
           </motion.div>
         </div>
@@ -1264,11 +1279,11 @@ interface LandingProps {
 
 export default function Landing({
   demoHref = '/demo',
-  buyHref = '/app/dashboard',         // En producción: Stripe Checkout
+  buyHref = '/acceso-founder',         // En producción: Stripe Checkout
   premiumHref = '/app/acompanamiento', // En producción: form de solicitud
 }: LandingProps) {
   return (
-    <div style={{ background: tokens.color.bg, color: tokens.color.ink, fontFamily: '"Geist", system-ui, -apple-system, sans-serif' }}>
+    <div className="overflow-x-hidden" style={{ background: tokens.color.bg, color: tokens.color.ink, fontFamily: '"Geist", system-ui, -apple-system, sans-serif' }}>
       <NavBar demoHref={demoHref} buyHref={buyHref} />
       <Hero demoHref={demoHref} buyHref={buyHref} />
       <NotAPdfSection />
@@ -1288,3 +1303,4 @@ export default function Landing({
     </div>
   );
 }
+

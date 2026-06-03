@@ -49,9 +49,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const hasSession = Boolean(user);
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-bg overflow-x-hidden">
       {/* TOPBAR mobile */}
-      <header className="lg:hidden sticky top-0 z-40 bg-surface border-b border-line h-14 px-4 flex items-center justify-between">
+      <header className="lg:hidden sticky top-0 z-40 bg-surface border-b border-line min-h-14 px-4 py-2 flex items-center justify-between gap-3">
         <Link href="/app/dashboard" className="flex items-baseline gap-1.5">
           <span className="text-[10px] tracking-[0.22em] uppercase text-muted">Ivan ·</span>
           <span className="font-serif italic text-xl text-ink">Matricula</span>
@@ -69,7 +69,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {/* SIDEBAR */}
         <aside
           className={cn(
-            'fixed inset-y-0 left-0 z-30 w-[260px] bg-ink text-white transition-transform lg:translate-x-0 lg:static lg:flex-shrink-0',
+            'fixed inset-y-0 left-0 z-30 w-[86vw] max-w-[320px] bg-ink text-white transition-transform lg:translate-x-0 lg:static lg:w-[260px] lg:max-w-none lg:flex-shrink-0',
             mobileOpen ? 'translate-x-0' : '-translate-x-full',
             'flex flex-col'
           )}

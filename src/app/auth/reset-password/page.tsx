@@ -76,9 +76,9 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-bg flex items-center justify-center px-4 py-6 sm:py-10">
       <div className="w-full max-w-[440px]">
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 sm:mb-8">
           <Link href="/" className="inline-flex items-baseline gap-1.5">
             <span className="text-[9.5px] tracking-[0.22em] uppercase text-muted">Ivan Imports ·</span>
             <span className="font-serif italic text-2xl text-ink">Matricula</span>
@@ -86,7 +86,7 @@ export default function ResetPasswordPage() {
           </Link>
         </div>
 
-        <div className="rounded-[20px] p-7 lg:p-8 bg-surface border border-line shadow-soft-md">
+        <div className="rounded-[20px] p-5 sm:p-7 lg:p-8 bg-surface border border-line shadow-soft-md">
           {state === 'loading' && (
             <div className="text-center">
               <Loader2 size={28} className="animate-spin text-accent mx-auto mb-3" />
@@ -135,7 +135,7 @@ export default function ResetPasswordPage() {
                     autoComplete="new-password"
                     minLength={8}
                     placeholder="Mínimo 8 caracteres"
-                    className="w-full px-3.5 py-2.5 rounded-lg text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors"
+                    className="w-full px-3.5 py-3 rounded-lg text-[16px] sm:text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors"
                   />
                 </div>
 
@@ -151,7 +151,7 @@ export default function ResetPasswordPage() {
                     autoComplete="new-password"
                     minLength={8}
                     placeholder="Repite la contraseña"
-                    className="w-full px-3.5 py-2.5 rounded-lg text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors"
+                    className="w-full px-3.5 py-3 rounded-lg text-[16px] sm:text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors"
                   />
                 </div>
 

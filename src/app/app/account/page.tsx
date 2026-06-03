@@ -78,7 +78,7 @@ export default function AccountPage() {
         </Link>
       </div>
 
-      <section className="rounded-[24px] p-7 lg:p-9 bg-surface border border-line shadow-soft-md">
+      <section className="rounded-[24px] p-5 sm:p-7 lg:p-9 bg-surface border border-line shadow-soft-md">
         <div className="flex items-start justify-between gap-4 flex-wrap mb-7">
           <div>
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full mb-3 bg-accent-soft text-accent-deep">
@@ -102,7 +102,7 @@ export default function AccountPage() {
           </div>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="grid gap-4 sm:gap-5 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-2xl p-5 border border-line bg-bg">
             <div className="text-[10.5px] tracking-[0.18em] uppercase text-muted mb-4">Datos principales</div>
 

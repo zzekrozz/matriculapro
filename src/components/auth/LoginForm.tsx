@@ -62,7 +62,7 @@ export function LoginForm({ nextUrl = '/app/dashboard' }: LoginFormProps) {
           required
           autoComplete="email"
           placeholder="tu@email.com"
-          className="w-full px-3.5 py-2.5 rounded-lg text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors"
+          className="w-full px-3.5 py-3 rounded-lg text-[16px] sm:text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors"
         />
       </div>
 
@@ -78,7 +78,7 @@ export function LoginForm({ nextUrl = '/app/dashboard' }: LoginFormProps) {
             required
             autoComplete="current-password"
             placeholder="••••••••"
-            className="w-full px-3.5 py-2.5 rounded-lg text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors pr-10"
+            className="w-full px-3.5 py-3 rounded-lg text-[16px] sm:text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors pr-10"
           />
           <button
             type="button"
@@ -97,7 +97,7 @@ export function LoginForm({ nextUrl = '/app/dashboard' }: LoginFormProps) {
         </div>
       )}
 
-      <div className="flex justify-end">
+      <div className="flex justify-end pt-1">
         <Link href="/auth/forgot-password" className="text-[12px] text-accent-deep hover:underline font-medium">
           ¿Olvidaste tu contraseña?
         </Link>

@@ -780,6 +780,7 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
   const [hoveredZone, setHoveredZone] = useState<string | null>(null);
   const [brakePhase, setBrakePhase] = useState<BrakePhase>('idle');
   const [showNoviceBanner, setShowNoviceBanner] = useState(true);
+  const [showMobileDetails, setShowMobileDetails] = useState(false);
   const { openFounderModal } = useFounderModal();
 
   const visibleSteps = useMemo(() => isDemo ? ITV_STEPS.filter(s => s.demo) : ITV_STEPS, [isDemo]);
@@ -810,9 +811,13 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
     return () => clearTimeout(t);
   }, [autoPlay, stepIdx, isLast]);
 
+  useEffect(() => {
+    setShowMobileDetails(false);
+  }, [step.id]);
+
   return (
-    <div className="min-h-screen" style={{ background: tokens.color.bg, fontFamily: 'Geist, system-ui, sans-serif' }}>
-      <div className="px-5 lg:px-8 pt-6 pb-12 max-w-[1400px] mx-auto">
+    <div className="min-h-screen overflow-x-hidden" style={{ background: tokens.color.bg, fontFamily: 'Geist, system-ui, sans-serif' }}>
+      <div className="px-4 sm:px-5 lg:px-8 pt-6 pb-12 max-w-[1400px] mx-auto">
         {onBack && (
           <button onClick={onBack} className="mb-4 inline-flex items-center gap-2 text-[12.5px]" style={{ color: tokens.color.muted }}>
             <ChevronLeft size={14} /> Volver al centro de control
@@ -863,12 +868,12 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
         </AnimatePresence>
 
         {/* Layout principal */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-4 sm:gap-6 items-start">
 
           {/* ESCENARIO */}
           <div className="space-y-4">
             <div className="rounded-[20px] overflow-hidden" style={{ background: tokens.color.surface, border: `1px solid ${tokens.color.line}`, boxShadow: tokens.shadow.md }}>
-              <div className="px-5 py-3 border-b flex items-center justify-between" style={{ borderColor: tokens.color.line, background: tokens.color.surfaceAlt }}>
+              <div className="px-4 sm:px-5 py-3 border-b flex items-center justify-between gap-3" style={{ borderColor: tokens.color.line, background: tokens.color.surfaceAlt }}>
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: tokens.color.bgDeep, color: tokens.color.ink }}>
                     <Car size={14} />
@@ -885,17 +890,42 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
                 </button>
               </div>
 
-              <div className="relative" style={{ background: 'linear-gradient(180deg, #F0F3F8 0%, #DDE3ED 100%)' }}>
-                <ITVGarage activeZones={step.zones} labels={step.labels || {}} stepId={step.id}
-                  brakeMeterPhase={brakePhase}
-                  hoveredZone={hoveredZone} setHoveredZone={setHoveredZone} />
+              <div className="relative px-2 sm:px-3 lg:px-0 pb-3 lg:pb-0" style={{ background: 'linear-gradient(180deg, #F0F3F8 0%, #DDE3ED 100%)' }}>
+                <div className="relative mx-auto w-full max-w-[860px] aspect-[16/11] sm:aspect-[16/10]">
+                  <ITVGarage activeZones={step.zones} labels={step.labels || {}} stepId={step.id}
+                    brakeMeterPhase={brakePhase}
+                    hoveredZone={hoveredZone} setHoveredZone={setHoveredZone} />
+                </div>
+
+                <div
+                  className="lg:hidden mx-1 mt-3 rounded-2xl p-3.5"
+                  style={{
+                    background: 'rgba(11, 31, 58, 0.95)', color: '#fff',
+                    boxShadow: '0 16px 40px rgba(11, 31, 58, 0.18)',
+                    border: `1px solid rgba(200, 134, 46, 0.25)`,
+                  }}>
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
+                         style={{ background: tokens.color.accent, color: tokens.color.ink }}>
+                      <span style={{ fontFamily: 'Instrument Serif, serif', fontSize: 16, fontStyle: 'italic' }}>{step.n}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[9px] tracking-[0.22em] uppercase mb-0.5" style={{ color: tokens.color.accent }}>
+                        Inspector ITV
+                      </div>
+                      <p className="text-[12px] leading-snug" style={{ color: '#fff', fontStyle: 'italic' }}>
+                        "{step.inspector}"
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Bocadillo inspector */}
                 <AnimatePresence mode="wait">
                   <motion.div key={step.id}
                     initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.35 }}
-                    className="absolute bottom-4 left-4 right-4 lg:right-auto lg:max-w-[400px] rounded-2xl p-3.5"
+                    className="hidden lg:block absolute bottom-4 left-4 right-4 lg:right-auto lg:max-w-[400px] rounded-2xl p-3.5"
                     style={{
                       background: 'rgba(11, 31, 58, 0.95)', color: '#fff',
                       boxShadow: '0 16px 40px rgba(11, 31, 58, 0.25)',
@@ -921,7 +951,7 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
               </div>
 
               {/* Stepper */}
-              <div className="px-5 py-4 border-t flex items-center gap-1.5 overflow-x-auto" style={{ borderColor: tokens.color.line, background: tokens.color.surfaceAlt }}>
+              <div className="px-3 sm:px-5 py-3 sm:py-4 border-t flex items-center gap-1.5 overflow-x-auto" style={{ borderColor: tokens.color.line, background: tokens.color.surfaceAlt }}>
                 {visibleSteps.map((s, i) => {
                   const isDone = i < stepIdx;
                   const isCurrent = i === stepIdx;
@@ -967,7 +997,7 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
             style={{ background: tokens.color.surface, border: `1px solid ${tokens.color.line}`, boxShadow: tokens.shadow.md }}>
 
             {/* Header */}
-            <div className="p-6 pb-4 border-b" style={{ borderColor: tokens.color.line }}>
+            <div className="p-5 sm:p-6 pb-4 border-b" style={{ borderColor: tokens.color.line }}>
               <div className="flex items-start gap-4">
                 <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: tokens.color.ink, color: '#fff' }}>
                   <StepIcon size={24} />
@@ -981,9 +1011,21 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
                   </h2>
                 </div>
               </div>
+              <div className="lg:hidden mt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowMobileDetails(v => !v)}
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full text-[12.5px] font-medium"
+                  style={{ background: tokens.color.bgDeep, color: tokens.color.ink }}
+                >
+                  {showMobileDetails ? 'Ocultar explicación' : 'Ver explicación completa'}
+                  <ChevronRight size={13} style={{ transform: showMobileDetails ? 'rotate(90deg)' : 'none' }} />
+                </button>
+              </div>
             </div>
 
             {/* BLOQUE 1: QUÉ TE PIDEN */}
+            <div className={showMobileDetails ? 'block' : 'hidden lg:block'}>
             <div className="p-5 border-b" style={{ borderColor: tokens.color.line, background: tokens.color.surfaceAlt }}>
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: tokens.color.accent, color: tokens.color.ink }}>
@@ -1033,10 +1075,12 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
               </ul>
             </div>
 
+            </div>
+
             {/* Controles */}
-            <div className="px-6 pb-6 pt-2 flex items-center gap-2">
+            <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               <button onClick={prev} disabled={stepIdx === 0}
-                className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-full text-[12px] disabled:opacity-40"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-full text-[12px] disabled:opacity-40"
                 style={{ background: tokens.color.bgDeep, color: tokens.color.inkSoft }}>
                 <ChevronLeft size={13} /> Anterior
               </button>
@@ -1066,7 +1110,7 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
                     Has visto los primeros 5 pasos. Con acceso Founder desbloqueas los 6 restantes: luces traseras, dirección, ruedas, frenos en rodillos, emisiones y resultado final.
                   </p>
                   <button onClick={openFounderModal}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[12.5px] font-medium transition-transform hover:scale-[1.02]"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-[12.5px] font-medium transition-transform hover:scale-[1.02]"
                     style={{ background: tokens.color.accent, color: tokens.color.ink }}>
                     <Crown size={13} /> Desbloquear ITV completo · 49 €
                   </button>

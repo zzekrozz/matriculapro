@@ -16,7 +16,7 @@ function AccesoFounderContent() {
       <div className="w-full max-w-[480px]">
         <Logo />
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-          className="rounded-[24px] p-8 bg-surface border border-line shadow-soft-md text-center">
+          className="rounded-[24px] p-5 sm:p-8 bg-surface border border-line shadow-soft-md text-center">
           <AlertCircle size={32} className="text-muted mx-auto mb-3" />
           <h2 className="font-serif text-[24px] text-ink mb-2">Pago cancelado</h2>
           <p className="text-[13px] text-ink-soft mb-6 leading-relaxed">
@@ -43,7 +43,7 @@ function AccesoFounderContent() {
         className="rounded-[24px] overflow-hidden bg-surface border border-line shadow-soft-md">
 
         {/* Cabecera */}
-        <div className="p-7 lg:p-8 text-center relative overflow-hidden"
+        <div className="p-5 sm:p-7 lg:p-8 text-center relative overflow-hidden"
              style={{ background: 'linear-gradient(135deg, #0B1F3A 0%, #16335E 100%)', color: '#fff' }}>
           <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full opacity-20 blur-3xl bg-accent pointer-events-none" />
           <div className="relative">
@@ -67,7 +67,7 @@ function AccesoFounderContent() {
         </div>
 
         {/* Pasos */}
-        <div className="px-7 lg:px-8 py-5 border-b border-line bg-bg-deep">
+        <div className="px-5 sm:px-7 lg:px-8 py-5 border-b border-line bg-bg-deep">
           <div className="text-[10px] tracking-[0.22em] uppercase text-accent-deep mb-3 font-semibold">
             Cómo activar tu acceso
           </div>
@@ -88,7 +88,7 @@ function AccesoFounderContent() {
         </div>
 
         {/* CTAs */}
-        <div className="p-7 lg:p-8 flex flex-col gap-3">
+        <div className="p-5 sm:p-7 lg:p-8 flex flex-col gap-3">
           <Link href="/auth/register?from=acceso-founder"
             className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-[14px] font-medium transition-transform hover:scale-[1.01] bg-ink text-white shadow-soft-md">
             <UserPlus size={15} /> Crear cuenta Founder
@@ -126,7 +126,7 @@ function Logo() {
 
 export default function AccesoFounderPage() {
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-bg flex items-center justify-center px-4 py-6 sm:py-10">
       <Suspense fallback={
         <div className="flex items-center gap-3 text-muted text-[13px]">
           <Loader2 size={18} className="animate-spin text-accent" /> Cargando…
