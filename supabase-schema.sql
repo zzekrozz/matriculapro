@@ -52,14 +52,16 @@ create or replace view public.founder_garage_view as
   select
     founder_number,
     case
-      when display_name is not null and display_name <> '' then display_name
-      else null
+      when nullif(trim(coalesce(display_name, '')), '') is not null then trim(display_name)
+      else 'Founder #' || lpad(founder_number::text, 4, '0')
     end as display_name,
-    access_level,
     created_at
   from public.profiles
   where founder_number is not null
   order by founder_number asc;
+
+grant select on public.founder_garage_view to anon;
+grant select on public.founder_garage_view to authenticated;
 
 -- ─── 5. SECUENCIA founder_number ─────────────────────────
 -- El #0001 es para el admin. Los compradores empiezan en #0002.

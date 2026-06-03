@@ -5,6 +5,21 @@
 alter table if exists public.profiles enable row level security;
 alter table if exists public.pending_founder_purchases enable row level security;
 
+create or replace view public.founder_garage_view as
+select
+  founder_number,
+  case
+    when nullif(trim(coalesce(display_name, '')), '') is not null then trim(display_name)
+    else 'Founder #' || lpad(founder_number::text, 4, '0')
+  end as display_name,
+  created_at
+from public.profiles
+where founder_number is not null
+order by founder_number asc;
+
+grant select on public.founder_garage_view to anon;
+grant select on public.founder_garage_view to authenticated;
+
 do $$
 begin
   if not exists (

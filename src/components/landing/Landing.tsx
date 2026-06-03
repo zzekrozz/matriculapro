@@ -10,7 +10,6 @@ import {
   Plus, Shield, Clock, Users, type LucideIcon
 } from 'lucide-react';
 import { tokens } from '@/lib/tokens';
-import { FounderGarage } from '@/components/founder/FounderGarage';
 import { PriceLadder } from '@/components/founder/PriceLadder';
 import { FeedbackCard } from '@/components/founder/FeedbackCard';
 
@@ -989,6 +988,112 @@ const AcompanamientoSection: React.FC<{ premiumHref: string }> = ({ premiumHref 
   </section>
 );
 
+const TESTIMONIALS = [
+  {
+    name: 'M. R.',
+    role: 'Comprador particular',
+    comment: 'Me ordenó el proceso. Antes tenía información suelta; aquí vi qué preparar antes de mover el coche.',
+    outcome: 'Llegó a ITV con la documentación más clara y sin improvisar.',
+  },
+  {
+    name: 'Javier',
+    role: 'Importador ocasional',
+    comment: 'No me vendió humo. Me ayudó a detectar en qué parte me podía equivocar y qué debía revisar antes de presentar nada.',
+    outcome: 'Menos dudas al preparar el Modelo 576.',
+  },
+  {
+    name: 'A. C.',
+    role: 'Autónomo',
+    comment: 'La parte práctica me dio tranquilidad. Especialmente las checklists y la secuencia real de pasos.',
+    outcome: 'Menos fricción previa a ITV y DGT.',
+  },
+  {
+    name: 'R. Vega',
+    role: 'Compraventa',
+    comment: 'Lo útil es que funciona como herramienta de trabajo, no solo como curso. Te devuelve contexto rápido cuando retomas un expediente.',
+    outcome: 'Más control del flujo completo de matriculación.',
+  },
+];
+
+const SocialProofSection = () => (
+  <section className="py-18 lg:py-24" style={{ background: tokens.color.surface }}>
+    <div className="max-w-[1180px] mx-auto px-5 lg:px-8">
+      <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-8 lg:gap-10 items-start">
+        <div className="lg:sticky lg:top-24">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-4"
+               style={{ background: tokens.color.accentSoft, color: tokens.color.accentDeep }}>
+            <Users size={12} />
+            <span className="text-[10.5px] tracking-[0.18em] uppercase font-semibold">Feedback temprano</span>
+          </div>
+          <h2 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 'clamp(30px, 3.8vw, 50px)', color: tokens.color.ink, lineHeight: 1.08 }}>
+            La prueba social de MatriculaPRO tiene que sentirse <span style={{ fontStyle: 'italic', color: tokens.color.accent }}>útil</span>, no decorativa.
+          </h2>
+          <p className="mt-4 max-w-[470px] text-[14.5px] leading-relaxed" style={{ color: tokens.color.inkSoft }}>
+            Estas primeras impresiones resumen el tipo de valor que buscamos: menos ansiedad, más claridad y mejor preparación antes de tocar Hacienda, ITV o DGT.
+          </p>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a
+              href="#precios"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-[13.5px] font-medium transition-transform hover:scale-[1.02]"
+              style={{ background: tokens.color.ink, color: '#fff', boxShadow: tokens.shadow.md }}
+            >
+              Quiero acceder a MatriculaPRO <ChevronRight size={14} />
+            </a>
+            <Link
+              href="/founders"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-[13px] font-medium"
+              style={{ background: 'transparent', color: tokens.color.ink, border: `1px solid ${tokens.color.line}` }}
+            >
+              Ver acceso Founder Beta <ArrowUpRight size={13} />
+            </Link>
+          </div>
+
+          <div className="mt-6 max-w-[360px]">
+            <FeedbackCard variant="card" />
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-4">
+          {TESTIMONIALS.map((item, index) => (
+            <div
+              key={index}
+              className="rounded-[24px] p-5 lg:p-6 border min-h-[240px] flex flex-col"
+              style={{ background: '#fff', borderColor: tokens.color.line, boxShadow: tokens.shadow.sm }}
+            >
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <div>
+                  <div className="text-[14px] font-medium" style={{ color: tokens.color.ink }}>{item.name}</div>
+                  <div className="text-[11px] tracking-[0.14em] uppercase mt-1" style={{ color: tokens.color.muted }}>
+                    {item.role}
+                  </div>
+                </div>
+                <div className="w-10 h-10 rounded-2xl flex items-center justify-center"
+                     style={{ background: tokens.color.accentSoft, color: tokens.color.accentDeep }}>
+                  <CheckCircle2 size={16} />
+                </div>
+              </div>
+
+              <p className="text-[13.5px] leading-relaxed flex-1" style={{ color: tokens.color.inkSoft }}>
+                “{item.comment}”
+              </p>
+
+              <div className="mt-5 pt-4 border-t" style={{ borderColor: tokens.color.line }}>
+                <div className="text-[10px] tracking-[0.18em] uppercase mb-1" style={{ color: tokens.color.accentDeep }}>
+                  Resultado
+                </div>
+                <div className="text-[12.5px] leading-relaxed" style={{ color: tokens.color.ink }}>
+                  {item.outcome}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
 /* ============================================================
    FAQ
    ============================================================ */
@@ -1170,27 +1275,20 @@ export default function Landing({
       <PiezasSection />
       <DemoSection demoHref={demoHref} />
 
-      {/* GARAJE FUNDADOR */}
-      <section className="py-16 lg:py-20" style={{ background: tokens.color.bg }}>
-        <div className="max-w-[1100px] mx-auto px-5 lg:px-8">
-          <FounderGarage variant="full" />
-        </div>
-      </section>
-
       {/* ESCALERA DE PRECIOS */}
       <PriceLadder />
 
       <AcompanamientoSection premiumHref={premiumHref} />
 
-      {/* FEEDBACK */}
-      <section className="py-12" style={{ background: tokens.color.bg }}>
-        <div className="max-w-[680px] mx-auto px-5 lg:px-8">
-          <FeedbackCard variant="card" />
-        </div>
-      </section>
+      <SocialProofSection />
 
       <FAQSection />
       <FinalCTA demoHref={demoHref} buyHref={buyHref} />
+      <div className="pb-8 text-center" style={{ background: tokens.color.bg }}>
+        <Link href="/founders" className="text-[12px] text-muted hover:text-ink transition-colors">
+          Ver Garaje Fundador
+        </Link>
+      </div>
       <Footer />
     </div>
   );
