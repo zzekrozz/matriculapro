@@ -10,7 +10,6 @@ import { MODULES } from '@/data/modules';
 import { useCourse } from '@/providers/CourseProvider';
 import { useAccess } from '@/providers/AccessProvider';
 import { useFounderModal } from '@/providers/FounderModalProvider';
-import { FounderGarage } from '@/components/founder/FounderGarage';
 import { FeedbackCard } from '@/components/founder/FeedbackCard';
 import type { ModuleDef, ModuleState } from '@/lib/types';
 
@@ -161,9 +160,7 @@ export default function DashboardPage() {
         ))}
       </section>
 
-      {/* GARAJE FUNDADOR + FEEDBACK */}
-      <section className="mt-8 grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-4 items-start">
-        <FounderGarage variant="compact" />
+      <section className="mt-8">
         <FeedbackCard variant="card" />
       </section>
 

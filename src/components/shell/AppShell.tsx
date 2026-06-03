@@ -46,6 +46,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { level, founderNumber, isFounder, isExplorer } = useAccess();
   const { openFounderModal } = useFounderModal();
   const { user } = useAuth();
+  const hasSession = Boolean(user);
 
   return (
     <div className="min-h-screen bg-bg">
@@ -57,7 +58,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="text-[11px] font-semibold text-accent">PRO</span>
         </Link>
         <div className="flex items-center gap-2">
-          <AccessBadge level={level} founderNumber={founderNumber} />
+          <AccessBadge level={level} founderNumber={founderNumber} hasSession={hasSession} />
           <button onClick={() => setMobileOpen(v => !v)} className="p-2">
             {mobileOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -84,6 +85,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               level={level}
               founderNumber={founderNumber}
               onUpgrade={openFounderModal}
+              hasSession={hasSession}
             />
           </div>
 
@@ -138,13 +140,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <ChevronRight size={11} className="text-muted ml-auto" />
             </Link>
 
-            <div className="text-[9.5px] tracking-[0.22em] uppercase text-muted px-3 mb-2 mt-6">Cuenta</div>
-            <Link href="/app/account" onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12.5px] text-muted-soft hover:bg-white/5 hover:text-white">
-              <UserRound size={14} className="shrink-0 text-muted" />
-              <span>Mi cuenta</span>
-              <ChevronRight size={11} className="text-muted ml-auto" />
-            </Link>
+            {hasSession && (
+              <>
+                <div className="text-[9.5px] tracking-[0.22em] uppercase text-muted px-3 mb-2 mt-6">Cuenta</div>
+                <Link href="/app/account" onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12.5px] text-muted-soft hover:bg-white/5 hover:text-white">
+                  <UserRound size={14} className="shrink-0 text-muted" />
+                  <span>Mi cuenta</span>
+                  <ChevronRight size={11} className="text-muted ml-auto" />
+                </Link>
+              </>
+            )}
           </nav>
 
           {/* Footer sidebar */}
@@ -154,7 +160,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <div className="text-[10px] text-muted truncate">{user.email}</div>
               </div>
             )}
-            <LogoutButton />
+            {hasSession && <LogoutButton />}
             <Link href="/legal/aviso-formativo" className="text-[10.5px] leading-snug text-muted hover:text-white px-3 block pt-1">
               ⚠ Aviso formativo
             </Link>
@@ -169,7 +175,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {/* MAIN */}
         <main className="flex-1 min-w-0 min-h-screen">
           {/* Banner Explorer */}
-          {isExplorer && <ExplorerBanner onUpgrade={openFounderModal} />}
+          {hasSession && isExplorer && <ExplorerBanner onUpgrade={openFounderModal} />}
           {children}
         </main>
       </div>
@@ -207,23 +213,37 @@ function ExplorerBanner({ onUpgrade }: { onUpgrade: () => void }) {
 /* ============================================================
    Badges
    ============================================================ */
-function SidebarLevelBadge({ level, founderNumber, onUpgrade }: {
+function SidebarLevelBadge({ level, founderNumber, onUpgrade, hasSession }: {
   level: ReturnType<typeof useAccess>['level'];
   founderNumber: number | null;
   onUpgrade: () => void;
+  hasSession: boolean;
 }) {
-  if (level === 'visitor') {
+  if (!hasSession) {
     return (
-      <button onClick={onUpgrade}
-        className="w-full text-left rounded-lg p-2.5 transition-colors hover:bg-white/5 border border-white/10">
+      <div className="w-full rounded-lg p-2.5 border border-white/10">
         <div className="flex items-center gap-2">
           <Lock size={11} className="text-muted shrink-0" />
           <div className="flex-1 min-w-0">
             <div className="text-[10.5px] tracking-[0.18em] uppercase text-muted font-semibold">Visitante</div>
-            <div className="text-[10.5px] text-muted-soft mt-0.5">Entrar como Founder</div>
+            <div className="text-[10.5px] text-muted-soft mt-0.5">Vista demo limitada</div>
           </div>
         </div>
-      </button>
+        <div className="mt-3 space-y-2">
+          <Link
+            href="/acceso-founder"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-full px-3.5 py-2 text-[12px] font-medium bg-white text-ink"
+          >
+            <Crown size={12} className="text-accent-deep" /> Comprar acceso Founder
+          </Link>
+          <Link
+            href="/auth/login"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-full px-3.5 py-2 text-[11.5px] text-muted-soft border border-white/10 hover:bg-white/5"
+          >
+            Iniciar sesión
+          </Link>
+        </div>
+      </div>
     );
   }
   if (level === 'explorer') {
@@ -261,10 +281,18 @@ function SidebarLevelBadge({ level, founderNumber, onUpgrade }: {
   return null;
 }
 
-function AccessBadge({ level, founderNumber }: {
+function AccessBadge({ level, founderNumber, hasSession }: {
   level: ReturnType<typeof useAccess>['level'];
   founderNumber: number | null;
+  hasSession: boolean;
 }) {
+  if (!hasSession) {
+    return (
+      <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-bg-deep text-muted">
+        Visitante
+      </span>
+    );
+  }
   if (level === 'founder' || level === 'full') {
     const label = level === 'full' ? 'Full' : 'Founder';
     return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, Loader2, Mail, Shield, UserRound, KeyRound, LogOut } from 'lucide-react';
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser';
@@ -8,17 +8,11 @@ import { useAccess, formatFounderNumber } from '@/providers/AccessProvider';
 import { useAuth } from '@/providers/AuthProvider';
 
 export default function AccountPage() {
-  const { user, profile, refreshProfile, signOut, loading: authLoading } = useAuth();
+  const { user, profile, signOut, loading: authLoading } = useAuth();
   const { level, founderNumber } = useAccess();
-  const [displayName, setDisplayName] = useState('');
-  const [savingName, setSavingName] = useState(false);
   const [sendingReset, setSendingReset] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setDisplayName(profile?.display_name ?? '');
-  }, [profile?.display_name]);
 
   const accessLabel = useMemo(() => {
     switch (level) {
@@ -32,36 +26,6 @@ export default function AccountPage() {
         return 'Visitor';
     }
   }, [level]);
-
-  const handleSaveName = async () => {
-    if (!user || savingName) return;
-
-    setSavingName(true);
-    setMessage(null);
-    setError(null);
-
-    try {
-      const supabase = createSupabaseBrowserClient();
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ display_name: displayName.trim() || null })
-        .eq('id', user.id);
-
-      if (updateError) {
-        console.warn('[ACCOUNT] update display_name error:', updateError.message);
-        setError('No se ha podido guardar el nombre visible.');
-        return;
-      }
-
-      await refreshProfile();
-      setMessage('Nombre visible actualizado.');
-    } catch (err) {
-      console.error('[ACCOUNT] update display_name exception:', err);
-      setError('No se ha podido guardar el nombre visible.');
-    } finally {
-      setSavingName(false);
-    }
-  };
 
   const handleSendPasswordReset = async () => {
     if (!user?.email || sendingReset) return;
@@ -125,7 +89,7 @@ export default function AccountPage() {
               Tu perfil en MatriculaPRO
             </h1>
             <p className="mt-3 max-w-[580px] text-[14px] leading-relaxed text-ink-soft">
-              Aquí puedes revisar tus datos principales, guardar tu nombre visible y solicitar el cambio de contraseña.
+              Aquí puedes revisar tus datos principales y solicitar el cambio de contraseña.
             </p>
           </div>
 
@@ -147,13 +111,12 @@ export default function AccountPage() {
                 <label className="block text-[10.5px] tracking-[0.18em] uppercase text-muted mb-1.5">
                   Nombre visible
                 </label>
-                <input
-                  type="text"
-                  value={displayName}
-                  onChange={e => setDisplayName(e.target.value)}
-                  placeholder="Cómo quieres aparecer en MatriculaPRO"
-                  className="w-full px-3.5 py-2.5 rounded-lg text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors"
-                />
+                <div className="w-full px-3.5 py-2.5 rounded-lg text-[13.5px] bg-surface border border-line text-ink-soft">
+                  {profile?.display_name?.trim() || 'Aún no configurado'}
+                </div>
+                <p className="mt-2 text-[11.5px] leading-relaxed text-muted">
+                  La edición del nombre visible estará disponible más adelante.
+                </p>
               </div>
 
               <div>
@@ -179,15 +142,6 @@ export default function AccountPage() {
                   {error}
                 </div>
               )}
-
-              <button
-                type="button"
-                onClick={handleSaveName}
-                disabled={savingName}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-[13px] font-medium bg-ink text-white disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {savingName ? <><Loader2 size={14} className="animate-spin" /> Guardando...</> : 'Guardar nombre'}
-              </button>
             </div>
           </div>
 

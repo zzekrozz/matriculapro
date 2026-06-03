@@ -1041,7 +1041,7 @@ const SocialProofSection = () => (
               Quiero acceder a MatriculaPRO <ChevronRight size={14} />
             </a>
             <Link
-              href="/founders"
+              href="/acceso-founder"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-[13px] font-medium"
               style={{ background: 'transparent', color: tokens.color.ink, border: `1px solid ${tokens.color.line}` }}
             >
@@ -1284,11 +1284,6 @@ export default function Landing({
 
       <FAQSection />
       <FinalCTA demoHref={demoHref} buyHref={buyHref} />
-      <div className="pb-8 text-center" style={{ background: tokens.color.bg }}>
-        <Link href="/founders" className="text-[12px] text-muted hover:text-ink transition-colors">
-          Ver Garaje Fundador
-        </Link>
-      </div>
       <Footer />
     </div>
   );
