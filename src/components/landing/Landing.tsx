@@ -114,14 +114,14 @@ const Hero: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
             <motion.h1
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
               style={{ fontFamily: 'Instrument Serif, serif', fontSize: 'clamp(40px, 5.5vw, 72px)', color: tokens.color.ink, letterSpacing: '-0.02em', lineHeight: 1.02 }}>
-              Matricula tu coche importado en España con una <span style={{ fontStyle: 'italic', color: tokens.color.accent }}>guía paso a paso</span>.
+              Matricula tu vehículo en España con una <span style={{ fontStyle: 'italic', color: tokens.color.accent }}>herramienta guiada paso a paso</span>.
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
               className="mt-5 sm:mt-6 text-[14.5px] sm:text-[15.5px] lg:text-[17px] leading-relaxed max-w-[560px]"
               style={{ color: tokens.color.inkSoft }}>
-              MatriculaPRO reúne la ruta completa, checklists, simuladores, documentos y recorridos guiados para ayudarte a entender qué hacer antes de comprar, en ITV, Hacienda y DGT.
+              MatriculaPRO reúne la ruta completa, checklists, simuladores, documentos y recorridos guiados para ayudarte a entender y preparar qué hacer antes de ITV, Hacienda y DGT.
             </motion.p>
 
             <motion.p
@@ -215,7 +215,7 @@ const HeroMockup = () => (
       <div className="flex">
         {/* Sidebar mini */}
         <div className="w-[140px] py-4 px-3 space-y-1" style={{ background: '#0B1F3A' }}>
-          <div className="text-[8px] tracking-[0.22em] uppercase mb-2" style={{ color: '#5C6B82' }}>Curso</div>
+          <div className="text-[8px] tracking-[0.22em] uppercase mb-2" style={{ color: '#5C6B82' }}>Herramienta</div>
           {[
             { label: 'Centro', active: true },
             { label: 'Ruta', active: false },
@@ -235,7 +235,7 @@ const HeroMockup = () => (
         <div className="flex-1 p-4">
           {/* Hero mini */}
           <div className="rounded-xl p-4 mb-3" style={{ background: 'linear-gradient(135deg, #0B1F3A 0%, #16335E 100%)', color: '#fff' }}>
-            <div className="text-[8px] tracking-[0.22em] uppercase mb-1" style={{ color: tokens.color.accent }}>Curso activo</div>
+            <div className="text-[8px] tracking-[0.22em] uppercase mb-1" style={{ color: tokens.color.accent }}>Herramienta activa</div>
             <div className="flex items-end justify-between">
               <div>
                 <div style={{ fontFamily: 'Instrument Serif, serif', fontSize: 22, lineHeight: 1, fontStyle: 'italic' }}>
@@ -297,8 +297,8 @@ const HeroMockup = () => (
           <MousePointer2 size={16} />
         </div>
         <div>
-          <div className="text-[9.5px] tracking-[0.18em] uppercase" style={{ color: tokens.color.muted }}>No es un PDF</div>
-          <div className="text-[12px] font-medium" style={{ color: tokens.color.ink }}>Pulsa, practica, aprende</div>
+          <div className="text-[9.5px] tracking-[0.18em] uppercase" style={{ color: tokens.color.muted }}>Herramienta guiada</div>
+          <div className="text-[12px] font-medium" style={{ color: tokens.color.ink }}>Pulsa, practica y avanza</div>
         </div>
       </div>
     </motion.div>
@@ -350,7 +350,7 @@ const NotAPdfSection = () => (
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-5"
                  style={{ background: tokens.color.accent, color: tokens.color.ink }}>
               <Check size={12} />
-              <span className="text-[10.5px] tracking-[0.18em] uppercase font-semibold">MatriculaPRO</span>
+              <span className="text-[10.5px] tracking-[0.18em] uppercase font-semibold">Herramienta MatriculaPRO</span>
             </div>
             <ul className="space-y-3">
               {[
@@ -462,10 +462,10 @@ const PiezasSection = () => {
         <div className="max-w-[720px] mb-14">
           <div className="text-[10.5px] tracking-[0.22em] uppercase mb-3" style={{ color: tokens.color.accentDeep }}>Qué hay dentro</div>
           <h2 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 'clamp(28px, 3.6vw, 48px)', color: tokens.color.ink, letterSpacing: '-0.01em', lineHeight: 1.1 }}>
-            7 piezas <span style={{ fontStyle: 'italic', color: tokens.color.accent }}>interactivas</span>, no 7 capítulos para leer.
+            Más que un curso: una <span style={{ fontStyle: 'italic', color: tokens.color.accent }}>herramienta guiada</span> para saber qué hacer antes de ITV, Hacienda y DGT.
           </h2>
           <p className="mt-4 text-[15px] leading-relaxed" style={{ color: tokens.color.inkSoft }}>
-            Cada pieza está pensada para hacer, no para mirar. Pulsas, practicas y avanzas.
+            Cada pieza está pensada para ayudarte a avanzar. Pulsas, practicas y entiendes qué hacer en cada fase.
           </p>
         </div>
 
@@ -883,12 +883,12 @@ const PRICING: PricingPlan[] = [
   },
   {
     id: 'completo',
-    name: 'Curso completo',
+    name: 'Herramienta completa',
     price: '89',
     priceOriginal: '129',
     period: 'Precio preventa · pago único',
-    cta: 'Comprar curso completo',
-    desc: 'Todas las piezas, sin acompañamiento.',
+    cta: 'Acceder a MatriculaPRO',
+    desc: 'La herramienta completa, sin acompañamiento.',
     badge: 'PREVENTA',
     featured: true,
     includes: [
@@ -902,7 +902,7 @@ const PRICING: PricingPlan[] = [
       'Casos prácticos por dificultad',
       'Biblioteca de documentos',
       'Plantillas para ITV',
-      'Cupón 20% para futuros cursos',
+      'Cupón 20% para futuras herramientas',
       'Actualizaciones gratuitas',
     ],
   },
@@ -912,11 +912,11 @@ const PRICING: PricingPlan[] = [
     price: '499',
     period: 'Pago único · plazas limitadas',
     cta: 'Solicitar acompañamiento',
-    desc: 'Curso completo + acompañamiento directo durante 30 días.',
+    desc: 'Herramienta completa + acompañamiento directo durante 30 días.',
     badge: 'PREMIUM',
     premium: true,
     includes: [
-      'Todo lo del curso completo',
+      'Todo lo de la herramienta completa',
       'Dudas por WhatsApp/email · 30 días',
       'Llamada antes de ITV',
       'Llamada antes de Modelo 576',
@@ -947,7 +947,7 @@ const AcompanamientoSection: React.FC<{ premiumHref: string }> = ({ premiumHref 
               Haz tu primera matriculación <span style={{ fontStyle: 'italic', color: tokens.color.accent }}>acompañado</span>.
             </h2>
             <p className="mt-4 text-[14.5px] leading-relaxed max-w-[460px]" style={{ color: '#B4BECE' }}>
-              Si prefieres aprender haciendo tu primera matriculación con ayuda directa, contrata MatriculaPRO Acompañado. Curso completo + 30 días de acceso directo.
+              Si prefieres avanzar con tu primera matriculación con ayuda directa, contrata MatriculaPRO Acompañado. Herramienta completa + 30 días de acceso directo.
             </p>
 
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1126,12 +1126,12 @@ const SocialProofSection = () => (
    ============================================================ */
 
 const FAQS = [
-  { q: '¿Sustituye a una gestoría o a la propia ITV?', a: 'No. MatriculaPRO es contenido formativo y orientativo. La validación final corresponde siempre a ITV, DGT, Agencia Tributaria u organismo competente. Lo que sí hace es prepararte para no llegar perdido.' },
+  { q: '¿Sustituye a una gestoría o a la propia ITV?', a: 'No. MatriculaPRO es una herramienta orientativa. La validación final corresponde siempre a ITV, DGT, Agencia Tributaria u organismo competente. Lo que sí hace es prepararte para no llegar perdido.' },
   { q: 'Compré ya el coche, ¿me sirve?', a: 'Sí. La ruta de matriculación se adapta automáticamente: si ya compraste, te ayuda a ordenar el expediente, detectar puntos críticos y avanzar con cuidado. Lo ideal es comprarlo antes de comprar, pero también vale después.' },
   { q: '¿Cubre homologaciones y reformas?', a: 'No en profundidad. Si tu vehículo tiene reformas, modificaciones, documentación dudosa o datos que no cuadran, te indicamos cuándo parar y consultar con ITV, ingeniero u homologador. No es nuestro terreno.' },
   { q: '¿El simulador del Modelo 576 calcula el impuesto?', a: 'No. Es un simulador educativo para entender qué campos pide y cómo se rellenan. No calcula importes oficiales ni sustituye la presentación real ante la Agencia Tributaria.' },
-  { q: '¿Cómo es el pago y el acceso?', a: 'Pago único, sin suscripciones. Tras el pago recibes acceso inmediato y permanente. Las actualizaciones del curso van incluidas.' },
-  { q: '¿Tiene devolución?', a: 'Por la naturaleza del contenido digital de acceso inmediato, una vez accedes al curso completo el reembolso no es automático. Si tienes dudas antes de comprar, prueba la demo gratis: es exactamente para eso.' },
+  { q: '¿Cómo es el pago y el acceso?', a: 'Pago único, sin suscripciones. Tras el pago recibes acceso inmediato a la herramienta. Las futuras mejoras incluidas para tu nivel de acceso se mantienen a medida que MatriculaPRO evoluciona.' },
+  { q: '¿Tiene devolución?', a: 'Por la naturaleza del acceso digital inmediato a la herramienta, el reembolso no es automático una vez activado el acceso correspondiente. Si tienes dudas antes de comprar, prueba la demo gratis: es exactamente para eso.' },
 ];
 
 const FAQSection = () => {

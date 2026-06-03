@@ -85,12 +85,12 @@ export default function DashboardPage() {
 
         <div className="relative grid lg:grid-cols-[1fr_auto] gap-8 items-center">
           <div>
-            <div className="text-[10.5px] tracking-[0.22em] uppercase mb-2 text-accent">Curso activo</div>
+            <div className="text-[10.5px] tracking-[0.22em] uppercase mb-2 text-accent">Herramienta activa</div>
             <h1 className="font-serif italic text-white text-[44px] lg:text-[56px] leading-[1] tracking-tight">
               Matricula<span className="text-accent">PRO</span>
             </h1>
             <p className="mt-4 max-w-[480px] text-[14px] leading-relaxed text-muted-soft">
-              Tu centro de control. Cada módulo es una pieza interactiva. Pulsa, practica y avanza por la ruta de matriculación.
+              Tu centro de control. Cada módulo es una pieza interactiva dentro de la herramienta. Pulsa, practica y avanza por la ruta de matriculación.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link href={ctaHref}
@@ -136,7 +136,7 @@ export default function DashboardPage() {
           { label: 'Pasos de ruta', value: `${routeStepsDone}/${routeStepsTotal}` },
           { label: 'Casos resueltos', value: `${completedCases.length}/5` },
           { label: 'Módulos', value: `${completedCount}/${MODULES.length}` },
-          { label: 'Cupón próximo curso', value: '20%' },
+          { label: 'Cupón próximo recurso', value: '20%' },
         ].map((s, i) => (
           <div key={i} className="rounded-2xl p-4 bg-surface border border-line">
             <div className="text-[10.5px] tracking-[0.22em] uppercase text-muted mb-1">{s.label}</div>

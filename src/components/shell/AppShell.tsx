@@ -99,7 +99,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
 
           <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5">
-            <div className="text-[9.5px] tracking-[0.22em] uppercase text-muted px-3 mb-2 mt-1">Curso activo</div>
+            <div className="text-[9.5px] tracking-[0.22em] uppercase text-muted px-3 mb-2 mt-1">Herramienta activa</div>
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || (item.href !== '/app/dashboard' && pathname?.startsWith(item.href));
@@ -144,14 +144,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               );
             })}
 
-            <div className="text-[9.5px] tracking-[0.22em] uppercase text-muted px-3 mb-2 mt-6">Mis cursos</div>
+            <div className="text-[9.5px] tracking-[0.22em] uppercase text-muted px-3 mb-2 mt-6">Mis herramientas</div>
             <Link
               href="/app/mis-cursos"
               onClick={() => setMobileOpen(false)}
               className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12.5px] text-muted-soft hover:bg-white/5 hover:text-white"
             >
               <GraduationCap size={14} className="shrink-0 text-muted" />
-              <span>Todos los cursos</span>
+              <span>Más herramientas</span>
               <ChevronRight size={11} className="text-muted ml-auto" />
             </Link>
 

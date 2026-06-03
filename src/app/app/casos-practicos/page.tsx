@@ -40,7 +40,7 @@ function CasosContent() {
               <span className="text-[10.5px] font-mono tracking-wider text-muted">M.08</span>
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10.5px] font-medium tracking-[0.04em] uppercase rounded-full bg-accent-soft text-accent-deep">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
-                Examen del curso
+                Caso guiado
               </span>
             </div>
             <h1 className="font-serif text-ink leading-[1] tracking-tight" style={{ fontSize: 'clamp(32px, 3.6vw, 48px)' }}>
@@ -102,7 +102,7 @@ function CasosContent() {
 
         <div className="mt-8 rounded-xl p-4 flex items-start gap-3 text-[11.5px] leading-relaxed bg-warn-soft text-warn border border-accent-soft">
           <AlertTriangle size={14} className="shrink-0 mt-0.5" />
-          <span>Los casos son simulaciones formativas. Las situaciones reales pueden incluir matices adicionales — ante dudas, consulta con gestoría, ingeniero o asesor fiscal.</span>
+          <span>Los casos son simulaciones orientativas. Las situaciones reales pueden incluir matices adicionales — ante dudas, consulta con gestoría, ingeniero o asesor fiscal.</span>
         </div>
       </div>
     </div>

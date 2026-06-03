@@ -9,10 +9,10 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'MatriculaPRO · Ivan Imports',
-  description: 'Plataforma interactiva para aprender a matricular coches importados en España. Simuladores, checklists y recorridos guiados. No es un PDF.',
+  description: 'Herramienta guiada para entender y avanzar en la matriculación de vehículos en España. Rutas, checklists, simuladores y recorridos prácticos.',
   openGraph: {
     title: 'MatriculaPRO · Ivan Imports',
-    description: 'Plataforma interactiva para matricular coches importados. Simulador 576, ficha 3D, recorrido ITV.',
+    description: 'Herramienta guiada para preparar la matriculación de vehículos en España. Simulador 576, ficha 3D, recorrido ITV y checklists.',
     url: 'https://matriculapro.ivanimports.es',
     siteName: 'MatriculaPRO',
     locale: 'es_ES',

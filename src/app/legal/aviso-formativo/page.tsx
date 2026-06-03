@@ -22,7 +22,7 @@ export default function AvisoFormativoPage() {
 
         <div className="mt-8 prose prose-lg max-w-none">
           <p className="text-[15px] leading-relaxed text-ink-soft">
-            MatriculaPRO es un curso interactivo de carácter formativo y orientativo. Te ayuda a entender el proceso de matriculación de vehículos importados en España y a practicar con escenarios cercanos a la realidad, pero <strong className="text-ink">no sustituye en ningún caso</strong>:
+            MatriculaPRO es una herramienta interactiva de carácter práctico y orientativo. Te ayuda a entender el proceso de matriculación de vehículos en España y a practicar con escenarios cercanos a la realidad, pero <strong className="text-ink">no sustituye en ningún caso</strong>:
           </p>
           <ul className="mt-4 space-y-2 text-[14px] text-ink-soft">
             <li>• A la <strong>ITV oficial</strong> ni a la decisión técnica de sus inspectores.</li>
