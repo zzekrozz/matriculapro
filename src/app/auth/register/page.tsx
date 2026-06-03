@@ -39,7 +39,7 @@ function RegisterContent() {
             </h1>
             <p className="text-[13px] text-ink-soft mb-6">
               Explora MatriculaPRO en modo demo.{' '}
-              <Link href="/#precios" className="text-accent-deep hover:underline">Acceso Founder · 49 €</Link>{' '}
+              <Link href="/#precios" className="text-accent-deep hover:underline">Acceso Founder Beta · 49 €</Link>{' '}
               para acceso completo.
             </p>
           </>

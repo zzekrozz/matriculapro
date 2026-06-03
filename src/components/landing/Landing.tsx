@@ -69,7 +69,7 @@ const NavBar: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
           <Link href={buyHref}
             className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full text-[12px] sm:text-[12.5px] font-medium transition-transform hover:scale-[1.02] whitespace-nowrap"
             style={{ background: tokens.color.ink, color: '#fff', boxShadow: tokens.shadow.md }}>
-            Founder Beta · 49 € <ChevronRight size={13} />
+            Acceso Founder Beta · 49 € <ChevronRight size={13} />
           </Link>
         </div>
       </div>
@@ -130,7 +130,7 @@ const Hero: React.FC<CTAProps> = ({ demoHref, buyHref }) => {
               <Link href={buyHref}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full text-[14px] font-medium transition-transform hover:scale-[1.02]"
                 style={{ background: tokens.color.ink, color: '#fff', boxShadow: tokens.shadow.md }}>
-                <Sparkles size={14} /> Acceder a Founder Beta · 49 €
+                <Sparkles size={14} /> Acceso Founder Beta · 49 €
               </Link>
               <Link href="/auth/login"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full text-[14px] font-medium"
