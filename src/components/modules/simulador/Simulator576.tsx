@@ -133,7 +133,7 @@ export function Simulator576({
              style={{ background: tokens.color.bgDeep, border: `1px dashed ${tokens.color.line}` }}>
           <Lock size={14} className="shrink-0 mt-0.5" style={{ color: tokens.color.muted }} />
           <div className="text-[11.5px] leading-relaxed" style={{ color: tokens.color.inkSoft }}>
-            <strong style={{ color: tokens.color.ink }}>Con acceso Founder Beta</strong> podrás practicar con fichas aleatorias, casos por dificultad (fácil, medio, alerta) y corrección paso a paso de los 10 campos.
+            <strong style={{ color: tokens.color.ink }}>Con acceso Founder Alpha</strong> podrás practicar con fichas aleatorias, casos por dificultad (fácil, medio, alerta) y corrección paso a paso de los 10 campos.
           </div>
         </div>
       </div>

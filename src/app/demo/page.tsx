@@ -23,7 +23,7 @@ export default function DemoPage() {
           </div>
           <a href="/#precios"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-medium bg-ink text-white hover:scale-[1.02] transition-transform">
-            <Crown size={11} className="text-accent" /> Founder Beta · 49&nbsp;€
+            <Crown size={11} className="text-accent" /> Founder Alpha · 49&nbsp;€
           </a>
         </div>
       </header>
@@ -47,7 +47,7 @@ export default function DemoPage() {
       {/* Recorrido ITV en modo demo */}
       <RecorridoITV isDemo={true} />
 
-      {/* CTA inferior demo → Founder Beta */}
+      {/* CTA inferior demo → Founder Alpha */}
       <section className="px-5 lg:px-8 pb-14">
         <div className="max-w-[1400px] mx-auto rounded-[24px] p-8 lg:p-12 relative overflow-hidden"
              style={{ background: 'linear-gradient(135deg, #0B1F3A 0%, #16335E 60%, #0B1F3A 100%)', color: '#fff' }}>
@@ -56,23 +56,23 @@ export default function DemoPage() {
             <div>
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-3 bg-accent/20 text-accent">
                 <Crown size={11} />
-                <span className="text-[10.5px] tracking-[0.18em] uppercase font-semibold">Acceso Fundador Beta</span>
+                <span className="text-[10.5px] tracking-[0.18em] uppercase font-semibold">Acceso Founder Alpha</span>
               </div>
               <h2 className="font-serif text-[32px] lg:text-[40px] leading-[1.05] tracking-tight">
                 ¿Te ha convencido lo que viste? <span className="italic text-accent">Sigue practicando.</span>
               </h2>
               <p className="mt-3 max-w-[560px] text-[14px] text-muted-soft leading-relaxed">
-                Acceso de fundador por vida: 49 € pago único. Mantienes el acceso aunque MatriculaPRO suba a 199 €. No es el producto completo — es entrar antes.
+                Acceso Founder Alpha: entra por 49 €, accede a los módulos actuales y recibe futuras mejoras mientras MatriculaPRO evoluciona.
               </p>
               <div className="mt-2 flex items-baseline gap-2 text-muted-soft">
                 <span className="font-serif italic text-white text-[28px] leading-none">49 €</span>
-                <span className="text-[10px]">pago único · acceso de por vida</span>
+                <span className="text-[10px]">pago único · actualizaciones incluidas</span>
               </div>
             </div>
             <div className="flex flex-col gap-2 shrink-0">
               <a href="/#precios"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-[13.5px] font-medium bg-accent text-ink hover:scale-[1.02] transition-transform">
-                <Crown size={14} /> Entrar como fundador
+                <Crown size={14} /> Ver precios Founder
               </a>
               <Link href="/" className="text-[11px] text-center text-muted-soft hover:text-white">
                 Ver todo lo que incluye

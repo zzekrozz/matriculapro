@@ -240,7 +240,7 @@ function BienvenidaContent() {
                     style={{ fontSize: 'clamp(26px, 3.2vw, 36px)' }}>
                   {founderNumber
                     ? <>Eres <span className="text-accent">Founder {formatFounderNumber(founderNumber)}</span></>
-                    : 'Eres Founder Beta'}
+                    : 'Eres Founder Alpha'}
                 </h1>
                 <p className="text-[13.5px] text-muted-soft leading-relaxed">
                   Acceso activo. Ya puedes usar todos los módulos y guardar tu progreso.

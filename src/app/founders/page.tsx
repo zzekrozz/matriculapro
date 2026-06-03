@@ -1,14 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowUpRight, Crown } from 'lucide-react';
-import { FounderGarage } from '@/components/founder/FounderGarage';
+import { Clock3, Crown } from 'lucide-react';
 import { tokens } from '@/lib/tokens';
 
 export default function FoundersPage() {
   return (
     <div style={{ background: tokens.color.bg, color: tokens.color.ink, minHeight: '100vh' }}>
-      <section className="pt-14 pb-8 lg:pt-20 lg:pb-12">
+      <section className="pt-14 pb-14 lg:pt-20 lg:pb-20">
         <div className="max-w-[1180px] mx-auto px-5 lg:px-8">
           <div className="mb-8">
             <Link href="/" className="inline-flex items-center gap-2 text-[12.5px] text-muted hover:text-ink transition-colors">
@@ -26,48 +25,46 @@ export default function FoundersPage() {
             />
 
             <div className="relative max-w-[780px]">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5"
-                   style={{ background: 'rgba(200,134,46,0.18)', color: tokens.color.accent }}>
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5"
+                style={{ background: 'rgba(200,134,46,0.18)', color: tokens.color.accent }}
+              >
                 <Crown size={12} />
-                <span className="text-[10.5px] tracking-[0.18em] uppercase font-semibold">Garaje Fundador</span>
+                <span className="text-[10.5px] tracking-[0.18em] uppercase font-semibold">Garaje Founder</span>
               </div>
 
               <h1 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 'clamp(34px, 5vw, 64px)', lineHeight: 1.02, fontStyle: 'italic' }}>
-                Garaje Fundador
+                Garaje Founder
               </h1>
 
               <p className="mt-4 text-[18px] leading-relaxed max-w-[640px]" style={{ color: '#D5DDE8' }}>
-                Los primeros usuarios que apoyaron MatriculaPRO desde el inicio.
+                Garaje Founder estará disponible próximamente.
               </p>
 
-              <p className="mt-4 text-[14.5px] leading-relaxed max-w-[720px]" style={{ color: '#B4BECE' }}>
-                Cada Founder recibe un número único por orden de entrada. Puede aparecer con nombre, iniciales, alias o de forma anónima.
-              </p>
+              <div
+                className="mt-6 inline-flex max-w-[620px] items-start gap-3 rounded-[22px] px-4 py-4 text-[13px] leading-relaxed"
+                style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}
+              >
+                <Clock3 size={16} className="shrink-0 mt-0.5" style={{ color: tokens.color.accent }} />
+                <div>
+                  <p className="font-medium text-white">No se muestra todavía mientras terminamos la experiencia Founder.</p>
+                  <p style={{ color: '#D5DDE8' }}>
+                    Lo activaremos cuando esté lista para mostrarse correctamente, sin placeholders ni estados intermedios.
+                  </p>
+                </div>
+              </div>
 
-              <div className="mt-7 flex flex-wrap gap-3">
-                <a
-                  href="#garaje"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-[13.5px] font-medium"
-                  style={{ background: tokens.color.accent, color: tokens.color.ink }}
-                >
-                  Ver Founders <ArrowUpRight size={13} />
-                </a>
+              <div className="mt-7">
                 <Link
                   href="/#precios"
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-[13px] font-medium"
-                  style={{ background: 'transparent', color: '#fff', border: '1px solid rgba(255,255,255,0.2)' }}
+                  style={{ background: tokens.color.accent, color: tokens.color.ink }}
                 >
-                  Ver acceso Founder Beta
+                  Ver precios Founder
                 </Link>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section id="garaje" className="pb-20 lg:pb-24">
-        <div className="max-w-[1180px] mx-auto px-5 lg:px-8">
-          <FounderGarage variant="page" />
         </div>
       </section>
     </div>

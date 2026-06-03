@@ -88,7 +88,7 @@ export default function AccesoPage() {
             <a href="/#precios"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-[13px] transition-colors border"
               style={{ borderColor: 'rgba(200,134,46,0.4)', color: 'var(--color-accent-deep)', background: 'rgba(200,134,46,0.06)' }}>
-              <Crown size={13} /> Acceso Founder Beta · 49 €
+              <Crown size={13} /> Ver precios Founder
             </a>
 
             <Link href="/demo"
@@ -100,7 +100,7 @@ export default function AccesoPage() {
 
         <p className="text-center mt-5 text-[11px] text-muted leading-relaxed">
           Sin registro obligatorio para explorar.{' '}
-          <Link href="/auth/register" className="hover:underline">Crea una cuenta</Link> para guardar tu progreso.
+          Si ya tienes cuenta, <Link href="/auth/login" className="hover:underline">inicia sesión</Link>.
         </p>
       </div>
     </div>

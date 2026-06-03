@@ -9,7 +9,6 @@ import {
 import { MODULES } from '@/data/modules';
 import { useCourse } from '@/providers/CourseProvider';
 import { useAccess } from '@/providers/AccessProvider';
-import { useFounderModal } from '@/providers/FounderModalProvider';
 import { FeedbackCard } from '@/components/founder/FeedbackCard';
 import type { ModuleDef, ModuleState } from '@/lib/types';
 
@@ -33,8 +32,6 @@ const STATE_LABEL: Record<ModuleState, string> = {
 export default function DashboardPage() {
   const { completedModules, completedRouteSteps, completedCases } = useCourse();
   const { canAccessModule, isExplorer, isFounder } = useAccess();
-  const { openFounderModal } = useFounderModal();
-
   const moduleWithLiveState = (m: ModuleDef): ModuleDef => {
     if (completedModules.includes(m.id)) return { ...m, state: 'completed' };
     if (m.id === 'ruta' && completedRouteSteps.length > 0) {
@@ -176,13 +173,13 @@ export default function DashboardPage() {
                 Desbloquea el acceso completo por 49 €.
               </h3>
               <p className="mt-2 text-[13px] text-muted-soft leading-relaxed max-w-[480px]">
-                Acceso Founder de por vida: simulador 576, checklists completos, casos prácticos, biblioteca y plantillas. 49 € ahora, aunque el precio suba a 199 €.
+                Acceso Founder Alpha: entra por 49 €, accede a los módulos actuales y recibe futuras mejoras mientras MatriculaPRO evoluciona.
               </p>
             </div>
-            <button onClick={openFounderModal}
+            <Link href="/#precios"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[13.5px] font-medium transition-transform hover:scale-[1.02] bg-accent text-ink whitespace-nowrap shrink-0">
-              <Crown size={14} /> Entrar como Founder · 49 €
-            </button>
+              <Crown size={14} /> Ver precios Founder
+            </Link>
           </div>
         </div>
       )}

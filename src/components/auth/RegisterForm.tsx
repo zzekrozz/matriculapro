@@ -71,7 +71,7 @@ export function RegisterForm({ isFounderContext = false }: RegisterFormProps) {
         </label>
         <input type="text" value={displayName} onChange={e => setDisplayName(e.target.value)}
           autoComplete="name" placeholder="Tu nombre o alias"
-          className="w-full px-3.5 py-2.5 rounded-lg text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors" />
+          className="w-full px-3.5 py-3 rounded-lg text-[16px] sm:text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors" />
       </div>
 
       <div>
@@ -81,7 +81,7 @@ export function RegisterForm({ isFounderContext = false }: RegisterFormProps) {
         <input type="email" value={email} onChange={e => setEmail(e.target.value)}
           required autoComplete="email"
           placeholder={isFounderContext ? 'El mismo email que en Stripe' : 'tu@email.com'}
-          className="w-full px-3.5 py-2.5 rounded-lg text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors" />
+          className="w-full px-3.5 py-3 rounded-lg text-[16px] sm:text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors" />
       </div>
 
       <div>
@@ -92,7 +92,7 @@ export function RegisterForm({ isFounderContext = false }: RegisterFormProps) {
           <input type={showPw ? 'text' : 'password'} value={password}
             onChange={e => setPassword(e.target.value)}
             required autoComplete="new-password" placeholder="Mínimo 8 caracteres" minLength={8}
-            className="w-full px-3.5 py-2.5 rounded-lg text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors pr-10" />
+            className="w-full px-3.5 py-3 rounded-lg text-[16px] sm:text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors pr-10" />
           <button type="button" onClick={() => setShowPw(v => !v)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-ink transition-colors"
             aria-label={showPw ? 'Ocultar contraseña' : 'Mostrar contraseña'}>
