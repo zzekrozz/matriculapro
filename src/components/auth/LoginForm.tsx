@@ -97,6 +97,12 @@ export function LoginForm({ nextUrl = '/app/dashboard' }: LoginFormProps) {
         </div>
       )}
 
+      <div className="flex justify-end">
+        <Link href="/auth/forgot-password" className="text-[12px] text-accent-deep hover:underline font-medium">
+          ¿Olvidaste tu contraseña?
+        </Link>
+      </div>
+
       <button
         type="submit"
         disabled={loading || !email || !password}

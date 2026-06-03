@@ -9,6 +9,7 @@ import { Loader2 } from 'lucide-react';
 function LoginContent() {
   const searchParams = useSearchParams();
   const next = searchParams.get('next') ?? '/app/dashboard';
+  const passwordUpdated = searchParams.get('message') === 'password-updated';
 
   return (
     <div className="w-full max-w-[440px]">
@@ -27,6 +28,11 @@ function LoginContent() {
         <p className="text-[13px] text-ink-soft mb-6">
           Entra con tu cuenta para acceder a MatriculaPRO.
         </p>
+        {passwordUpdated && (
+          <div className="rounded-lg px-3 py-2.5 mb-4 bg-ok-soft text-ok text-[12.5px] leading-relaxed">
+            Contraseña actualizada. Ya puedes iniciar sesión.
+          </div>
+        )}
         <LoginForm nextUrl={next} />
       </div>
 

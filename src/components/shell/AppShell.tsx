@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Route, Calculator, ScrollText, Car, Wrench, Stamp,
   BookOpen, FileText, Mail, Phone, GraduationCap, Sparkles, ChevronRight,
-  Menu, X, CheckSquare, Crown, Lock, type LucideIcon
+  Menu, X, CheckSquare, Crown, Lock, UserRound, type LucideIcon
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/cn';
@@ -135,6 +135,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12.5px] text-muted-soft hover:bg-white/5 hover:text-white">
               <GraduationCap size={14} className="shrink-0 text-muted" />
               <span>Todos los cursos</span>
+              <ChevronRight size={11} className="text-muted ml-auto" />
+            </Link>
+
+            <div className="text-[9.5px] tracking-[0.22em] uppercase text-muted px-3 mb-2 mt-6">Cuenta</div>
+            <Link href="/app/account" onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12.5px] text-muted-soft hover:bg-white/5 hover:text-white">
+              <UserRound size={14} className="shrink-0 text-muted" />
+              <span>Mi cuenta</span>
               <ChevronRight size={11} className="text-muted ml-auto" />
             </Link>
           </nav>
