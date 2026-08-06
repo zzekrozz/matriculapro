@@ -1,0 +1,16 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "incremental": false,
+    "isolatedModules": false,
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "../../../.test-dist/auth",
+    "rootDir": "../../../src",
+    "plugins": []
+  },
+  "include": ["./**/*.ts", "../../lib/auth/redirect.ts"],
+  "exclude": ["../../../node_modules"]
+}

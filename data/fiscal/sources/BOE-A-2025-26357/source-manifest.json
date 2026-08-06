@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "sourceDocumentId": "BOE-A-2025-26357",
+  "sourceOrder": "Orden HAC/1501/2025, de 17 de diciembre",
+  "catalogYear": 2026,
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "officialUrls": {
+    "pdf": "https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf",
+    "xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2025-26357"
+  },
+  "downloadedAt": "2026-08-05T10:49:18.640Z",
+  "files": {
+    "pdf": {
+      "relativePath": "data/fiscal/sources/BOE-A-2025-26357/BOE-A-2025-26357.pdf",
+      "bytes": 20127606,
+      "sha256": "16e392a1222e892b1d86eab21ffa4d0b371e50dd48cbb3252348a6925f18eceb"
+    },
+    "xml": {
+      "relativePath": "data/fiscal/sources/BOE-A-2025-26357/BOE-A-2025-26357.xml",
+      "bytes": 42575375,
+      "sha256": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26"
+    }
+  }
+}

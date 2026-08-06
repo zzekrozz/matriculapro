@@ -1,202 +1,194 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react';
-import { usePersistentState } from '@/lib/usePersistentState';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import type { AccessContext as ServerAccessContext, AccessTier, UserLicense } from '@/domain/access';
+import { createSupabaseBrowserClient, isSupabaseBrowserConfigured } from '@/lib/supabase/browser';
 import { useAuth } from '@/providers/AuthProvider';
 
-export type AccessLevel = 'visitor' | 'explorer' | 'founder' | 'full';
-
-export const EXPLORER_DEMO_MODULES = ['ruta', 'itv', 'simulador', 'ficha'] as const;
-export type ExplorerDemoModule = typeof EXPLORER_DEMO_MODULES[number];
-
 interface AccessContextValue {
-  level: AccessLevel;
-  founderNumber: number | null;
-  founderAlias: string | null;
-  founderDisplayMode: 'name' | 'initials' | 'alias' | 'anonymous';
+  tier: AccessTier;
+  mode: ServerAccessContext['mode'];
+  license: UserLicense | null;
+  scheduledLicense: UserLicense | null;
+  expiredAt: string | null;
+  loading: boolean;
   hydrated: boolean;
-  setLevel: (level: AccessLevel) => void;
-  activateFounder: (opts?: { alias?: string }) => number;
-  setFounderAlias: (alias: string | null) => void;
-  setFounderDisplayMode: (mode: 'name' | 'initials' | 'alias' | 'anonymous') => void;
-  reset: () => void;
-  isExplorer: boolean;
-  isFounder: boolean;
-  isFounderOrFull: boolean;
-  canCompleteSteps: boolean;
-  canUseSimulators: boolean;
-  canSaveProgress: boolean;
-  canAccessChecklists: boolean;
-  canAccessLibrary: boolean;
-  canAccessModule: (moduleId: string) => boolean;
+  canUseFreeChecker: boolean;
+  canViewHistoricalPaidData: boolean;
+  canCreateFullCases: boolean;
+  canEditFullCases: boolean;
+  canRunFiscalCalculations: boolean;
+  canUseAdvancedSimulators: boolean;
+  canGenerateReports: boolean;
+  canExport: boolean;
+  canUseProfessionalTools: boolean;
+  canViewPaidCases: boolean;
+  canManageFullCases: boolean;
+  canUseProfessional: boolean;
+  isPaid: boolean;
+  readOnly: boolean;
+  refresh: () => Promise<void>;
 }
 
 const AccessContext = createContext<AccessContextValue | null>(null);
-const FIRST_FOUNDER_NUMBER = 2;
-const ACCESS_COOKIE = 'mpro:access-level';
-const FOUNDER_COOKIE = 'mpro:founder-number';
+const MAX_TIMEOUT_MS = 2_147_483_647;
 
-function syncAccessCookie(level: AccessLevel, founderNumber: number | null) {
-  if (typeof document === 'undefined') return;
-
-  const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = `${ACCESS_COOKIE}=${level};path=/;expires=${expires};SameSite=Lax`;
-
-  if (founderNumber != null) {
-    document.cookie = `${FOUNDER_COOKIE}=${founderNumber};path=/;expires=${expires};SameSite=Lax`;
-  } else {
-    document.cookie = `${FOUNDER_COOKIE}=;path=/;max-age=0;SameSite=Lax`;
-  }
-}
+const FREE_ACCESS: Omit<AccessContextValue, 'loading' | 'hydrated' | 'refresh'> = {
+  tier: 'free',
+  mode: 'free',
+  license: null,
+  scheduledLicense: null,
+  expiredAt: null,
+  canUseFreeChecker: true,
+  canViewHistoricalPaidData: false,
+  canCreateFullCases: false,
+  canEditFullCases: false,
+  canRunFiscalCalculations: false,
+  canUseAdvancedSimulators: false,
+  canGenerateReports: false,
+  canExport: false,
+  canUseProfessionalTools: false,
+  canViewPaidCases: false,
+  canManageFullCases: false,
+  canUseProfessional: false,
+  isPaid: false,
+  readOnly: false,
+};
 
 export function AccessProvider({ children }: { children: ReactNode }) {
-  const { profile, user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const [access, setAccess] = useState<Omit<AccessContextValue, 'loading' | 'hydrated' | 'refresh'>>(FREE_ACCESS);
+  const [loading, setLoading] = useState(true);
 
-  const [localLevel, setLocalLevel, hydrated] = usePersistentState<AccessLevel>('mpro:access-level', 'visitor');
-  const [founderNumber, setFounderNumber] = usePersistentState<number | null>('mpro:founder-number', null);
-  const [founderAlias, setFounderAliasRaw] = usePersistentState<string | null>('mpro:founder-alias', null);
-  const [founderDisplayMode, setFounderDisplayModeRaw] = usePersistentState<
-    'name' | 'initials' | 'alias' | 'anonymous'
-  >('mpro:founder-display-mode', 'alias');
+  const refresh = useCallback(async () => {
+    if (!user || !isSupabaseBrowserConfigured()) {
+      setAccess(FREE_ACCESS);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data, error } = await createSupabaseBrowserClient().rpc('get_my_access_context');
+      if (error) throw error;
+      setAccess(normalizeAccess(data, user.id));
+    } catch {
+      // Fail closed in the UI. Paid capabilities remain unavailable until the
+      // server-backed context can be read again.
+      setAccess(FREE_ACCESS);
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
 
   useEffect(() => {
-    if (!profile) return;
+    if (!authLoading) void refresh();
+  }, [authLoading, refresh]);
 
-    console.log('[ACCESS] profile', profile.access_level, profile.founder_number ?? 'null');
-    setLocalLevel(profile.access_level);
-    setFounderNumber(profile.founder_number ?? null);
-    syncAccessCookie(profile.access_level, profile.founder_number ?? null);
-  }, [profile, setFounderNumber, setLocalLevel]);
+  useEffect(() => {
+    const expiresAt = access.mode === 'full' ? access.license?.expiresAt : null;
+    if (!expiresAt) return;
+    const expiresAtMs = Date.parse(expiresAt);
+    if (!Number.isFinite(expiresAtMs)) return;
 
-  const resolution = useMemo<{
-    level: AccessLevel;
-    founderNumber: number | null;
-    source: 'profile' | 'localStorage' | 'cookie' | 'demo';
-  }>(() => {
-    if (user && profile) {
-      return {
-        level: profile.access_level,
-        founderNumber: profile.founder_number ?? null,
-        source: 'profile' as const,
-      };
-    }
-
-    if (!user && localLevel !== 'visitor') {
-      return {
-        level: localLevel,
-        founderNumber,
-        source: 'localStorage' as const,
-      };
-    }
-
-    if (!user && typeof document !== 'undefined') {
-      const cookieValue = document.cookie
-        .split('; ')
-        .find(chunk => chunk.startsWith(`${ACCESS_COOKIE}=`))
-        ?.split('=')[1];
-
-      if (cookieValue === 'explorer' || cookieValue === 'founder' || cookieValue === 'full') {
-        return {
-          level: cookieValue,
-          founderNumber,
-          source: 'cookie' as const,
-        };
+    let timerId: number | undefined;
+    let cancelled = false;
+    const scheduleExpirationRefresh = () => {
+      if (cancelled) return;
+      const remainingMs = expiresAtMs - Date.now();
+      if (remainingMs <= 0) {
+        void refresh();
+        return;
       }
-    }
-
-    return {
-      level: 'visitor' as AccessLevel,
-      founderNumber: null,
-      source: user ? 'profile' as const : 'demo' as const,
+      timerId = window.setTimeout(scheduleExpirationRefresh, Math.min(remainingMs, MAX_TIMEOUT_MS));
     };
-  }, [founderNumber, localLevel, profile, user]);
+
+    scheduleExpirationRefresh();
+    return () => {
+      cancelled = true;
+      if (timerId !== undefined) window.clearTimeout(timerId);
+    };
+  }, [access.license?.expiresAt, access.mode, refresh]);
 
   useEffect(() => {
-    console.log('[ACCESS] user', user?.email ?? 'none');
-    console.log('[ACCESS] profile', profile?.access_level ?? 'null');
-    console.log('[ACCESS] source=' + resolution.source);
-    console.log('[ACCESS] resolved level=' + resolution.level);
-  }, [profile, resolution.level, resolution.source, user]);
-
-  const value = useMemo<AccessContextValue>(() => {
-    const isFounderOrFull = resolution.level === 'founder' || resolution.level === 'full';
-    const isExplorer = resolution.level === 'explorer';
-    const isFounder = isFounderOrFull;
-
-    const canAccessModule = (moduleId: string): boolean => {
-      if (isFounderOrFull) return true;
-      if (isExplorer) return (EXPLORER_DEMO_MODULES as readonly string[]).includes(moduleId);
-      return false;
+    const refreshOnFocus = () => { void refresh(); };
+    const refreshOnVisibility = () => {
+      if (document.visibilityState === 'visible') void refresh();
     };
-
-    return {
-      level: resolution.level,
-      founderNumber: resolution.founderNumber,
-      founderAlias,
-      founderDisplayMode,
-      hydrated: hydrated && !authLoading,
-      setLevel: (level: AccessLevel) => {
-        if (user) return;
-        setLocalLevel(level);
-        syncAccessCookie(level, level === 'founder' || level === 'full' ? founderNumber : null);
-      },
-      activateFounder: ({ alias } = {}) => {
-        if (user && profile) {
-          return profile.founder_number ?? FIRST_FOUNDER_NUMBER;
-        }
-
-        const nextFounderNumber = founderNumber ?? FIRST_FOUNDER_NUMBER;
-        setFounderNumber(nextFounderNumber);
-        if (alias) setFounderAliasRaw(alias);
-        setLocalLevel('founder');
-        syncAccessCookie('founder', nextFounderNumber);
-        return nextFounderNumber;
-      },
-      setFounderAlias: setFounderAliasRaw,
-      setFounderDisplayMode: setFounderDisplayModeRaw,
-      reset: () => {
-        if (user) return;
-        setLocalLevel('visitor');
-        setFounderNumber(null);
-        setFounderAliasRaw(null);
-        setFounderDisplayModeRaw('alias');
-        syncAccessCookie('visitor', null);
-      },
-      isExplorer,
-      isFounder,
-      isFounderOrFull,
-      canCompleteSteps: isFounderOrFull,
-      canUseSimulators: isFounderOrFull,
-      canSaveProgress: isFounderOrFull,
-      canAccessChecklists: isFounderOrFull,
-      canAccessLibrary: isFounderOrFull,
-      canAccessModule,
+    window.addEventListener('focus', refreshOnFocus);
+    document.addEventListener('visibilitychange', refreshOnVisibility);
+    return () => {
+      window.removeEventListener('focus', refreshOnFocus);
+      document.removeEventListener('visibilitychange', refreshOnVisibility);
     };
-  }, [
-    founderAlias,
-    authLoading,
-    founderDisplayMode,
-    founderNumber,
-    hydrated,
-    profile,
-    resolution.founderNumber,
-    resolution.level,
-    setFounderAliasRaw,
-    setFounderDisplayModeRaw,
-    setFounderNumber,
-    setLocalLevel,
-    user,
-  ]);
+  }, [refresh]);
+
+  const value = useMemo<AccessContextValue>(() => ({
+    ...access,
+    loading: authLoading || loading,
+    hydrated: !authLoading && !loading,
+    refresh,
+  }), [access, authLoading, loading, refresh]);
 
   return <AccessContext.Provider value={value}>{children}</AccessContext.Provider>;
 }
 
 export function useAccess() {
-  const ctx = useContext(AccessContext);
-  if (!ctx) throw new Error('useAccess must be used within AccessProvider');
-  return ctx;
+  const context = useContext(AccessContext);
+  if (!context) throw new Error('useAccess must be used within AccessProvider');
+  return context;
 }
 
-export function formatFounderNumber(n: number): string {
-  return `#${String(n).padStart(4, '0')}`;
+function normalizeAccess(value: unknown, expectedUserId: string): Omit<AccessContextValue, 'loading' | 'hydrated' | 'refresh'> {
+  if (!value || typeof value !== 'object') throw new Error('Invalid access context');
+  const row = value as Record<string, unknown>;
+  if (row.userId !== expectedUserId) throw new Error('Invalid access owner');
+  const tier = row.tier;
+  const mode = row.mode;
+  if (!['free', 'particular', 'professional'].includes(String(tier))) throw new Error('Invalid access tier');
+  if (!['free', 'full', 'read_only'].includes(String(mode))) throw new Error('Invalid access mode');
+  const license = normalizeLicense(row.license, expectedUserId);
+  const scheduledLicense = normalizeLicense(row.scheduledLicense, expectedUserId);
+  return {
+    tier: tier as AccessTier,
+    mode: mode as ServerAccessContext['mode'],
+    license,
+    scheduledLicense,
+    expiredAt: typeof row.expiredAt === 'string' ? row.expiredAt : null,
+    canUseFreeChecker: row.canUseFreeChecker === true,
+    canViewHistoricalPaidData: row.canViewHistoricalPaidData === true,
+    canCreateFullCases: row.canCreateFullCases === true,
+    canEditFullCases: row.canEditFullCases === true,
+    canRunFiscalCalculations: row.canRunFiscalCalculations === true,
+    canUseAdvancedSimulators: row.canUseAdvancedSimulators === true,
+    canGenerateReports: row.canGenerateReports === true,
+    canExport: row.canExport === true,
+    canUseProfessionalTools: row.canUseProfessionalTools === true,
+    canViewPaidCases: row.canViewHistoricalPaidData === true,
+    canManageFullCases: row.canCreateFullCases === true && row.canEditFullCases === true,
+    canUseProfessional: row.canUseProfessionalTools === true,
+    isPaid: mode === 'full',
+    readOnly: mode === 'read_only',
+  };
 }
+
+function normalizeLicense(value: unknown, expectedUserId: string): UserLicense | null {
+  if (!value || typeof value !== 'object') return null;
+  const row = value as Record<string, unknown>;
+  if (row.userId !== expectedUserId) throw new Error('Invalid license owner');
+  return {
+    id: requiredString(row.id),
+    userId: expectedUserId,
+    tier: requiredString(row.tier) as UserLicense['tier'],
+    duration: (typeof row.duration === 'string' ? row.duration : null) as UserLicense['duration'],
+    status: requiredString(row.status) as UserLicense['status'],
+    startsAt: optionalString(row.startsAt),
+    expiresAt: optionalString(row.expiresAt),
+    originalPurchaseId: optionalString(row.originalPurchaseId),
+    upgradedFromLicenseId: optionalString(row.upgradedFromLicenseId),
+    createdAt: requiredString(row.createdAt),
+    updatedAt: requiredString(row.updatedAt),
+  };
+}
+
+function requiredString(value: unknown): string { if (typeof value !== 'string' || !value) throw new Error('Invalid license'); return value; }
+function optionalString(value: unknown): string | null { return typeof value === 'string' ? value : null; }

@@ -8,7 +8,8 @@ import { ModuleGate } from '@/components/access/ModuleGate';
 export default function Page() {
   return (
     <ModuleGate
-      requiresFounder
+      requiredCapability="use_advanced_simulators"
+      requiredTier="particular"
       moduleName="Checklist pre-ITV"
       moduleCode="M.05"
       description="Repasa luces, interior, ruedas y motor antes de ir a la ITV de matriculación."

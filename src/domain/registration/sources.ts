@@ -1,0 +1,175 @@
+import { DOMAIN_REVIEW_DATE } from './constants';
+import type { OfficialSource } from './types';
+
+export const OFFICIAL_SOURCES: OfficialSource[] = [
+  {
+    id: 'boe-vat-law-37-1992',
+    authority: 'Boletín Oficial del Estado',
+    title: 'Ley 37/1992, de 28 de diciembre, del Impuesto sobre el Valor Añadido',
+    url: 'https://www.boe.es/eli/es/l/1992/12/28/37/con',
+    scope: 'Definición legal de medios de transporte nuevos en adquisiciones intracomunitarias.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'boe-itp-law-1-1993',
+    authority: 'Boletín Oficial del Estado',
+    title: 'Real Decreto Legislativo 1/1993, texto refundido del ITPAJD',
+    url: 'https://www.boe.es/buscar/act.php?id=BOE-A-1993-25359',
+    scope: 'Sujeción de transmisiones entre particulares y exclusión de operaciones empresariales.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'boe-regional-financing-law-22-2009',
+    authority: 'Boletín Oficial del Estado',
+    title: 'Ley 22/2009, financiación de las Comunidades Autónomas',
+    url: 'https://www.boe.es/buscar/act.php?id=BOE-A-2009-20375',
+    scope: 'Punto de conexión autonómico del ITP y competencias sobre tipos del IEDMT.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'boe-local-finance-law-2-2004',
+    authority: 'Boletín Oficial del Estado',
+    title: 'Real Decreto Legislativo 2/2004, Ley Reguladora de las Haciendas Locales',
+    url: 'https://www.boe.es/buscar/act.php?id=BOE-A-2004-4214',
+    scope: 'IVTM, sujeto pasivo, tarifas y potestad municipal sobre coeficientes y bonificaciones.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'boe-rd-750-2010',
+    authority: 'Boletín Oficial del Estado',
+    title: 'Real Decreto 750/2010, homologación de vehículos',
+    url: 'https://www.boe.es/buscar/act.php?id=BOE-A-2010-9994',
+    scope: 'Homologación CE, individual, series cortas, equivalencia y ficha reducida.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'boe-rd-866-2010',
+    authority: 'Boletín Oficial del Estado',
+    title: 'Real Decreto 866/2010, tramitación de reformas de vehículos',
+    url: 'https://www.boe.es/buscar/act.php?id=BOE-A-2010-11154',
+    scope: 'Concepto y tramitación de reformas posteriores a la matriculación.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'aeat-brexit-vehicle-note',
+    authority: 'Agencia Estatal de Administración Tributaria',
+    title: 'Nota Informativa GA 15/2021: vehículos procedentes de Reino Unido',
+    url: 'https://sede.agenciatributaria.gob.es/static_files/Sede/Tema/Aduanas/Notas_info/NI_2021/NIGA15_21.pdf',
+    scope: 'Estatuto aduanero, entrada en UE-27 e Irlanda del Norte tras Brexit.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'dgt-eu-registration',
+    authority: 'Dirección General de Tráfico',
+    title: 'Matricular un vehículo proveniente de la UE',
+    url: 'https://www.dgt.es/nuestros-servicios/tu-vehiculo/quieres-traer-o-llevarte-un-vehiculo-del-extranjero/matricular-un-vehiculo-proveniente-de-la-ue/',
+    scope: 'Titularidad, ITV, fiscalidad, DGT, rehabilitación y placas para vehículos procedentes de la UE.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'dgt-ordinary-registration',
+    authority: 'Sede Electrónica de la DGT',
+    title: 'Matriculación de vehículos nuevos y vehículos provenientes del extranjero',
+    url: 'https://sede.dgt.gob.es/es/vehiculos/matriculaciones-de-vehiculos/matriculacion-ordinaria/',
+    scope: 'Documentos según origen y vendedor, canales de presentación, Reino Unido y placas.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'aeat-vat-new-vehicle',
+    authority: 'Agencia Estatal de Administración Tributaria',
+    title: 'Adquisiciones intracomunitarias de medios de transporte nuevos',
+    url: 'https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/manual-iva-2025/capitulo-03-entregas-realizadas-empresarios-profesionales/adquisiciones-intracomunitarias-importaciones-bienes/concepto-adquisicion-intracomunitaria/adquisic-intrac-medios-transp-nuevos-iva.html',
+    scope: 'Definición fiscal de medio de transporte nuevo y tributación del IVA en destino.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'aeat-model-576',
+    authority: 'Agencia Estatal de Administración Tributaria',
+    title: 'Modelo 576. Autoliquidación del Impuesto Especial sobre Determinados Medios de Transporte',
+    url: 'https://sede.agenciatributaria.gob.es/Sede/vehiculos-embarcaciones/primera-matriculacion-medios-transporte/modelo-576.html',
+    scope: 'Operaciones sujetas y no exentas y Código Electrónico de Matriculación.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'aeat-model-05',
+    authority: 'Agencia Estatal de Administración Tributaria',
+    title: 'Modelo 05. Reconocimiento previo de no sujeción, exención o reducción',
+    url: 'https://sede.agenciatributaria.gob.es/Sede/procedimientos/GZ17.shtml',
+    scope: 'Beneficios fiscales que requieren reconocimiento previo antes de la matriculación definitiva.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'aeat-model-06',
+    authority: 'Agencia Estatal de Administración Tributaria',
+    title: 'Modelo 06. Exenciones y no sujeción sin reconocimiento previo',
+    url: 'https://sede.agenciatributaria.gob.es/Sede/vehiculos-embarcaciones/primera-matriculacion-medios-transporte/modelo-06.html',
+    scope: 'Supuestos de no sujeción o exención sin reconocimiento previo.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'aeat-model-06-instructions',
+    authority: 'Agencia Estatal de Administración Tributaria',
+    title: 'Instrucciones del Modelo 06',
+    url: 'https://sede.agenciatributaria.gob.es/Sede/todas-gestiones/impuestos-tasas/impuesto-matriculacion/modelo-06-impues_____xenciones-no-sujecion-previo_/instrucciones-modelo-06.html',
+    scope: 'Claves, justificantes y tratamiento de categorías N1, N2 y N3.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'aeat-registration-tax-rates-2026',
+    authority: 'Agencia Estatal de Administración Tributaria',
+    title: 'Tipos impositivos del Impuesto de Matriculación',
+    url: 'https://sede.agenciatributaria.gob.es/Sede/vehiculos-embarcaciones/primera-matriculacion-medios-transporte/son-tipos-impuesto-aplicar-caso/tipos-impositivos.html',
+    scope: 'Tipos estatales, territoriales y modificaciones autonómicas publicadas por la AEAT.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+    mustReviewAnnually: true,
+  },
+  {
+    id: 'boe-law-38-1992',
+    authority: 'Boletín Oficial del Estado',
+    title: 'Ley 38/1992, de 28 de diciembre, de Impuestos Especiales (texto consolidado)',
+    url: 'https://www.boe.es/buscar/act.php?id=BOE-A-1992-28741',
+    scope: 'Sujeción, exenciones, base imponible, epígrafes, tipos y devengo del IEDMT.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+  },
+  {
+    id: 'industry-itv-manual-7-9',
+    authority: 'Ministerio de Industria y Turismo',
+    title: 'Manual de Procedimiento de Inspección de las Estaciones ITV, versión 7.9',
+    url: 'https://industria.gob.es/Calidad-Industrial/vehiculos/itv1/Manual%20de%20procedimiento%20de%20inspecci%C3%B3n/Manual%20de%20procedimiento%20de%20inspeccion%20de%20estaciones%20ITV-V%207.9_final2.pdf',
+    scope: 'Inspecciones no periódicas, vehículos del EEE, CoC, ficha reducida, equivalencia y documentación.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+    version: '7.9',
+    effectiveFrom: '2026-01-01',
+  },
+  {
+    id: 'industry-reforms-manual-7-c2',
+    authority: 'Ministerio de Industria y Turismo',
+    title: 'Manual de Reformas de Vehículos, revisión 7, corrección 2',
+    url: 'https://industria.gob.es/Calidad-Industrial/vehiculos/Documents/Manual%20de%20Reformas%20de%20Veh%C3%ADculos%20Revisi%C3%B3n%207.2.pdf',
+    scope: 'Determinación y documentación de reformas de vehículos.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+    version: '7, corrección 2',
+    effectiveFrom: '2026-02-06',
+  },
+  {
+    id: 'boe-market-values-2026',
+    authority: 'Boletín Oficial del Estado',
+    title: 'Orden HAC/1501/2025, precios medios de venta aplicables en 2026',
+    url: 'https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-26357',
+    scope: 'Precios medios como medio de comprobación y valoración de vehículos usados durante 2026.',
+    reviewedAt: DOMAIN_REVIEW_DATE,
+    effectiveFrom: '2026-01-01',
+    mustReviewAnnually: true,
+  },
+];
+
+export const OFFICIAL_SOURCE_BY_ID = Object.fromEntries(
+  OFFICIAL_SOURCES.map((source) => [source.id, source]),
+) as Record<string, OfficialSource>;
+
+export function sourcesForIds(ids: Iterable<string>): OfficialSource[] {
+  const unique = new Set(ids);
+  return [...unique]
+    .map((id) => OFFICIAL_SOURCE_BY_ID[id])
+    .filter((source): source is OfficialSource => Boolean(source));
+}

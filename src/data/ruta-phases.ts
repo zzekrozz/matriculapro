@@ -1,28 +1,22 @@
-/** Las 3 fases del proceso de matriculación · Mapa visual */
+/** Las tres fases del mapa educativo. El expediente real puede exigir otro orden. */
 
 export type PhaseId = 'preparar' | 'pagos' | 'dgt';
 
 export interface RutaPhase {
   id: PhaseId;
   n: number;
-  shortTitle: string;       // título corto para badges (ej: "Fase 1")
-  title: string;            // título completo (ej: "Preparar expediente e ITV")
-  /** Palabra en italic ámbar para titulares */
+  shortTitle: string;
+  title: string;
   titleAccent: string;
-  /** Resumen corto para la card del mapa */
   pitch: string;
-  /** Mensaje clave (más largo) para la sección agrupada */
   message: string;
-  /** Pasos incluidos (rango de números de paso) */
   steps: number[];
-  /** Nombre del icono lucide */
   icon: string;
-  /** Colores de la fase (CSS variables o hex) */
   color: {
-    main: string;          // color principal
-    soft: string;          // fondo suave
-    deep: string;          // texto/accent oscuro
-    accent: string;        // detalle (ámbar de la marca o color complementario)
+    main: string;
+    soft: string;
+    deep: string;
+    accent: string;
   };
 }
 
@@ -31,56 +25,56 @@ export const RUTA_PHASES: RutaPhase[] = [
     id: 'preparar',
     n: 1,
     shortTitle: 'Fase 1',
-    title: 'Preparar expediente e ITV',
-    titleAccent: 'expediente',
-    pitch: 'Reúnes los papeles, consigues el COC y pasas la ITV de matriculación.',
-    message: 'Es la fase donde preparas el expediente y donde necesitas llevar el coche físicamente a ITV. Sin la ficha técnica española emitida aquí, no puedes seguir.',
+    title: 'Definir el caso y preparar la parte técnica',
+    titleAccent: 'parte técnica',
+    pitch: 'Clasificas el caso, reúnes las pruebas y confirmas la vía técnica antes de la ITV.',
+    message: 'El origen, la fecha y kilometraje, el tipo de vendedor, la categoría, la homologación y las reformas cambian el expediente. Los pasos 1 a 4 son un mapa de preparación: no convierten el COC, la ficha reducida ni una vía de homologación en requisitos intercambiables o universales.',
     steps: [1, 2, 3, 4],
     icon: 'FileCheck2',
     color: {
-      main:  '#0B1F3A',  // navy de la marca
-      soft:  '#ECF0F6',
-      deep:  '#0B1F3A',
-      accent:'#C8862E',
+      main: '#0B1F3A',
+      soft: '#ECF0F6',
+      deep: '#0B1F3A',
+      accent: '#C8862E',
     },
   },
   {
     id: 'pagos',
     n: 2,
     shortTitle: 'Fase 2',
-    title: 'Pagos y tasas',
-    titleAccent: 'pagos',
-    pitch: 'Presentas el 576 en Hacienda, pagas el IVTM al ayuntamiento y la tasa DGT.',
-    message: 'Después de la ITV, preparas los pagos necesarios antes de presentar en DGT. El Modelo 576 es la pieza delicada — un dato mal puesto te lo devuelve.',
+    title: 'Resolver impuestos, tasas y justificantes',
+    titleAccent: 'impuestos',
+    pitch: 'Determinas qué obligación corresponde y conservas el justificante correcto para tu caso.',
+    message: 'No todos los expedientes presentan ni pagan lo mismo. Hay que separar IVA o ITP de los trámites de primera matriculación, y decidir entre Modelo 576, 06, 05 u otra justificación según la sujeción, exención y necesidad de reconocimiento previo. El IVTM y la tasa de Tráfico también se verifican con el organismo competente.',
     steps: [5, 6, 7],
     icon: 'Receipt',
     color: {
-      main:  '#C8862E',  // ámbar
-      soft:  '#F5E9D4',
-      deep:  '#9C661E',
-      accent:'#0B1F3A',
+      main: '#C8862E',
+      soft: '#F5E9D4',
+      deep: '#9C661E',
+      accent: '#0B1F3A',
     },
   },
   {
     id: 'dgt',
     n: 3,
     shortTitle: 'Fase 3',
-    title: 'DGT y placas',
-    titleAccent: 'matrícula',
-    pitch: 'Con el expediente completo, presentas en DGT y el coche queda matriculado.',
-    message: 'Con el expediente completo, presentas en DGT y el vehículo queda matriculado en España. Solo entonces fabricates las placas y contratas el seguro definitivo.',
+    title: 'Presentar, matricular y cerrar',
+    titleAccent: 'cerrar',
+    pitch: 'Revisas el expediente aplicable, lo presentas y solo después completas placas, seguro y entrega.',
+    message: 'La DGT contrasta la identidad, la titularidad, la documentación técnica y las justificaciones tributarias que correspondan. La matrícula, el permiso y la tarjeta ITV española permiten cerrar la operación; el vehículo solo debe circular cuando además esté asegurado y cumpla el resto de condiciones legales.',
     steps: [8, 9],
     icon: 'Flag',
     color: {
-      main:  '#1F7A4D',  // verde (cierre)
-      soft:  '#DEF1E5',
-      deep:  '#1F7A4D',
-      accent:'#C8862E',
+      main: '#1F7A4D',
+      soft: '#DEF1E5',
+      deep: '#1F7A4D',
+      accent: '#C8862E',
     },
   },
 ];
 
-/** Devuelve la fase a la que pertenece un paso */
+/** Devuelve la fase educativa en la que se muestra un paso. */
 export function phaseOfStep(stepN: number): RutaPhase {
-  return RUTA_PHASES.find(p => p.steps.includes(stepN)) ?? RUTA_PHASES[0];
+  return RUTA_PHASES.find((phase) => phase.steps.includes(stepN)) ?? RUTA_PHASES[0];
 }

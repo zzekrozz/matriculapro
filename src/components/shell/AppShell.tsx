@@ -2,335 +2,98 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, type ReactNode } from 'react';
 import {
-  LayoutDashboard,
-  Route,
+  BadgeEuro,
   Calculator,
-  ScrollText,
-  Car,
-  Wrench,
-  Stamp,
-  BookOpen,
-  FileText,
-  Mail,
-  Phone,
-  GraduationCap,
-  Sparkles,
-  ChevronRight,
-  Menu,
-  X,
+  CalendarDays,
+  CarFront,
   CheckSquare,
-  Crown,
-  Lock,
+  CircleDollarSign,
+  ClipboardCheck,
+  FileText,
+  FolderOpen,
+  LayoutDashboard,
+  Menu,
+  RefreshCw,
+  Route,
+  ScrollText,
+  Stamp,
   UserRound,
+  Users,
+  Wrench,
+  X,
   type LucideIcon,
 } from 'lucide-react';
-import { useState } from 'react';
 import { cn } from '@/lib/cn';
-import { useAccess, formatFounderNumber } from '@/providers/AccessProvider';
-import { useFounderModal } from '@/providers/FounderModalProvider';
+import { useAccess } from '@/providers/AccessProvider';
 import { useAuth } from '@/providers/AuthProvider';
+import { useRegistrationCases } from '@/providers/RegistrationCaseProvider';
 import { LogoutButton } from '@/components/auth/LogoutButton';
 
-interface NavItem {
-  href: string;
-  icon: LucideIcon;
-  label: string;
-  code: string;
-  badge?: 'hot' | 'premium' | 'demo';
-  requiresFounder?: boolean;
-  explorerDemo?: boolean;
-}
+interface NavItem { href: string; icon: LucideIcon; label: string; }
+interface NavGroup { title: string; items: NavItem[]; }
 
-const NAV_ITEMS: NavItem[] = [
-  { href: '/app/dashboard', icon: LayoutDashboard, label: 'Centro de control', code: '' },
-  { href: '/app/ruta', icon: Route, label: 'Ruta de matriculación', code: 'M.01' },
-  { href: '/app/simulador-576', icon: Calculator, label: 'Simulador 576', code: 'M.02', badge: 'hot', requiresFounder: true },
-  { href: '/app/ficha-tecnica', icon: ScrollText, label: 'Ficha técnica 3D', code: 'M.03', requiresFounder: true },
-  { href: '/app/checklist/antes-de-comprar', icon: CheckSquare, label: 'Antes de comprar', code: 'M.04', requiresFounder: true },
-  { href: '/app/checklist/pre-itv', icon: Wrench, label: 'Checklist pre-ITV', code: 'M.05', requiresFounder: true },
-  { href: '/app/recorrido-itv', icon: Car, label: 'Recorrido ITV', code: 'M.06', badge: 'hot', explorerDemo: true },
-  { href: '/app/checklist/pre-dgt', icon: Stamp, label: 'Checklist pre-DGT', code: 'M.07', requiresFounder: true },
-  { href: '/app/casos-practicos', icon: BookOpen, label: 'Casos prácticos', code: 'M.08', requiresFounder: true },
-  { href: '/app/biblioteca', icon: FileText, label: 'Biblioteca docs.', code: 'M.09', requiresFounder: true },
-  { href: '/app/plantillas-itv', icon: Mail, label: 'Plantillas ITV', code: 'M.10', requiresFounder: true },
-  { href: '/app/acompanamiento', icon: Phone, label: 'Acompañamiento', code: 'M.11', badge: 'premium' },
-];
-
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { level, founderNumber, isFounder, isExplorer } = useAccess();
-  const { openFounderModal } = useFounderModal();
   const { user } = useAuth();
-  const hasSession = Boolean(user);
+  const access = useAccess();
+  const { activeCase } = useRegistrationCases();
+  const caseBase = activeCase ? `/app/expedientes/${activeCase.id}` : '/app/expedientes';
+  const canViewProfessionalHistory = access.tier === 'professional' && access.canViewPaidCases;
+  const groups: NavGroup[] = [
+    { title: 'Comprobar', items: [{ href: '/app/comprobar', icon: ClipboardCheck, label: 'Comprobación gratuita' }] },
+    ...(access.canViewPaidCases ? [
+      { title: 'Expedientes', items: [
+        { href: '/app/dashboard', icon: LayoutDashboard, label: 'Centro de control' },
+        { href: '/app/expedientes', icon: FolderOpen, label: 'Mis expedientes' },
+        ...(activeCase ? [
+          { href: caseBase, icon: Route, label: 'Resumen y ruta' },
+          { href: `${caseBase}/documentos`, icon: FileText, label: 'Documentos' },
+          { href: `${caseBase}/impuestos`, icon: CircleDollarSign, label: 'Costes e impuestos' },
+          { href: `${caseBase}/itv`, icon: Wrench, label: 'ITV' },
+          { href: `${caseBase}/dgt`, icon: Stamp, label: 'DGT' },
+          { href: `${caseBase}/fechas`, icon: CalendarDays, label: 'Fechas y citas' },
+        ] : []),
+      ] },
+      { title: 'Herramientas', items: [
+        { href: '/app/simulador-576', icon: Calculator, label: 'Calculadora Modelo 576' },
+        { href: '/app/ficha-tecnica', icon: ScrollText, label: 'Ficha técnica guiada' },
+        { href: '/app/checklist/antes-de-comprar', icon: CheckSquare, label: 'Checklist de compra' },
+        { href: '/app/checklist/pre-itv', icon: Wrench, label: 'Preparación ITV' },
+        { href: '/app/checklist/pre-dgt', icon: CheckSquare, label: 'Preparación DGT' },
+      ] },
+    ] : []),
+    ...(canViewProfessionalHistory ? [{ title: 'Profesional', items: access.canUseProfessional ? [
+      { href: '/app/profesional', icon: BadgeEuro, label: 'Operaciones y márgenes' },
+      { href: '/app/profesional/clientes', icon: Users, label: 'Clientes' },
+      { href: '/app/profesional/informes', icon: FileText, label: 'Informes y exportación' },
+    ] : [
+      { href: '/app/profesional', icon: BadgeEuro, label: 'Historial profesional' },
+    ] }] : []),
+    { title: 'Cuenta', items: [
+      { href: '/app/cuenta', icon: UserRound, label: 'Mi cuenta' },
+      { href: '/#precios', icon: RefreshCw, label: access.isPaid ? 'Renovar o ampliar' : 'Ver licencias' },
+    ] },
+  ];
 
-  return (
-    <div className="min-h-screen bg-bg overflow-x-hidden">
-      <header className="lg:hidden sticky top-0 z-40 bg-surface border-b border-line min-h-14 px-4 py-2 flex items-center justify-between gap-3">
-        <Link href="/app/dashboard" className="flex items-baseline gap-1.5">
-          <span className="text-[10px] tracking-[0.22em] uppercase text-muted">Ivan ·</span>
-          <span className="font-serif italic text-xl text-ink">Matricula</span>
-          <span className="text-[11px] font-semibold text-accent">PRO</span>
-        </Link>
-        <div className="flex items-center gap-2">
-          <AccessBadge level={level} founderNumber={founderNumber} hasSession={hasSession} />
-          <button onClick={() => setMobileOpen((v) => !v)} className="p-2">
-            {mobileOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
-        </div>
-      </header>
-
-      <div className="flex">
-        <aside
-          className={cn(
-            'fixed inset-y-0 left-0 z-30 w-[86vw] max-w-[320px] bg-ink text-white transition-transform lg:translate-x-0 lg:static lg:w-[260px] lg:max-w-none lg:flex-shrink-0',
-            mobileOpen ? 'translate-x-0' : '-translate-x-full',
-            'flex flex-col',
-          )}
-        >
-          <div className="px-5 py-5 hidden lg:block border-b border-white/5">
-            <div className="flex items-baseline gap-1.5 mb-3">
-              <span className="text-[9.5px] tracking-[0.22em] uppercase text-muted">Ivan Imports ·</span>
-              <span className="font-serif italic text-2xl text-white">Matricula</span>
-              <span className="text-[11px] font-semibold text-accent">PRO</span>
-            </div>
-            <SidebarLevelBadge level={level} founderNumber={founderNumber} hasSession={hasSession} />
-          </div>
-
-          <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5">
-            <div className="text-[9.5px] tracking-[0.22em] uppercase text-muted px-3 mb-2 mt-1">Herramienta activa</div>
-            {NAV_ITEMS.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href || (item.href !== '/app/dashboard' && pathname?.startsWith(item.href));
-              const isLocked = item.requiresFounder && !isFounder;
-              const isExplorerDemoOk = item.explorerDemo && isExplorer;
-
-              if (isLocked) {
-                return (
-                  <button
-                    key={item.href}
-                    onClick={() => {
-                      setMobileOpen(false);
-                      openFounderModal();
-                    }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12.5px] transition-colors text-muted opacity-60 hover:opacity-80 hover:bg-white/5"
-                  >
-                    <Lock size={14} className="shrink-0 text-muted" />
-                    <span className="flex-1 truncate text-left">{item.label}</span>
-                    {item.code && <span className="text-[9px] font-mono shrink-0 text-muted">{item.code}</span>}
-                    <Crown size={9} className="text-accent shrink-0 opacity-70" />
-                  </button>
-                );
-              }
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    'flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12.5px] transition-colors group relative',
-                    isActive ? 'bg-accent/15 text-white' : 'text-muted-soft hover:bg-white/5 hover:text-white',
-                  )}
-                >
-                  <Icon size={14} className={cn('shrink-0', isActive ? 'text-accent' : 'text-muted')} />
-                  <span className="flex-1 truncate">{item.label}</span>
-                  {item.code && <span className={cn('text-[9px] font-mono shrink-0', isActive ? 'text-accent' : 'text-muted')}>{item.code}</span>}
-                  {item.badge === 'hot' && <Sparkles size={10} className="text-accent shrink-0" />}
-                  {item.badge === 'premium' && <span className="text-[8.5px] font-semibold text-accent shrink-0">PRO</span>}
-                  {isExplorerDemoOk && <span className="text-[8px] font-semibold text-accent-deep shrink-0 bg-accent-soft px-1 rounded">DEMO</span>}
-                </Link>
-              );
-            })}
-
-            <div className="text-[9.5px] tracking-[0.22em] uppercase text-muted px-3 mb-2 mt-6">Mis herramientas</div>
-            <Link
-              href="/app/mis-cursos"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12.5px] text-muted-soft hover:bg-white/5 hover:text-white"
-            >
-              <GraduationCap size={14} className="shrink-0 text-muted" />
-              <span>Más herramientas</span>
-              <ChevronRight size={11} className="text-muted ml-auto" />
-            </Link>
-
-            {hasSession && (
-              <>
-                <div className="text-[9.5px] tracking-[0.22em] uppercase text-muted px-3 mb-2 mt-6">Cuenta</div>
-                <Link
-                  href="/app/account"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12.5px] text-muted-soft hover:bg-white/5 hover:text-white"
-                >
-                  <UserRound size={14} className="shrink-0 text-muted" />
-                  <span>Mi cuenta</span>
-                  <ChevronRight size={11} className="text-muted ml-auto" />
-                </Link>
-              </>
-            )}
-          </nav>
-
-          <div className="px-3 pb-4 border-t border-white/5 pt-4 space-y-1">
-            {user && (
-              <div className="px-3 py-1.5 mb-1">
-                <div className="text-[10px] text-muted truncate">{user.email}</div>
-              </div>
-            )}
-            {hasSession && <LogoutButton />}
-            <Link href="/legal/aviso-formativo" className="text-[10.5px] leading-snug text-muted hover:text-white px-3 block pt-1">
-              Aviso formativo
-            </Link>
-          </div>
-        </aside>
-
-        {mobileOpen && <div className="fixed inset-0 bg-black/40 z-20 lg:hidden" onClick={() => setMobileOpen(false)} />}
-
-        <main className="flex-1 min-w-0 min-h-screen">
-          {hasSession && isExplorer && <ExplorerBanner />}
-          {children}
-        </main>
-      </div>
+  return <div className="min-h-screen overflow-x-hidden bg-bg">
+    <header className="print-shell-hidden sticky top-0 z-40 flex min-h-14 items-center justify-between border-b border-line bg-surface px-4 lg:hidden"><Brand /><div className="flex items-center gap-2"><TierBadge tier={access.tier} mode={access.mode} /><button type="button" onClick={() => setMobileOpen((value) => !value)} className="rounded-lg p-2" aria-label={mobileOpen ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={mobileOpen}>{mobileOpen ? <X size={19} /> : <Menu size={19} />}</button></div></header>
+    <div className="flex"><aside className={cn('print-shell-hidden fixed inset-y-0 left-0 z-30 flex w-[86vw] max-w-[310px] flex-col bg-ink text-white transition-transform lg:static lg:w-[274px] lg:shrink-0 lg:translate-x-0', mobileOpen ? 'translate-x-0' : '-translate-x-full')}>
+      <div className="hidden border-b border-white/5 px-5 py-5 lg:block"><Brand dark /><div className="mt-4"><AccessSummary /></div></div>
+      {activeCase && access.canViewPaidCases && <Link href={caseBase} onClick={() => setMobileOpen(false)} className="mx-3 mt-3 rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/[.08]"><div className="text-[8.5px] uppercase tracking-[.18em] text-accent">Expediente activo</div><div className="mt-1 truncate text-[11.5px] font-medium text-white">{activeCase.vehicle.brand || 'Vehículo'} {activeCase.vehicle.model}</div><div className="mt-0.5 text-[9.5px] text-muted">{access.readOnly ? 'Solo lectura' : 'Guardado y editable'}</div></Link>}
+      <nav className="flex-1 overflow-y-auto px-3 pb-4 pt-3" aria-label="Navegación de la aplicación">{groups.map((group) => <div key={group.title} className="mt-4 first:mt-0"><div className="mb-1.5 px-3 text-[9px] font-semibold uppercase tracking-[.2em] text-muted">{group.title}</div><div className="space-y-0.5">{group.items.map((item) => { const active = pathname === item.href || (item.href !== '/app/dashboard' && item.href.startsWith('/app/') && pathname.startsWith(`${item.href}/`)); const Icon = item.icon; return <Link key={`${group.title}-${item.href}`} href={item.href} onClick={() => setMobileOpen(false)} className={cn('flex items-center gap-2.5 rounded-lg px-3 py-2 text-[11.5px] transition-colors', active ? 'bg-accent/15 text-white' : 'text-muted-soft hover:bg-white/5 hover:text-white')}><Icon size={13} className={active ? 'text-accent' : 'text-muted'} /><span className="truncate">{item.label}</span></Link>; })}</div></div>)}</nav>
+      <div className="border-t border-white/5 px-3 pb-4 pt-3">{user && <div className="truncate px-3 pb-2 text-[9.5px] text-muted">{user.email}</div>}<LogoutButton /><Link href="/legal/aviso-fiscal-tecnico" className="block px-3 pt-2 text-[9.5px] text-muted hover:text-white">Alcance fiscal y técnico</Link></div>
+    </aside>
+    {mobileOpen && <button type="button" aria-label="Cerrar menú" className="fixed inset-0 z-20 bg-black/40 lg:hidden" onClick={() => setMobileOpen(false)} />}
+    <main className="min-h-screen min-w-0 flex-1">{access.readOnly && <ExpiredBanner expiredAt={access.expiredAt} />}{children}</main>
     </div>
-  );
+  </div>;
 }
 
-function ExplorerBanner() {
-  return (
-    <div
-      className="sticky top-0 z-20 px-5 lg:px-8 py-3 flex items-center gap-3 justify-between flex-wrap"
-      style={{
-        background: 'linear-gradient(135deg, #F5E9D4 0%, #FBEAD0 100%)',
-        borderBottom: '1px solid #C8862E',
-      }}
-    >
-      <div className="flex items-center gap-2 min-w-0 flex-1">
-        <span className="inline-flex items-center gap-1 text-[10px] tracking-[0.18em] uppercase font-semibold text-accent-deep shrink-0">
-          <Sparkles size={11} /> Modo Explorador
-        </span>
-        <span className="text-[12px] leading-tight text-accent-deep truncate">
-          Estás explorando gratis. Ruta, ITV demo y ficha técnica disponibles. Revisa el <strong>acceso Founder Alpha</strong> y las opciones actuales de precio.
-        </span>
-      </div>
-      <Link
-        href="/#precios"
-        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11.5px] font-medium transition-transform hover:scale-[1.02] shrink-0 bg-ink text-white shadow-soft-md"
-      >
-        <Crown size={11} /> Ver precios Founder
-      </Link>
-    </div>
-  );
-}
-
-function SidebarLevelBadge({
-  level,
-  founderNumber,
-  hasSession,
-}: {
-  level: ReturnType<typeof useAccess>['level'];
-  founderNumber: number | null;
-  hasSession: boolean;
-}) {
-  if (!hasSession) {
-    return (
-      <div className="w-full rounded-lg p-2.5 border border-white/10">
-        <div className="flex items-center gap-2">
-          <Lock size={11} className="text-muted shrink-0" />
-          <div className="flex-1 min-w-0">
-            <div className="text-[10.5px] tracking-[0.18em] uppercase text-muted font-semibold">Visitante</div>
-            <div className="text-[10.5px] text-muted-soft mt-0.5">Vista demo limitada</div>
-          </div>
-        </div>
-        <div className="mt-3 space-y-2">
-          <Link
-            href="/#precios"
-            className="w-full inline-flex items-center justify-center gap-2 rounded-full px-3.5 py-2 text-[12px] font-medium bg-white text-ink"
-          >
-            <Crown size={12} className="text-accent-deep" /> Ver precios Founder
-          </Link>
-          <Link
-            href="/auth/login"
-            className="w-full inline-flex items-center justify-center gap-2 rounded-full px-3.5 py-2 text-[11.5px] text-muted-soft border border-white/10 hover:bg-white/5"
-          >
-            Iniciar sesión
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (level === 'explorer') {
-    return (
-      <Link
-        href="/#precios"
-        className="w-full text-left rounded-lg p-2.5 transition-colors hover:bg-accent/10 border block"
-        style={{ borderColor: 'rgba(200, 134, 46, 0.3)', background: 'rgba(200, 134, 46, 0.08)' }}
-      >
-        <div className="flex items-center gap-2">
-          <Sparkles size={12} className="text-accent shrink-0" />
-          <div className="flex-1 min-w-0">
-            <div className="text-[10.5px] tracking-[0.18em] uppercase font-semibold text-accent">Explorer</div>
-            <div className="text-[10.5px] text-muted-soft mt-0.5">Ver precios Founder</div>
-          </div>
-        </div>
-      </Link>
-    );
-  }
-
-  if (level === 'founder' || level === 'full') {
-    const levelLabel = level === 'full' ? 'Full' : 'Founder';
-    return (
-      <div
-        className="rounded-lg p-2.5 border"
-        style={{ borderColor: 'rgba(200, 134, 46, 0.4)', background: 'rgba(200, 134, 46, 0.12)' }}
-      >
-        <div className="flex items-center gap-2">
-          <Crown size={12} className="text-accent shrink-0" />
-          <div className="flex-1 min-w-0">
-            <div className="text-[10px] tracking-[0.18em] uppercase font-semibold text-accent">{levelLabel}</div>
-            <div className="text-[11px] text-white font-mono mt-0.5">{founderNumber !== null ? formatFounderNumber(founderNumber) : '—'}</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-}
-
-function AccessBadge({
-  level,
-  founderNumber,
-  hasSession,
-}: {
-  level: ReturnType<typeof useAccess>['level'];
-  founderNumber: number | null;
-  hasSession: boolean;
-}) {
-  if (!hasSession) {
-    return (
-      <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-bg-deep text-muted">
-        Visitante
-      </span>
-    );
-  }
-
-  if (level === 'founder' || level === 'full') {
-    const label = level === 'full' ? 'Full' : 'Founder';
-    return (
-      <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-1 rounded-full bg-accent/15 text-accent-deep">
-        <Crown size={10} /> {founderNumber !== null ? `${label} ${formatFounderNumber(founderNumber)}` : label}
-      </span>
-    );
-  }
-
-  if (level === 'explorer') {
-    return (
-      <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-bg-deep text-muted">
-        Explorer
-      </span>
-    );
-  }
-
-  return null;
-}
+function Brand({ dark = false }: { dark?: boolean }) { return <Link href="/app/comprobar" className="flex items-baseline gap-1.5"><span className="text-[8.5px] uppercase tracking-[.18em] text-muted">IvanImports ·</span><span className={cn('font-serif text-[21px] italic', dark ? 'text-white' : 'text-ink')}>Matricula</span><span className="text-[9px] font-semibold text-accent">PRO</span></Link>; }
+function TierBadge({ tier, mode }: { tier: ReturnType<typeof useAccess>['tier']; mode: ReturnType<typeof useAccess>['mode'] }) { const label = mode === 'read_only' ? 'Solo lectura' : tier === 'professional' ? 'Profesional' : tier === 'particular' ? 'Particular' : 'Gratis'; return <span className="rounded-full bg-bg-deep px-2.5 py-1 text-[9px] font-medium text-ink-soft">{label}</span>; }
+function AccessSummary() { const access = useAccess(); return <div className="rounded-xl border border-white/10 bg-white/5 p-3"><div className="text-[9px] font-semibold uppercase tracking-[.16em] text-accent">{access.tier === 'professional' ? 'Profesional' : access.tier === 'particular' ? 'Particular' : 'Gratis'}</div><p className="mt-1 text-[9.5px] text-muted-soft">{access.mode === 'full' && access.license?.expiresAt ? `Activo hasta ${formatDate(access.license.expiresAt)}` : access.mode === 'read_only' ? 'Expedientes en solo lectura' : 'Comprobación previa incluida'}</p></div>; }
+function ExpiredBanner({ expiredAt }: { expiredAt: string | null }) { return <div className="print-shell-hidden sticky top-0 z-20 flex flex-wrap items-center justify-between gap-2 border-b border-accent/25 bg-accent-soft px-5 py-2.5 text-[11px] text-accent-deep lg:px-8"><span><strong>Tu acceso completo finalizó{expiredAt ? ` el ${formatDate(expiredAt)}` : ''}.</strong> Tus expedientes siguen disponibles en modo lectura.</span><Link href="/#precios" className="rounded-full bg-ink px-3 py-1.5 text-[10.5px] font-medium text-white">Renovar acceso</Link></div>; }
+function formatDate(value: string) { return new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium' }).format(new Date(value)); }

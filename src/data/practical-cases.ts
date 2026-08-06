@@ -1,4 +1,4 @@
-/** Casos prácticos · 5 escenarios para poner a prueba lo aprendido */
+/** Cinco expedientes educativos para practicar decisiones, no recetas cerradas. */
 
 export type Difficulty = 'easy' | 'medium' | 'alert';
 
@@ -6,19 +6,15 @@ export interface CaseDecisionOption {
   id: string;
   label: string;
   correct: boolean;
-  /** Explicación que se muestra al elegir esta opción */
   explanation: string;
 }
 
 export interface CaseDecision {
   id: string;
   question: string;
-  /** Contexto opcional antes de la pregunta */
   context?: string;
-  /** Tipo de pregunta: única o múltiple respuesta correcta */
   multi?: boolean;
   options: CaseDecisionOption[];
-  /** Lección general tras responder */
   lesson: string;
 }
 
@@ -26,571 +22,386 @@ export interface PracticalCase {
   id: string;
   n: number;
   title: string;
-  origin: string; // País
-  flag: string;   // Emoji bandera (sólo para UI ligera)
+  origin: string;
+  flag: string;
   difficulty: Difficulty;
-  /** Resumen corto para la card */
   pitch: string;
-  /** Historia/contexto del caso, en párrafos */
   scenario: string[];
-  /** Lo que el usuario tiene en mano */
   documents: { code: string; label: string; status: 'ok' | 'missing' | 'doubt' }[];
-  /** 3-5 decisiones a tomar */
   decisions: CaseDecision[];
-  /** Conclusiones del caso una vez resuelto */
   takeaways: string[];
-  /** Estimación de tiempo de resolución (min) */
   estimatedMinutes: number;
 }
 
 export const PRACTICAL_CASES: PracticalCase[] = [
-  /* ============================================================
-     CASO 1 · Alemania con COC · FÁCIL
-     ============================================================ */
   {
     id: 'alemania-coc',
     n: 1,
-    title: 'BMW Serie 3 con COC alemán',
+    title: 'Turismo usado comprado a un particular alemán',
     origin: 'Alemania',
     flag: '🇩🇪',
     difficulty: 'easy',
-    estimatedMinutes: 6,
-    pitch: 'Coche reciente, documentación limpia y COC del fabricante. El "modo fácil" para entender el proceso.',
+    estimatedMinutes: 8,
+    pitch: 'Un caso común que obliga a separar contrato, ITP, IVA, ITV e impuesto de matriculación.',
     scenario: [
-      'Has comprado un BMW Serie 3 (320d) de 2022 en Múnich. El vendedor era un particular, todo legal: factura a tu nombre, permiso de circulación alemán (Zulassungsbescheinigung Teil II), y COC original del fabricante.',
-      'El bastidor del salpicadero coincide con el de la documentación. El coche pasa una ITV en Alemania (HU) hace 8 meses con resultado favorable.',
-      'Llegas a España con el coche cargado en un remolque (sin matricular aún). El siguiente paso es matricularlo. ¿Por dónde empiezas?',
+      'Compras a una persona particular un turismo matriculado por primera vez en Alemania en 2019. La entrega se produce en agosto de 2026 y el cuentakilómetros acreditado marca 84.200 km.',
+      'Recibes el contrato firmado, las dos partes de la documentación alemana y un COC que coincide con el VIN y la variante. El vehículo no tiene reformas conocidas.',
+      'Aunque parece un expediente sencillo, no existe una secuencia fiscal universal: primero debes acreditar la compra, confirmar el tratamiento de adquisición, completar la vía técnica española y resolver qué justificante del IEDMT corresponde.',
     ],
     documents: [
-      { code: 'COC',     label: 'Certificate of Conformity (COC original BMW)', status: 'ok' },
-      { code: 'PERM.',   label: 'Permiso de circulación alemán (Zulassungsbescheinigung Teil II)', status: 'ok' },
-      { code: 'FACT.',   label: 'Factura del vendedor particular', status: 'ok' },
-      { code: 'HU',      label: 'ITV alemana favorable (vigente 8 meses)', status: 'ok' },
-      { code: 'DNI',     label: 'DNI del comprador (a su nombre)', status: 'ok' },
+      { code: 'CTO.', label: 'Contrato entre particulares con VIN, precio, fecha y firmas', status: 'ok' },
+      { code: 'ZUL.', label: 'Documentación alemana completa y original', status: 'ok' },
+      { code: 'COC', label: 'COC coincidente con VIN, variante y versión', status: 'ok' },
+      { code: 'KM', label: 'Kilometraje y fecha de primera puesta en servicio acreditados', status: 'ok' },
+      { code: 'ITP', label: 'Justificante autonómico de ITP o situación aplicable', status: 'missing' },
+      { code: 'ITV ES', label: 'Tarjeta ITV española', status: 'missing' },
+      { code: 'IEDMT', label: '576, 06, 05 u otra justificación aplicable', status: 'doubt' },
+      { code: 'IVTM', label: 'Alta, pago o situación municipal aplicable', status: 'missing' },
+      { code: 'DGT', label: 'Tasa y expediente de matriculación', status: 'missing' },
+      { code: 'CIERRE', label: 'Matrícula, placas y seguro vigente antes de circular', status: 'missing' },
     ],
     decisions: [
       {
-        id: 'first-step',
-        question: '¿Cuál es el primer paso correcto?',
+        id: 'proof-of-purchase',
+        question: '¿Qué prueba de adquisición encaja con el vendedor?',
         options: [
-          {
-            id: 'a', label: 'Ir directamente a la DGT a matricular',
-            correct: false,
-            explanation: 'No puedes ir a la DGT sin antes haber pasado la ITV de matriculación española y haber presentado el Modelo 576.',
-          },
-          {
-            id: 'b', label: 'Pedir cita de matriculación en una ITV española',
-            correct: true,
-            explanation: 'Correcto. La ITV de matriculación es el primer paso técnico. Allí verifican el coche y emiten la ficha técnica española.',
-          },
-          {
-            id: 'c', label: 'Presentar el Modelo 576 en Hacienda primero',
-            correct: false,
-            explanation: 'El Modelo 576 necesita la ficha técnica española como referencia, que sólo te dan tras pasar la ITV de matriculación.',
-          },
-          {
-            id: 'd', label: 'Contratar el seguro antes de cualquier trámite',
-            correct: false,
-            explanation: 'El seguro va al final, cuando ya tengas la matrícula asignada por DGT.',
-          },
+          { id: 'a', label: 'Contrato firmado y revisión de ITP', correct: true, explanation: 'Correcto. Al vender un particular, el contrato acredita la compra y debes confirmar la obligación autonómica de ITP y su justificante.' },
+          { id: 'b', label: 'Factura con IVA alemán', correct: false, explanation: 'Un particular no emite una factura empresarial con IVA. Inventar ese documento haría incoherente el expediente.' },
+          { id: 'c', label: 'Solo justificante bancario', correct: false, explanation: 'El pago ayuda, pero no sustituye un contrato que identifique partes, vehículo, precio y fecha.' },
         ],
-        lesson: 'El orden correcto es: ITV de matriculación → Modelo 576 (Hacienda) → IVTM (Ayuntamiento) → Tasa DGT → DGT → Placas y seguro.',
+        lesson: 'La condición del vendedor determina la prueba de adquisición. Contrato e ITP no deben sustituirse por una factura ficticia.',
       },
       {
-        id: 'coc-use',
-        question: '¿Qué papel juega el COC en este proceso?',
+        id: 'vat-status',
+        question: '¿Es un medio de transporte nuevo a efectos de la regla especial de IVA intracomunitario?',
+        context: 'Han transcurrido años desde la primera puesta en servicio y ha recorrido 84.200 km.',
         options: [
-          {
-            id: 'a', label: 'Sustituye a la ITV de matriculación',
-            correct: false,
-            explanation: 'El COC documenta la homologación europea pero no sustituye a la inspección técnica en España.',
-          },
-          {
-            id: 'b', label: 'Es opcional, se puede matricular sin él',
-            correct: false,
-            explanation: 'Sin COC necesitarías una ficha reducida emitida por un laboratorio autorizado, un proceso más caro y lento. Tener COC es una ventaja clave.',
-          },
-          {
-            id: 'c', label: 'Acredita la homologación europea del vehículo, base para emitir la ficha técnica española',
-            correct: true,
-            explanation: 'Correcto. El COC es el documento técnico clave que permite que la ITV emita tu ficha técnica española sin necesidad de ficha reducida.',
-          },
+          { id: 'a', label: 'No: supera seis meses y 6.000 km', correct: true, explanation: 'Correcto. En los datos del caso se superan ambos umbrales. Aun así, documenta fechas y kilometraje y resuelve por separado el ITP.' },
+          { id: 'b', label: 'Sí, porque todo vehículo importado es nuevo fiscalmente', correct: false, explanation: 'El origen extranjero no lo convierte en nuevo. La prueba usa antigüedad y kilometraje.' },
+          { id: 'c', label: 'Usado solo porque supera seis meses', correct: false, explanation: 'La antigüedad aislada no basta. En este caso también consta un kilometraje superior a 6.000 km; hacen falta los dos datos para descartar ambas condiciones de nuevo.' },
         ],
-        lesson: 'El COC ahorra tiempo y dinero. Sin él hay que tramitar ficha reducida en laboratorio autorizado.',
+        lesson: 'Es nuevo si se entrega antes de seis meses o si no ha recorrido más de 6.000 km. Para tratarlo como usado deben quedar fuera ambas condiciones de nuevo; los casos exactamente en el límite merecen revisión precisa.',
       },
       {
-        id: 'itv-cita',
-        question: 'Llamas a la ITV. ¿Qué tipo de cita pides?',
+        id: 'technical-path',
+        question: '¿Qué haces con el COC y la ITV alemana?',
         options: [
-          {
-            id: 'a', label: 'ITV periódica (la de toda la vida)',
-            correct: false,
-            explanation: 'La periódica es para vehículos ya matriculados en España. La tuya es diferente.',
-          },
-          {
-            id: 'b', label: 'ITV de matriculación / matriculación importado',
-            correct: true,
-            explanation: 'Correcto. Específica para importados: incluye revisión documental + técnica y emisión de ficha técnica española.',
-          },
-          {
-            id: 'c', label: 'ITV de reformas',
-            correct: false,
-            explanation: 'Es para vehículos con modificaciones (suspensión, motor, etc.). Tu BMW está de serie.',
-          },
+          { id: 'a', label: 'Confirmar el trámite español y presentar el COC como soporte técnico', correct: true, explanation: 'Correcto. El COC coincidente puede soportar la vía UE, pero la estación debe confirmar el procedimiento y emitir/documentar la tarjeta ITV española.' },
+          { id: 'b', label: 'Usar la ITV alemana como tarjeta ITV española', correct: false, explanation: 'La documentación alemana aporta antecedentes, pero no es por sí sola la tarjeta ITV española del expediente de matriculación.' },
+          { id: 'c', label: 'Encargar además una ficha reducida por sistema', correct: false, explanation: 'No acumules alternativas sin necesidad. Con COC válido, pregunta qué requiere la estación antes de pagar otro documento.' },
         ],
-        lesson: 'Pedir el tipo de cita correcto evita que te manden de vuelta. La cita de matriculación suele costar más que una periódica.',
+        lesson: 'El COC y la ficha reducida no son documentos que deban reunirse siempre juntos; la estación confirma la vía aplicable.',
       },
       {
-        id: 'co2-576',
-        question: 'Para el Modelo 576 necesitas las emisiones de CO₂. ¿Dónde las encuentras?',
+        id: 'iedmt-path',
+        question: 'Tras obtener la tarjeta ITV española, ¿qué decisión fiscal es correcta?',
         options: [
-          {
-            id: 'a', label: 'En la ficha técnica española (campo V.7)',
-            correct: true,
-            explanation: 'Correcto. El campo V.7 de la ficha técnica española contiene las emisiones de CO₂ en g/km, dato clave para calcular la base del 576.',
-          },
-          {
-            id: 'b', label: 'En el COC, en la sección 49',
-            correct: true,
-            explanation: 'También correcto. El COC tiene las emisiones homologadas, normalmente en la sección 49.',
-          },
-          {
-            id: 'c', label: 'En el permiso de circulación alemán',
-            correct: false,
-            explanation: 'El permiso alemán suele tener el dato pero en otro código y formato. Mejor coger el de la ficha técnica española una vez emitida.',
-          },
+          { id: 'a', label: 'Presentar siempre 576 y usar V.7 como base', correct: false, explanation: 'El 576 no es universal y V.7 son emisiones, no la base imponible de un usado importado.' },
+          { id: 'b', label: 'Determinar sujeción y decidir entre 576, 06, 05 u otra prueba', correct: true, explanation: 'Correcto. La salida depende del supuesto legal, posibles beneficios y reconocimiento previo; solo después se elige el modelo.' },
+          { id: 'c', label: 'No revisar IEDMT porque el coche es usado', correct: false, explanation: 'Ser usado no elimina automáticamente el análisis del impuesto de primera matriculación.' },
         ],
-        multi: true,
-        lesson: 'V.7 es uno de los datos críticos del Modelo 576. Si está mal, el impuesto sale mal.',
+        lesson: 'Separa la clasificación del vehículo de la elección del formulario. Después se completan IVTM, tasa y expediente DGT aplicables.',
       },
     ],
     takeaways: [
-      'Con COC, ficha técnica clara y documentación coherente, el caso "fácil" sigue una ruta lineal de 9 pasos.',
-      'El orden importa: ITV → 576 → IVTM → Tasa DGT → DGT → Placas.',
-      'V.7 (CO₂) determina la base del Modelo 576. Compruébalo dos veces.',
+      'Particular vendedor: contrato completo y revisión autonómica de ITP, no factura empresarial.',
+      'En este caso ambos datos —antigüedad y kilometraje— permiten descartar la regla de medio de transporte nuevo; nunca compruebes solo uno.',
+      'COC válido, ITV española, IEDMT, IVTM y DGT son piezas distintas, y el modelo fiscal se decide antes de rellenarlo.',
+      'V.7 puede servir para clasificar emisiones, pero no es la base imponible del 576.',
+      'Las placas se fabrican tras la asignación de matrícula y el seguro debe estar vigente antes de circular.',
     ],
   },
-
-  /* ============================================================
-     CASO 2 · Francia sin COC · MEDIO
-     ============================================================ */
   {
     id: 'francia-sin-coc',
     n: 2,
-    title: 'Peugeot 308 francés sin COC',
+    title: 'Vehículo francés sin COC',
     origin: 'Francia',
     flag: '🇫🇷',
     difficulty: 'medium',
-    estimatedMinutes: 9,
-    pitch: 'El fabricante no te entrega el COC. ¿Te bloquea? No. Hay alternativa, pero te cuesta tiempo y dinero.',
+    estimatedMinutes: 10,
+    pitch: 'La ausencia del COC no tiene una solución única: primero hay que identificar la homologación.',
     scenario: [
-      'Compras un Peugeot 308 de 2020 en Lyon. Documentación francesa correcta (Carte Grise, factura, contrôle technique reciente). El coche está bien.',
-      'Cuando contactas con Peugeot para pedir el COC, te dicen que no lo emiten retroactivamente para tu unidad concreta o piden un proceso largo. Sin COC, no puedes ir directo a la ITV.',
-      '¿Qué haces?',
+      'El vendedor entrega permiso y documento técnico franceses, pero no COC. En una foto aparece una contraseña parcial que podría corresponder a una homologación UE, aunque la variante no se lee bien.',
+      'Una empresa ofrece “hacer una ficha reducida para cualquier vehículo” sin revisar la contraseña. Otra persona afirma que la Carte Grise basta. Ninguna de las dos respuestas define la vía técnica.',
+      'Tu decisión es clasificar el vehículo antes de encargar documentos: tipo UE identificable, aprobación individual/serie corta extranjera o ausencia de homologación UE.',
     ],
     documents: [
-      { code: 'COC',   label: 'COC del fabricante', status: 'missing' },
-      { code: 'CG',    label: 'Carte Grise francesa', status: 'ok' },
-      { code: 'CT',    label: 'Contrôle technique favorable (3 meses)', status: 'ok' },
-      { code: 'FACT.', label: 'Factura de compraventa', status: 'ok' },
-      { code: 'DNI',   label: 'DNI a nombre del comprador', status: 'ok' },
+      { code: 'COC', label: 'Certificado de conformidad', status: 'missing' },
+      { code: 'CG', label: 'Permiso y documento técnico franceses', status: 'ok' },
+      { code: 'K', label: 'Contraseña de homologación completa y verificable', status: 'doubt' },
+      { code: 'VIN', label: 'VIN físico y documental coincidente', status: 'ok' },
+      { code: 'REF.', label: 'Inventario de reformas o diferencias', status: 'doubt' },
     ],
     decisions: [
       {
-        id: 'no-coc',
-        question: 'Peugeot no te da el COC. ¿Te bloquea el proceso?',
+        id: 'first-check',
+        question: '¿Cuál es el primer paso útil?',
         options: [
-          {
-            id: 'a', label: 'Sí, sin COC no puedes matricular',
-            correct: false,
-            explanation: 'Hay una alternativa legal: la ficha reducida emitida por un laboratorio autorizado.',
-          },
-          {
-            id: 'b', label: 'No: puedes tramitar una "ficha reducida" en laboratorio autorizado',
-            correct: true,
-            explanation: 'Correcto. La ficha reducida emitida por laboratorio acreditado sustituye al COC para la matriculación.',
-          },
-          {
-            id: 'c', label: 'No: la Carte Grise francesa sirve como COC',
-            correct: false,
-            explanation: 'La Carte Grise es el permiso de circulación francés, no equivale al COC. Tiene datos pero no es un certificado de homologación.',
-          },
+          { id: 'a', label: 'Encargar de inmediato una ficha reducida', correct: false, explanation: 'La ficha reducida no crea una homologación. Primero hay que saber qué aprobación y variante existen y confirmar la vía con la ITV.' },
+          { id: 'b', label: 'Identificar homologación, variante, VIN y reformas y consultar a la ITV', correct: true, explanation: 'Correcto. Esa clasificación distingue una carencia documental solucionable de un expediente de homologación más complejo.' },
+          { id: 'c', label: 'Usar la Carte Grise como COC', correct: false, explanation: 'El permiso francés no se convierte en declaración de conformidad del fabricante.' },
         ],
-        lesson: 'Sin COC no estás bloqueado, pero el camino se complica con costes adicionales (laboratorio) y tiempo.',
+        lesson: '“Sin COC” describe un síntoma, no una vía técnica. La contraseña, la variante y el tipo de aprobación determinan el siguiente paso.',
       },
       {
-        id: 'laboratorio',
-        question: '¿Qué necesitas para encargar la ficha reducida?',
+        id: 'eu-type',
+        question: 'Si se confirma un tipo UE identificable que cubre exactamente el vehículo, ¿qué puede ser viable?',
         options: [
-          {
-            id: 'a', label: 'Datos técnicos del vehículo (potencia, peso, dimensiones, emisiones)',
-            correct: true,
-            explanation: 'Correcto. El laboratorio necesita los parámetros técnicos para verificar la homologación.',
-          },
-          {
-            id: 'b', label: 'Documentación de origen (Carte Grise, factura)',
-            correct: true,
-            explanation: 'Correcto. Sin documentación de origen no hay base sobre la que trabajar.',
-          },
-          {
-            id: 'c', label: 'Bastidor visible y coherente con los documentos',
-            correct: true,
-            explanation: 'Correcto. El VIN es la clave de identificación del vehículo durante todo el proceso.',
-          },
-          {
-            id: 'd', label: 'Permiso de circulación español ya emitido',
-            correct: false,
-            explanation: 'Eso es el final del proceso, no se puede tener antes de la matriculación.',
-          },
+          { id: 'a', label: 'COC del fabricante o ficha reducida admisible, previa confirmación ITV', correct: true, explanation: 'Correcto. Según el supuesto, fabricante, servicio técnico designado o técnico competente puede documentar características; la estación confirma emisor y alcance.' },
+          { id: 'b', label: 'Una ficha casera firmada por el comprador', correct: false, explanation: 'No acredita técnicamente el vehículo ni procede de un emisor habilitado.' },
+          { id: 'c', label: 'Homologación individual española obligatoria en todo caso', correct: false, explanation: 'Si existe un tipo UE aplicable, puede haber una vía ordinaria; no se debe escalar sin comprobarla.' },
         ],
-        multi: true,
-        lesson: 'El laboratorio reconstruye técnicamente la homologación del vehículo a partir de sus datos. Si los datos están sucios, el resultado también.',
+        lesson: 'Una ficha reducida puede servir para documentar un tipo identificable, pero su emisor y validez dependen del procedimiento concreto.',
       },
       {
-        id: 'tiempo-extra',
-        question: '¿Cuánto tiempo extra puede sumar este caso?',
+        id: 'individual-series',
+        question: '¿Qué ocurre si la documentación revela una aprobación individual o de serie corta extranjera?',
         options: [
-          {
-            id: 'a', label: '2-3 días, prácticamente nada',
-            correct: false,
-            explanation: 'Demasiado optimista. La ficha reducida implica plazos de laboratorio y revisión.',
-          },
-          {
-            id: 'b', label: '1-2 meses adicionales según laboratorio y carga de trabajo',
-            correct: true,
-            explanation: 'Correcto. El proceso de ficha reducida puede sumar de varias semanas a un par de meses al calendario total.',
-          },
-          {
-            id: 'c', label: '6 meses como mínimo',
-            correct: false,
-            explanation: 'Esto sería un caso muy complejo o con incidencias graves. Para un caso estándar son semanas, no medio año.',
-          },
+          { id: 'a', label: 'Se trata automáticamente como homologación UE completa', correct: false, explanation: 'La aprobación individual o de serie corta tiene un alcance distinto y su reconocimiento no debe presumirse.' },
+          { id: 'b', label: 'Se estudia equivalencia, autorización o vía española específica', correct: true, explanation: 'Correcto. ITV, servicio técnico y autoridad competente deben indicar si cabe equivalencia o qué procedimiento español corresponde.' },
+          { id: 'c', label: 'Basta con traducir el permiso extranjero', correct: false, explanation: 'La traducción hace legible el documento, pero no cambia el alcance jurídico de la aprobación.' },
         ],
-        lesson: 'Cuenta con tiempo extra y coste extra. Pregunta al laboratorio el plazo realista antes de comprometerte con plazos a terceros.',
+        lesson: 'Las aprobaciones individuales y series cortas exigen una decisión de reconocimiento; no son un COC incompleto.',
+      },
+      {
+        id: 'no-eu-approval',
+        question: 'Si no existe homologación UE aplicable, ¿qué respuesta es responsable?',
+        options: [
+          { id: 'a', label: 'Prometer una ficha reducida en dos semanas', correct: false, explanation: 'Ni la viabilidad ni el plazo pueden prometerse antes de que el caso técnico sea aceptado.' },
+          { id: 'b', label: 'Evaluar homologación individual española o asumir un posible bloqueo', correct: true, explanation: 'Correcto. Puede requerir ensayos y adaptaciones o resultar inviable; hay que obtener una evaluación competente antes de comprar.' },
+          { id: 'c', label: 'Pasar una ITV periódica y continuar', correct: false, explanation: 'Una inspección periódica no resuelve la ausencia de vía de homologación para matricular.' },
+        ],
+        lesson: 'Sin aprobación UE puede existir una vía individual, pero no hay resultado, coste ni plazo garantizados.',
       },
     ],
     takeaways: [
-      'Sin COC no estás bloqueado, pero el coste y el tiempo aumentan claramente.',
-      'La ficha reducida la emite un laboratorio acreditado. No vale cualquier "técnico".',
-      'Pregunta el plazo y el coste antes de empezar para no llevarte sorpresas.',
+      'COC ausente no equivale automáticamente a ficha reducida.',
+      'Tipo UE identificable, aprobación individual/serie corta y ausencia de aprobación UE son tres ramas diferentes.',
+      'La ficha reducida puede proceder de distintos emisores habilitados según el caso; confirma el emisor con la ITV.',
+      'No prometas semanas ni un resultado antes de validar la vía técnica.',
     ],
   },
-
-  /* ============================================================
-     CASO 3 · Holanda factura empresa · MEDIO
-     ============================================================ */
   {
     id: 'holanda-empresa',
     n: 3,
-    title: 'Audi A4 holandés con factura de empresa',
+    title: 'Compra a empresa neerlandesa con IVA ambiguo',
     origin: 'Países Bajos',
     flag: '🇳🇱',
     difficulty: 'medium',
-    estimatedMinutes: 8,
-    pitch: 'El coche está a nombre de una empresa holandesa. La factura va a tu nombre pero implica IVA. Cuidado con los matices fiscales.',
+    estimatedMinutes: 10,
+    pitch: 'La factura existe, pero faltan el régimen de IVA y una lectura correcta de seis meses/6.000 km.',
     scenario: [
-      'Audi A4 Avant de 2021. Lo compras a una empresa holandesa de leasing. Factura emitida a tu nombre, con IVA holandés desglosado. El coche es nuevo para ti pero "usado" administrativamente.',
-      'El concesionario holandés te asegura que no hay problema, "todo lo demás se hace en España". Documentación parece estar bien, COC original.',
-      'Antes de mover el coche te surge la duda: ¿hay implicaciones fiscales por venir de empresa?',
+      'Una empresa neerlandesa vende a un particular residente en España un turismo cuya primera puesta en servicio fue el 20 de enero de 2026. Se entrega el 5 de agosto de 2026 con 5.980 km acreditados.',
+      'La factura incluye nombre y dirección de la empresa, pero no muestra con claridad su número de IVA ni si aplica régimen general, margen de bienes usados u otro tratamiento. Solo dice “VAT included”.',
+      'El vendedor sostiene que, al haber pasado más de seis meses, el coche es usado. Debes clasificarlo con los dos criterios y aclarar la factura antes de pagar.',
     ],
     documents: [
-      { code: 'COC',   label: 'COC original Audi', status: 'ok' },
-      { code: 'KENT.', label: 'Kentekenbewijs (permiso holandés)', status: 'ok' },
-      { code: 'FACT.', label: 'Factura empresa NL con IVA holandés desglosado', status: 'doubt' },
-      { code: 'BTW',   label: 'Certificado de IVA pagado en NL', status: 'doubt' },
-      { code: 'DNI',   label: 'DNI del comprador', status: 'ok' },
+      { code: 'FACT.', label: 'Factura de la empresa con VIN, precio y fecha', status: 'doubt' },
+      { code: 'VAT ID', label: 'Número de IVA del vendedor y condición empresarial verificables', status: 'missing' },
+      { code: 'RÉG.', label: 'Régimen de IVA indicado de forma inequívoca', status: 'missing' },
+      { code: 'KENT.', label: 'Documentación neerlandesa', status: 'ok' },
+      { code: 'KM', label: '5.980 km acreditados en la entrega', status: 'ok' },
+      { code: 'COC', label: 'COC coincidente', status: 'ok' },
     ],
     decisions: [
       {
-        id: 'iva-implicaciones',
-        question: 'Has pagado IVA en Holanda. ¿Tienes que pagar IVA otra vez en España?',
-        options: [
-          {
-            id: 'a', label: 'No, el IVA holandés vale para España al ser UE',
-            correct: false,
-            explanation: 'No siempre. El IVA intracomunitario tiene reglas concretas según si el vehículo es "nuevo" o "usado" fiscalmente y según el comprador.',
-          },
-          {
-            id: 'b', label: 'Depende de si fiscalmente el coche se considera "nuevo" o "usado"',
-            correct: true,
-            explanation: 'Correcto. Un vehículo es fiscalmente "nuevo" si tiene <6 meses o <6.000 km. En ese caso, el IVA se paga en destino (España). Si es "usado", aplica el régimen de bienes usados.',
-          },
-          {
-            id: 'c', label: 'Siempre pagas IVA en España, independientemente del país de origen',
-            correct: false,
-            explanation: 'No es así. Las reglas dependen de la condición fiscal del vehículo y de quién compra.',
-          },
-        ],
-        lesson: 'En vehículos UE intracomunitarios, "nuevo" o "usado" fiscalmente es la pregunta clave. Si dudas, consulta con asesor fiscal antes de comprar.',
-      },
-      {
-        id: 'cuando-parar',
-        question: 'Tienes dudas sobre el IVA. ¿Qué haces?',
-        options: [
-          {
-            id: 'a', label: 'Sigo adelante, ya lo aclararé en Hacienda al presentar el 576',
-            correct: false,
-            explanation: 'Es mala estrategia. Si Hacienda te marca incidencia, te puede salir mucho más caro o lento que aclararlo antes.',
-          },
-          {
-            id: 'b', label: 'Paro y consulto con asesor fiscal o gestoría antes de cerrar nada más',
-            correct: true,
-            explanation: 'Correcto. Casos con factura de empresa UE merecen una consulta puntual antes de avanzar. El coste de una asesoría es muy inferior al de un error fiscal.',
-          },
-          {
-            id: 'c', label: 'Llamo a la ITV a ver qué me dicen',
-            correct: false,
-            explanation: 'La ITV revisa el aspecto técnico, no temas fiscales. No es su competencia.',
-          },
-        ],
-        lesson: 'Cuando aparecen dudas fiscales, parar y consultar es siempre más barato que avanzar y rectificar.',
-      },
-      {
-        id: 'documento-extra',
-        question: '¿Qué documento adicional puede pedirte Hacienda en este caso?',
-        options: [
-          {
-            id: 'a', label: 'Justificante del IVA pagado en Holanda (BTW)',
-            correct: true,
-            explanation: 'Correcto. Si el IVA holandés se considera deducible o relevante, te pedirán el justificante oficial.',
-          },
-          {
-            id: 'b', label: 'Acta notarial española del vendedor',
-            correct: false,
-            explanation: 'No es habitual. La factura y los documentos UE suelen ser suficientes.',
-          },
-          {
-            id: 'c', label: 'Certificado del concesionario sobre estado fiscal del vehículo',
-            correct: true,
-            explanation: 'Correcto en algunos casos. Algunos concesionarios UE emiten certificados específicos para operaciones intracomunitarias.',
-          },
-        ],
+        id: 'seller-invoice',
+        question: '¿Qué debe corregirse o verificarse antes del pago?',
         multi: true,
-        lesson: 'Los casos con factura de empresa UE suelen requerir documentación fiscal adicional. Pídela al vendedor antes de cerrar la compra.',
+        options: [
+          { id: 'a', label: 'Identidad y número de IVA del vendedor', correct: true, explanation: 'Correcto. La factura y la condición del vendedor deben poder verificarse.' },
+          { id: 'b', label: 'Régimen de IVA aplicado y desglose o mención legal', correct: true, explanation: 'Correcto. “VAT included” no explica si es régimen general, margen u otro tratamiento.' },
+          { id: 'c', label: 'Factura sustituida por contrato entre particulares', correct: false, explanation: 'Vende una empresa. Convertirla documentalmente en particular sería incorrecto.' },
+          { id: 'd', label: 'Fecha de entrega y kilometraje acreditados', correct: true, explanation: 'Correcto. Son esenciales para la regla de medio de transporte nuevo.' },
+        ],
+        lesson: 'Factura, condición del vendedor, régimen fiscal, fecha y kilometraje forman una sola prueba coherente.',
+      },
+      {
+        id: 'new-or-used',
+        question: 'Con 5.980 km, ¿cómo se clasifica para la regla especial de IVA?',
+        options: [
+          { id: 'a', label: 'Usado, porque han pasado más de seis meses', correct: false, explanation: 'Falta el segundo criterio. No ha recorrido más de 6.000 km.' },
+          { id: 'b', label: 'Nuevo: basta cumplir cualquiera de los dos criterios de nuevo', correct: true, explanation: 'Correcto. Aunque haya pasado el umbral temporal, 5.980 km no supera 6.000 km. Incluso 6.000 km exactos sigue siendo “no más de 6.000”.' },
+          { id: 'c', label: 'Usado porque el vendedor lo llama de ocasión', correct: false, explanation: 'La etiqueta comercial no altera la definición fiscal.' },
+        ],
+        lesson: 'La regla usa una disyunción: entrega antes de seis meses o kilometraje no superior a 6.000 km. No sustituyas “o” por “y”.',
+      },
+      {
+        id: 'spanish-vat',
+        question: '¿Qué riesgo fiscal debes resolver?',
+        options: [
+          { id: 'a', label: 'Posible IVA en España por adquisición intracomunitaria de vehículo nuevo', correct: true, explanation: 'Correcto. Debes confirmar el cumplimiento en España y cómo debe facturar/corregir el vendedor para evitar un IVA de origen mal tratado.' },
+          { id: 'b', label: 'Ninguno: cualquier IVA neerlandés cierra el caso', correct: false, explanation: 'Pagar una cantidad llamada IVA en origen no garantiza que la operación esté tratada correctamente.' },
+          { id: 'c', label: 'Resolverlo dentro del Modelo 576', correct: false, explanation: 'IVA de adquisición e IEDMT son impuestos distintos y no se corrigen uno dentro del otro.' },
+        ],
+        lesson: 'En un vehículo nuevo a estos efectos, la tributación en destino debe revisarse antes de cerrar la factura y el pago.',
+      },
+      {
+        id: 'ambiguous-action',
+        question: 'Si el vendedor no aclara el régimen de la factura, ¿qué haces?',
+        options: [
+          { id: 'a', label: 'Pagar y pedir un certificado genérico después', correct: false, explanation: 'Después del pago pierdes capacidad para exigir una factura correcta y puedes duplicar costes.' },
+          { id: 'b', label: 'Pausar y consultar a AEAT o asesor fiscal con la factura concreta', correct: true, explanation: 'Correcto. La revisión debe hacerse con fechas, km, condición de las partes y texto íntegro de la factura.' },
+          { id: 'c', label: 'Preguntar a la ITV', correct: false, explanation: 'La estación resuelve la vía técnica, no el tratamiento de IVA de la compraventa.' },
+        ],
+        lesson: 'La ambigüedad fiscal es una condición de parada, no un campo que completar por intuición.',
       },
     ],
     takeaways: [
-      'Factura de empresa UE → siempre revisar implicaciones de IVA antes de cerrar.',
-      'Vehículo "nuevo" fiscalmente (<6 meses / <6.000 km) tributa en destino.',
-      'Pagar 100€ a un asesor fiscal puede ahorrar miles de euros y semanas de trámites.',
+      'Una empresa debe emitir una factura coherente e identificable; no existe un “certificado BTW” universal que arregle cualquier caso.',
+      'Menos de seis meses y no más de 6.000 km son criterios alternativos de vehículo nuevo.',
+      'IVA/ITP, IEDMT e ITV son ramas distintas.',
+      'Una factura ambigua se corrige o revisa antes del pago.',
     ],
   },
-
-  /* ============================================================
-     CASO 4 · Datos dudosos · ALERTA
-     ============================================================ */
   {
     id: 'datos-dudosos',
     n: 4,
-    title: 'VW Tiguan con datos que no cuadran',
-    origin: 'Bélgica',
-    flag: '🇧🇪',
+    title: 'Vehículo N1 con configuración dudosa',
+    origin: 'Italia',
+    flag: '🇮🇹',
     difficulty: 'alert',
-    estimatedMinutes: 10,
-    pitch: 'El bastidor del coche y el del COC no son idénticos. Hay un carácter de diferencia. ¿Te lo juegas?',
+    estimatedMinutes: 11,
+    pitch: 'La etiqueta N1 abre comprobaciones técnicas y fiscales; no concede por sí sola un modelo ni un tipo de gravamen.',
     scenario: [
-      'Volkswagen Tiguan 2.0 TDI de 2019, comprado en un concesionario belga. Documentación entregada en bloque, todo parece estar.',
-      'Revisando los papeles en casa, descubres una incoherencia: el bastidor del salpicadero termina en "…A123456" pero el del COC termina en "…A123450". Difiere el último carácter.',
-      'El vendedor te dice que "seguro que es un error de impresión, no te preocupes". ¿Sigues adelante?',
+      'Una furgoneta de 2012 figura como N1 en parte de la documentación italiana. Tiene una segunda fila de asientos y revestimiento interior añadidos después, sin que el vendedor aporte documentos de reforma.',
+      'La contraseña de homologación se lee parcialmente y el campo de emisiones no usa un dato comparable con el que esperabas encontrar. El anuncio la llama “turismo mixto”.',
+      'Un intermediario recomienda presentar directamente el Modelo 06 “porque todos los N1 están exentos”. Debes comprobar categoría, configuración, homologación y supuesto fiscal antes de aceptar esa conclusión.',
     ],
     documents: [
-      { code: 'COC',   label: 'COC del fabricante (VIN ...A123450)', status: 'doubt' },
-      { code: 'VIN',   label: 'Bastidor visible en el coche (...A123456)', status: 'doubt' },
-      { code: 'BEL.',  label: 'Permiso de circulación belga', status: 'ok' },
-      { code: 'FACT.', label: 'Factura del concesionario', status: 'ok' },
-      { code: 'DNI',   label: 'DNI del comprador', status: 'ok' },
+      { code: 'J', label: 'Categoría N1 en documento extranjero', status: 'doubt' },
+      { code: 'K', label: 'Contraseña de homologación completa', status: 'doubt' },
+      { code: 'V.7', label: 'Dato de emisiones comparable y trazable', status: 'doubt' },
+      { code: 'REF.', label: 'Documentación de asientos y acondicionamiento', status: 'missing' },
+      { code: '06', label: 'Supuesto de no sujeción/exención confirmado', status: 'missing' },
     ],
     decisions: [
       {
-        id: 'sigues-adelante',
-        question: 'El vendedor te dice "es un error de imprenta". ¿Sigues?',
+        id: 'verify-category',
+        question: '¿Qué determina que el vehículo se trate como N1?',
         options: [
-          {
-            id: 'a', label: 'Sí, por un carácter no van a marcar nada',
-            correct: false,
-            explanation: 'Grave error. Un solo carácter del VIN hace que el coche sea OTRO vehículo distinto. Es un dato crítico de identificación.',
-          },
-          {
-            id: 'b', label: 'No: paro inmediatamente y exijo aclaración por escrito del vendedor',
-            correct: true,
-            explanation: 'Correcto. El bastidor es la "huella dactilar" del vehículo. Cualquier discrepancia debe aclararse antes de cualquier trámite.',
-          },
-          {
-            id: 'c', label: 'Sí, en la ITV ya me lo dirán si está mal',
-            correct: false,
-            explanation: 'La ITV te lo va a marcar, sí, pero después de que hayas pagado, viajado, perdido tiempo y posiblemente perdido el dinero del coche si resulta ser fraude.',
-          },
+          { id: 'a', label: 'El anuncio y la forma exterior de furgoneta', correct: false, explanation: 'La descripción comercial no fija la categoría reglamentaria.' },
+          { id: 'b', label: 'Documentación, homologación y configuración física coherentes', correct: true, explanation: 'Correcto. Categoría, variante, masas, plazas y uso constructivo deben poder verificarse y coincidir.' },
+          { id: 'c', label: 'Que el comprador vaya a usarla para trabajar', correct: false, explanation: 'El uso previsto puede ser fiscalmente relevante en algunos supuestos, pero no reescribe por sí solo la categoría técnica.' },
         ],
-        lesson: 'Un carácter de diferencia en el VIN puede significar fraude, error administrativo grave o vehículo robado. NUNCA seguir adelante con un VIN dudoso.',
+        lesson: 'N1 es una categoría técnica que se demuestra; no una etiqueta elegida para obtener un tratamiento fiscal.',
       },
       {
-        id: 'que-puede-pasar',
-        question: '¿Qué escenarios podrían explicar la discrepancia?',
+        id: 'model-06',
+        question: '¿Puedes elegir el Modelo 06 solo porque aparece N1?',
         options: [
-          {
-            id: 'a', label: 'Error administrativo del fabricante al emitir el COC',
-            correct: true,
-            explanation: 'Posible. Pasa en raras ocasiones, pero el fabricante puede emitir un COC corregido si lo demuestras.',
-          },
-          {
-            id: 'b', label: 'COC pertenece a OTRO vehículo (el coche es otro)',
-            correct: true,
-            explanation: 'Posible y grave. El COC podría corresponder a otro vehículo similar, o el coche puede ser un duplicado con VIN clonado.',
-          },
-          {
-            id: 'c', label: 'Es completamente normal y siempre pasa',
-            correct: false,
-            explanation: 'Falso. El VIN debe coincidir exactamente. No hay "casi coincidencia" aceptable.',
-          },
-          {
-            id: 'd', label: 'Vehículo robado con VIN manipulado',
-            correct: true,
-            explanation: 'Posible. Es uno de los escenarios más graves. Por eso hay que parar y verificar antes de avanzar.',
-          },
+          { id: 'a', label: 'Sí, todos los N1 usan 06', correct: false, explanation: 'La categoría aislada no basta. Debes comprobar el supuesto legal, configuración y documentación exigida.' },
+          { id: 'b', label: 'No: primero se confirma no sujeción/exención y el modelo aplicable', correct: true, explanation: 'Correcto. Algunos supuestos de categorías N pueden encajar en el 06, pero no se presume ni se traslada a un vehículo incoherente.' },
+          { id: 'c', label: 'No hace falta ningún justificante fiscal', correct: false, explanation: 'La no sujeción o exención también necesita la acreditación que corresponda para el expediente.' },
         ],
-        multi: true,
-        lesson: 'Las discrepancias en el VIN siempre se aclaran antes de cualquier movimiento. Es la única forma de protegerte.',
+        lesson: 'El modelo es la consecuencia del análisis fiscal, no su punto de partida.',
       },
       {
-        id: 'siguiente-paso',
-        question: '¿Cuál es el siguiente paso correcto?',
+        id: 'emissions-old',
+        question: 'El dato de emisiones es antiguo o no comparable. ¿Qué haces?',
         options: [
-          {
-            id: 'a', label: 'Exigir al vendedor que aclare la discrepancia por escrito y emita COC correcto si es error',
-            correct: true,
-            explanation: 'Correcto. Cualquier solución pasa por documentación oficial corregida. No hay arreglo verbal posible.',
-          },
-          {
-            id: 'b', label: 'Buscar el VIN en bases de datos de vehículos robados (Interpol, policía local)',
-            correct: true,
-            explanation: 'Correcto. Verificar contra bases de datos te da seguridad sobre el origen del vehículo.',
-          },
-          {
-            id: 'c', label: 'Si el vendedor no aclara, valorar deshacer la operación y reclamar el dinero',
-            correct: true,
-            explanation: 'Correcto. Si no hay aclaración, la pérdida controlada de la operación es mejor que asumir riesgos legales y económicos mayores.',
-          },
+          { id: 'a', label: 'Aplicar automáticamente la tabla de CO₂ de un M1 moderno', correct: false, explanation: 'Categoría, método de medición y dato homologado pueden no ser comparables. No inventes un V.7.' },
+          { id: 'b', label: 'Trazar el dato técnico y pedir criterio para la clasificación fiscal', correct: true, explanation: 'Correcto. ITV, documentación de homologación y AEAT deben sostener el dato y su uso.' },
+          { id: 'c', label: 'Usar la potencia del motor como emisiones', correct: false, explanation: 'Potencia y emisiones son magnitudes distintas.' },
         ],
-        multi: true,
-        lesson: 'Mejor perder la operación ahora que asumir riesgos legales después. Vehículos con VIN dudoso pueden ser confiscados.',
+        lesson: 'En N1, vehículos antiguos o sin aprobación UE clara, no se traslada mecánicamente una tabla pensada para otro supuesto.',
+      },
+      {
+        id: 'seat-reform',
+        question: '¿Cómo afectan la segunda fila y el acondicionamiento?',
+        options: [
+          { id: 'a', label: 'No afectan si el vendedor dice que venían así', correct: false, explanation: 'La configuración debe acreditarse frente a la homologada; una afirmación verbal no documenta una reforma.' },
+          { id: 'b', label: 'Se comparan con homologación y se legalizan o revierten si son reforma', correct: true, explanation: 'Correcto. Pueden cambiar plazas, masas, anclajes, categoría o clasificación y necesitan la documentación técnica aplicable.' },
+          { id: 'c', label: 'Se ocultan para pasar primero la ITV', correct: false, explanation: 'Ocultar una discrepancia compromete la inspección y el expediente.' },
+        ],
+        lesson: 'Categoría y reformas se analizan juntas: modificar plazas o configuración puede cambiar la vía técnica y la fiscal.',
       },
     ],
     takeaways: [
-      'El VIN es sagrado. Una sola letra/número de diferencia es razón para parar.',
-      'Aclarar por escrito siempre, nunca por palabra del vendedor.',
-      'Si no hay aclaración convincente, deshacer la operación es la salida más barata.',
+      'N1 debe constar de forma coherente en homologación, documentos y vehículo.',
+      'El Modelo 06 puede corresponder a determinados supuestos, pero nunca se asigna automáticamente por la categoría.',
+      'No apliques una tabla de CO₂ de M1 ni inventes V.7 cuando el método o dato no sean comparables.',
+      'Vehículos antiguos, sin homologación UE clara o reformados requieren revisión técnica y fiscal específica.',
     ],
   },
-
-  /* ============================================================
-     CASO 5 · Posible reforma · ALERTA
-     ============================================================ */
   {
     id: 'posible-reforma',
     n: 5,
-    title: 'Ford Mustang con sospecha de reforma',
-    origin: 'Estados Unidos (vía Alemania)',
+    title: 'Vehículo de EE. UU. matriculado antes en Alemania',
+    origin: 'Estados Unidos · vía Alemania',
     flag: '🇺🇸',
     difficulty: 'alert',
-    estimatedMinutes: 10,
-    pitch: 'El coche tiene escape diferente al de fábrica y suspensión rebajada. ¿Lo cubre la homologación o necesitas pasar por ingeniero?',
+    estimatedMinutes: 12,
+    pitch: 'La matrícula alemana no convierte automáticamente un vehículo estadounidense en un tipo homologado UE.',
     scenario: [
-      'Ford Mustang GT V8 de 2018, importado de EEUU vía Alemania por su anterior dueño. Documentación alemana completa, COC americano-europeo gestionado por un importador.',
-      'Al inspeccionarlo, notas que tiene un escape racing aftermarket (no original Ford) y la suspensión está claramente rebajada. El vendedor te dice que "todo está homologado, vino así".',
-      'Te enfrentas a una decisión clave antes de matricularlo en España.',
+      'Un Ford Mustang fabricado para el mercado estadounidense fue importado y matriculado en Alemania mediante una aprobación individual alemana. El vendedor aporta permiso alemán y una resolución técnica, pero no un COC europeo del fabricante.',
+      'El vehículo conserva parte de la iluminación estadounidense y monta escape y suspensión distintos de los que figuran en algunas fotografías de la aprobación alemana.',
+      'El vendedor lo anuncia como “ya europeizado” y garantiza que España reconocerá todo. Debes separar registro alemán, base de homologación, posible equivalencia española y reformas actuales.',
     ],
     documents: [
-      { code: 'COC',   label: 'COC europeo (versión estándar Ford)', status: 'ok' },
-      { code: 'PERM.', label: 'Permiso de circulación alemán', status: 'ok' },
-      { code: 'FACT.', label: 'Factura del importador alemán', status: 'ok' },
-      { code: 'MODS',  label: 'Documentos de homologación de las modificaciones', status: 'missing' },
-      { code: 'DNI',   label: 'DNI del comprador', status: 'ok' },
+      { code: 'PERM. DE', label: 'Permiso de circulación alemán', status: 'ok' },
+      { code: 'EINZEL', label: 'Aprobación individual alemana y anexos', status: 'ok' },
+      { code: 'COC UE', label: 'COC europeo del fabricante', status: 'missing' },
+      { code: 'LUZ', label: 'Configuración de alumbrado admitida en España', status: 'doubt' },
+      { code: 'REF.', label: 'Documentos de escape, suspensión y otras reformas', status: 'missing' },
+      { code: 'ADUANA', label: 'Historial de importación y situación aduanera', status: 'doubt' },
     ],
     decisions: [
       {
-        id: 'modificaciones',
-        question: 'Las modificaciones (escape + suspensión). ¿Las cubre el COC?',
+        id: 'german-registration',
+        question: '¿Qué demuestra la matrícula alemana?',
         options: [
-          {
-            id: 'a', label: 'Sí, el COC cubre todo lo que tenga el coche',
-            correct: false,
-            explanation: 'Error grave. El COC cubre la configuración HOMOLOGADA del fabricante. Modificaciones aftermarket NO están cubiertas.',
-          },
-          {
-            id: 'b', label: 'No, las modificaciones aftermarket necesitan homologación específica (informe de reformas)',
-            correct: true,
-            explanation: 'Correcto. Cualquier modificación fuera de la homologación de fábrica necesita su propio informe de homologación firmado por ingeniero acreditado.',
-          },
-          {
-            id: 'c', label: 'Sí, si las modificaciones son de marcas conocidas',
-            correct: false,
-            explanation: 'La marca de la pieza no homologa nada. Necesitas un proceso de homologación de reforma específico para tu vehículo.',
-          },
+          { id: 'a', label: 'Que existe un COC “americano-europeo” válido en toda la UE', correct: false, explanation: 'Ese concepto no sustituye una homologación de tipo UE. El coche puede haber sido autorizado individualmente solo bajo el procedimiento alemán.' },
+          { id: 'b', label: 'Que Alemania lo admitió según una base que hay que estudiar', correct: true, explanation: 'Correcto. Permiso y resolución alemana son evidencias útiles, pero hay que identificar el alcance exacto de aquella aprobación.' },
+          { id: 'c', label: 'Que España debe matricularlo sin inspección', correct: false, explanation: 'No hay resultado automático por haber estado matriculado en otro Estado.' },
         ],
-        lesson: 'COC = configuración de fábrica. Modificaciones aftermarket = proceso aparte con ingeniero acreditado.',
+        lesson: 'Registro previo y homologación de tipo UE son conceptos distintos.',
       },
       {
-        id: 'que-pasa-itv',
-        question: '¿Qué pasa si vas a la ITV con esas modificaciones sin documentar?',
-        options: [
-          {
-            id: 'a', label: 'No pasa nada, la ITV es flexible con coches de importación',
-            correct: false,
-            explanation: 'Falso. La ITV revisa que el coche coincida con lo homologado. Modificaciones no documentadas = resultado desfavorable.',
-          },
-          {
-            id: 'b', label: 'Resultado desfavorable: te marcan defecto y no te emiten la ficha técnica española',
-            correct: true,
-            explanation: 'Correcto. La ITV revisa la concordancia entre el vehículo y su documentación. Si no concuerda, no hay matriculación.',
-          },
-          {
-            id: 'c', label: 'Te dejan pasar pero con multa',
-            correct: false,
-            explanation: 'La ITV no aplica multas. Su rol es validar o no la inspección. Si no es válida, no matricula.',
-          },
-        ],
-        lesson: 'La ITV es estricta con la concordancia. Si el coche no es lo que dicen sus papeles, no hay matriculación.',
-      },
-      {
-        id: 'que-haces',
-        question: '¿Cuál es la mejor estrategia ahora?',
-        options: [
-          {
-            id: 'a', label: 'Quitar las modificaciones y dejar el coche como de fábrica antes de la ITV',
-            correct: true,
-            explanation: 'Opción válida. Si las modificaciones no se quieren homologar, devolver el coche a configuración original permite matricularlo con el COC tal cual.',
-          },
-          {
-            id: 'b', label: 'Contactar con ingeniero acreditado para homologar las reformas en España',
-            correct: true,
-            explanation: 'Opción válida. Si quieres mantener las modificaciones, este es el camino. Suma tiempo y coste pero es la vía legal.',
-          },
-          {
-            id: 'c', label: 'Ir a la ITV "a ver qué dicen"',
-            correct: false,
-            explanation: 'Pérdida de tiempo y dinero. Te van a marcar desfavorable. Mejor llegar con la situación resuelta.',
-          },
-          {
-            id: 'd', label: 'Vender el coche a otra persona y comprar uno sin modificaciones',
-            correct: true,
-            explanation: 'Opción válida si las opciones anteriores no te compensan. A veces deshacer la operación es la salida más práctica.',
-          },
-        ],
+        id: 'possible-paths',
+        question: '¿Qué vías merece evaluar con ITV, servicio técnico y autoridad competente?',
         multi: true,
-        lesson: 'Tres caminos válidos: restaurar a fábrica, homologar reformas, o salirte de la operación. Lo que NO es válido es ignorar el problema.',
+        options: [
+          { id: 'a', label: 'Reconocimiento/equivalencia de la aprobación alemana si legalmente cabe', correct: true, explanation: 'Correcto. Debe evaluarse con el expediente completo, sin presumir aceptación.' },
+          { id: 'b', label: 'Homologación individual española si no hay vía de equivalencia', correct: true, explanation: 'Correcto. Puede requerir ensayos y adaptaciones, y tampoco garantiza resultado.' },
+          { id: 'c', label: 'Ficha reducida como creación automática de homologación UE', correct: false, explanation: 'Una ficha reducida describe características; no transforma una aprobación individual estadounidense/alemana en tipo UE.' },
+          { id: 'd', label: 'Desistir si la viabilidad o el coste no son aceptables', correct: true, explanation: 'Correcto. Antes de comprar, la inviabilidad o incertidumbre técnica es una razón legítima para salir de la operación.' },
+        ],
+        lesson: 'Equivalencia, homologación individual y desistimiento son ramas posibles; ninguna debe prometerse sin evaluación.',
+      },
+      {
+        id: 'lighting-reforms',
+        question: '¿Cómo tratas iluminación, escape y suspensión?',
+        options: [
+          { id: 'a', label: 'Como configuración a comparar y reformas a documentar o corregir', correct: true, explanation: 'Correcto. Hay que contrastar vehículo actual, aprobación alemana y requisitos españoles; puede haber adaptaciones y documentos específicos.' },
+          { id: 'b', label: 'Como cambios cubiertos por el permiso alemán', correct: false, explanation: 'El permiso no demuestra que cada modificación posterior forme parte de la aprobación.' },
+          { id: 'c', label: 'Solo importa el ruido del escape', correct: false, explanation: 'También pueden afectar alumbrado, anclajes, suspensión, emisiones y correspondencia con la configuración aprobada.' },
+        ],
+        lesson: 'En vehículos de mercado estadounidense, la configuración reglamentaria y las reformas actuales requieren una comparación documental y física precisa.',
+      },
+      {
+        id: 'promise',
+        question: 'El vendedor garantiza resultado y plazo. ¿Qué respuesta es prudente?',
+        options: [
+          { id: 'a', label: 'Aceptar: la matrícula alemana elimina el riesgo', correct: false, explanation: 'La afirmación omite la vía española, las reformas y la situación aduanera.' },
+          { id: 'b', label: 'Condicionar la compra a una evaluación escrita y sin promesa de resultado', correct: true, explanation: 'Correcto. El análisis debe incluir documentos completos, vehículo actual, aduanas y criterio técnico español.' },
+          { id: 'c', label: 'Ir a una ITV periódica para probar suerte', correct: false, explanation: 'No resuelve la base de homologación ni protege la decisión de compra.' },
+        ],
+        lesson: 'Un expediente complejo no tiene resultado ni calendario garantizados antes de su evaluación por los órganos competentes.',
       },
     ],
     takeaways: [
-      'Las modificaciones aftermarket NO están cubiertas por el COC de fábrica.',
-      'Pasar la ITV con reformas sin homologar = resultado desfavorable garantizado.',
-      'Tres salidas: restaurar a fábrica, homologar con ingeniero, o vender.',
-      'MatriculaPRO no cubre el proceso de homologación de reformas en profundidad — para eso, ingeniero acreditado.',
+      'No existe un “COC americano-europeo” genérico: identifica la base real de homologación.',
+      'Una aprobación individual alemana no se convierte automáticamente en homologación española o UE.',
+      'Equivalencia y homologación individual española son vías a evaluar, no promesas.',
+      'Iluminación, emisiones, escape, suspensión y situación aduanera pueden ser decisivos.',
+      'No garantices matriculación, coste ni plazo en un vehículo de EE. UU. previamente registrado en Europa.',
     ],
   },
 ];
 
 export const DIFFICULTY_LABEL: Record<Difficulty, string> = {
-  easy:   'Fácil',
+  easy: 'Fácil',
   medium: 'Medio',
-  alert:  'Alerta',
+  alert: 'Alerta',
 };

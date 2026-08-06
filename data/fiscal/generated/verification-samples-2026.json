@@ -1,0 +1,362 @@
+[
+  {
+    "sampleNumber": 1,
+    "verificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+    "sourceDocumentId": "BOE-A-2025-26357",
+    "officialRowReference": "BOE-A-2025-26357:ANEXO-I:BMW:00001:L73025",
+    "sourceXmlLine": 73025,
+    "sourcePdfPage": null,
+    "sourceLocatorNote": "El XML oficial no publica correspondencia de página PDF. No se infiere una página; el cotejo usa la línea XML exacta y el literal de las diez celdas.",
+    "brand": "BMW",
+    "officialModelType": "114 d 3p",
+    "commercialPeriod": [
+      2012,
+      2015
+    ],
+    "fuelType": "D",
+    "newVehicleOfficialValue": 19900,
+    "rawOfficialCells": [
+      "114 d 3p",
+      "2012",
+      "2015",
+      "1598",
+      "4",
+      "D",
+      "70",
+      "11,64",
+      "95",
+      "19.900"
+    ],
+    "normalizedRowId": "boe-2026-49e5363fc3a770c8564186135e84de06",
+    "suggestedCalculationFixture": {
+      "firstRegistrationDate": "2012-06-15",
+      "taxableEventDate": "2026-08-05",
+      "mileageKm": 10000,
+      "note": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+    }
+  },
+  {
+    "sampleNumber": 2,
+    "verificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+    "sourceDocumentId": "BOE-A-2025-26357",
+    "officialRowReference": "BOE-A-2025-26357:ANEXO-I:MERCEDES:00002:L343387",
+    "sourceXmlLine": 343387,
+    "sourcePdfPage": null,
+    "sourceLocatorNote": "El XML oficial no publica correspondencia de página PDF. No se infiere una página; el cotejo usa la línea XML exacta y el literal de las diez celdas.",
+    "brand": "MERCEDES",
+    "officialModelType": "65 AMG Largo Aut.",
+    "commercialPeriod": [
+      2017,
+      null
+    ],
+    "fuelType": "G",
+    "newVehicleOfficialValue": 275500,
+    "rawOfficialCells": [
+      "65 AMG Largo Aut.",
+      "2017",
+      "",
+      "5980",
+      "8",
+      "G",
+      "450",
+      "33,91",
+      "612",
+      "275.500"
+    ],
+    "normalizedRowId": "boe-2026-a57636969878eb02a26de20cca060b0a",
+    "suggestedCalculationFixture": {
+      "firstRegistrationDate": "2017-06-15",
+      "taxableEventDate": "2026-08-05",
+      "mileageKm": 10000,
+      "note": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+    }
+  },
+  {
+    "sampleNumber": 3,
+    "verificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+    "sourceDocumentId": "BOE-A-2025-26357",
+    "officialRowReference": "BOE-A-2025-26357:ANEXO-I:AUDI:00001:L9590",
+    "sourceXmlLine": 9590,
+    "sourcePdfPage": null,
+    "sourceLocatorNote": "El XML oficial no publica correspondencia de página PDF. No se infiere una página; el cotejo usa la línea XML exacta y el literal de las diez celdas.",
+    "brand": "AUDI",
+    "officialModelType": "A1 1.0 TFSI Active Kit",
+    "commercialPeriod": [
+      2015,
+      2019
+    ],
+    "fuelType": "G",
+    "newVehicleOfficialValue": 16600,
+    "rawOfficialCells": [
+      "A1 1.0 TFSI Active Kit",
+      "2015",
+      "2019",
+      "999",
+      "3",
+      "G",
+      "70",
+      "7,83",
+      "95",
+      "16.600"
+    ],
+    "normalizedRowId": "boe-2026-8e0d8a1e32f79a93b65618564ea711e6",
+    "suggestedCalculationFixture": {
+      "firstRegistrationDate": "2015-06-15",
+      "taxableEventDate": "2026-08-05",
+      "mileageKm": 10000,
+      "note": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+    }
+  },
+  {
+    "sampleNumber": 4,
+    "verificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+    "sourceDocumentId": "BOE-A-2025-26357",
+    "officialRowReference": "BOE-A-2025-26357:ANEXO-I:VOLKSWAGEN:00001:L657499",
+    "sourceXmlLine": 657499,
+    "sourcePdfPage": null,
+    "sourceLocatorNote": "El XML oficial no publica correspondencia de página PDF. No se infiere una página; el cotejo usa la línea XML exacta y el literal de las diez celdas.",
+    "brand": "VOLKSWAGEN",
+    "officialModelType": "ARTEON 1.5 TSI",
+    "commercialPeriod": [
+      2021,
+      2022
+    ],
+    "fuelType": "G",
+    "newVehicleOfficialValue": 37700,
+    "rawOfficialCells": [
+      "ARTEON 1.5 TSI",
+      "2021",
+      "2022",
+      "1498",
+      "4",
+      "G",
+      "110",
+      "11,20",
+      "150",
+      "37.700"
+    ],
+    "normalizedRowId": "boe-2026-b93194a50cdcc020128bdaebdd20301a",
+    "suggestedCalculationFixture": {
+      "firstRegistrationDate": "2021-08-15",
+      "taxableEventDate": "2026-08-05",
+      "mileageKm": 10000,
+      "note": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+    }
+  },
+  {
+    "sampleNumber": 5,
+    "verificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+    "sourceDocumentId": "BOE-A-2025-26357",
+    "officialRowReference": "BOE-A-2025-26357:ANEXO-I:PORSCHE:00001:L514139",
+    "sourceXmlLine": 514139,
+    "sourcePdfPage": null,
+    "sourceLocatorNote": "El XML oficial no publica correspondencia de página PDF. No se infiere una página; el cotejo usa la línea XML exacta y el literal de las diez celdas.",
+    "brand": "PORSCHE",
+    "officialModelType": "718 BOXSTER 2.0",
+    "commercialPeriod": [
+      2020,
+      null
+    ],
+    "fuelType": "G",
+    "newVehicleOfficialValue": 59500,
+    "rawOfficialCells": [
+      "718 BOXSTER 2.0",
+      "2020",
+      "",
+      "1988",
+      "4",
+      "G",
+      "221",
+      "13,27",
+      "300",
+      "59.500"
+    ],
+    "normalizedRowId": "boe-2026-2d149d5047e4459620373d813707a1ff",
+    "suggestedCalculationFixture": {
+      "firstRegistrationDate": "2020-06-15",
+      "taxableEventDate": "2026-08-05",
+      "mileageKm": 10000,
+      "note": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+    }
+  },
+  {
+    "sampleNumber": 6,
+    "verificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+    "sourceDocumentId": "BOE-A-2025-26357",
+    "officialRowReference": "BOE-A-2025-26357:ANEXO-I:PEUGEOT:00021:L482574",
+    "sourceXmlLine": 482574,
+    "sourcePdfPage": null,
+    "sourceLocatorNote": "El XML oficial no publica correspondencia de página PDF. No se infiere una página; el cotejo usa la línea XML exacta y el literal de las diez celdas.",
+    "brand": "PEUGEOT",
+    "officialModelType": "107 1.0i Active 2 Tronic",
+    "commercialPeriod": [
+      2012,
+      2014
+    ],
+    "fuelType": "G",
+    "newVehicleOfficialValue": 9300,
+    "rawOfficialCells": [
+      "107 1.0i Active 2 Tronic",
+      "2012",
+      "2014",
+      "998",
+      "3",
+      "G",
+      "50",
+      "7,82",
+      "68",
+      "9.300"
+    ],
+    "normalizedRowId": "boe-2026-2f2a445a6ca44bc47ecc973c8a279b15",
+    "suggestedCalculationFixture": {
+      "firstRegistrationDate": "2012-06-15",
+      "taxableEventDate": "2026-08-05",
+      "mileageKm": 10000,
+      "note": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+    }
+  },
+  {
+    "sampleNumber": 7,
+    "verificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+    "sourceDocumentId": "BOE-A-2025-26357",
+    "officialRowReference": "BOE-A-2025-26357:ANEXO-I:RENAULT:00001:L519037",
+    "sourceXmlLine": 519037,
+    "sourcePdfPage": null,
+    "sourceLocatorNote": "El XML oficial no publica correspondencia de página PDF. No se infiere una página; el cotejo usa la línea XML exacta y el literal de las diez celdas.",
+    "brand": "RENAULT",
+    "officialModelType": "4 E-Tech eléctrico 4 E-Tech eléctrico iconic “plein sud™” autonomía confort",
+    "commercialPeriod": [
+      2026,
+      null
+    ],
+    "fuelType": "Elc",
+    "newVehicleOfficialValue": 25600,
+    "rawOfficialCells": [
+      "4 E-Tech eléctrico 4 E-Tech eléctrico iconic “plein sud™” autonomía confort",
+      "2026",
+      "",
+      "",
+      "",
+      "Elc",
+      "110",
+      "15,30",
+      "150",
+      "25.600"
+    ],
+    "normalizedRowId": "boe-2026-55bb5859356423d33f7ba0576cf905ac",
+    "suggestedCalculationFixture": {
+      "firstRegistrationDate": "2026-01-02",
+      "taxableEventDate": "2026-08-05",
+      "mileageKm": 10000,
+      "note": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+    }
+  },
+  {
+    "sampleNumber": 8,
+    "verificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+    "sourceDocumentId": "BOE-A-2025-26357",
+    "officialRowReference": "BOE-A-2025-26357:ANEXO-I:TOYOTA:00003:L635898",
+    "sourceXmlLine": 635898,
+    "sourcePdfPage": null,
+    "sourceLocatorNote": "El XML oficial no publica correspondencia de página PDF. No se infiere una página; el cotejo usa la línea XML exacta y el literal de las diez celdas.",
+    "brand": "TOYOTA",
+    "officialModelType": "AURIS 1.3 WT-i Active 3p",
+    "commercialPeriod": [
+      2010,
+      2012
+    ],
+    "fuelType": "G",
+    "newVehicleOfficialValue": 12900,
+    "rawOfficialCells": [
+      "AURIS 1.3 WT-i Active 3p",
+      "2010",
+      "2012",
+      "1329",
+      "4",
+      "G",
+      "74",
+      "10,42",
+      "101",
+      "12.900"
+    ],
+    "normalizedRowId": "boe-2026-b931fd46e7b84d967949acd634fc8afc",
+    "suggestedCalculationFixture": {
+      "firstRegistrationDate": "2010-06-15",
+      "taxableEventDate": "2026-08-05",
+      "mileageKm": 10000,
+      "note": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+    }
+  },
+  {
+    "sampleNumber": 9,
+    "verificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+    "sourceDocumentId": "BOE-A-2025-26357",
+    "officialRowReference": "BOE-A-2025-26357:ANEXO-I:ALFA-ROMEO:00474:L6970",
+    "sourceXmlLine": 6970,
+    "sourcePdfPage": null,
+    "sourceLocatorNote": "El XML oficial no publica correspondencia de página PDF. No se infiere una página; el cotejo usa la línea XML exacta y el literal de las diez celdas.",
+    "brand": "ALFA ROMEO",
+    "officialModelType": "Junior Ibrida 1.2 eDCT6",
+    "commercialPeriod": [
+      2025,
+      null
+    ],
+    "fuelType": "GyE",
+    "newVehicleOfficialValue": 23100,
+    "rawOfficialCells": [
+      "Junior Ibrida 1.2 eDCT6",
+      "2025",
+      "",
+      "1199",
+      "3",
+      "GyE",
+      "107",
+      "8,73",
+      "145",
+      "23.100"
+    ],
+    "normalizedRowId": "boe-2026-3d98a4556a89922340647c66fc05ed61",
+    "suggestedCalculationFixture": {
+      "firstRegistrationDate": "2025-06-15",
+      "taxableEventDate": "2026-08-05",
+      "mileageKm": 10000,
+      "note": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+    }
+  },
+  {
+    "sampleNumber": 10,
+    "verificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+    "sourceDocumentId": "BOE-A-2025-26357",
+    "officialRowReference": "BOE-A-2025-26357:ANEXO-I:ABARTH:00067:L1004",
+    "sourceXmlLine": 1004,
+    "sourcePdfPage": null,
+    "sourceLocatorNote": "El XML oficial no publica correspondencia de página PDF. No se infiere una página; el cotejo usa la línea XML exacta y el literal de las diez celdas.",
+    "brand": "ABARTH",
+    "officialModelType": "ABARTH 500 BEV SCORPIONISSIMA 320 km",
+    "commercialPeriod": [
+      2023,
+      null
+    ],
+    "fuelType": "Elc",
+    "newVehicleOfficialValue": 35900,
+    "rawOfficialCells": [
+      "ABARTH 500 BEV SCORPIONISSIMA 320 km",
+      "2023",
+      "",
+      "",
+      "",
+      "Elc",
+      "113",
+      "21,93",
+      "154",
+      "35.900"
+    ],
+    "normalizedRowId": "boe-2026-2c19b416acf969ad6ed6ec08a7a19c0b",
+    "suggestedCalculationFixture": {
+      "firstRegistrationDate": "2023-06-15",
+      "taxableEventDate": "2026-08-05",
+      "mileageKm": 10000,
+      "note": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+    }
+  }
+]

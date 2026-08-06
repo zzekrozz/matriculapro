@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Car, ChevronLeft, ChevronRight, FileText, ScrollText, ShieldCheck, Volume2,
@@ -10,7 +10,6 @@ import {
 import { tokens } from '@/lib/tokens';
 import { ITV_STEPS as ITV_STEPS_DATA } from '@/data/itv-steps';
 import type { ITVStep } from '@/lib/types';
-import { useFounderModal } from '@/providers/FounderModalProvider';
 
 /* ============================================================
    RECORRIDO ITV · Maqueta didáctica integrada
@@ -770,25 +769,22 @@ const BrakeMeter: React.FC<{ phase?: BrakePhase }> = ({ phase = 'idle' }) => {
    ============================================================ */
 
 interface RecorridoITVProps {
-  isDemo?: boolean;
   onBack?: () => void;
 }
 
-const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBack }) => {
+const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ onBack }) => {
   const [stepIdx, setStepIdx] = useState(0);
   const [autoPlay, setAutoPlay] = useState(false);
   const [hoveredZone, setHoveredZone] = useState<string | null>(null);
   const [brakePhase, setBrakePhase] = useState<BrakePhase>('idle');
   const [showNoviceBanner, setShowNoviceBanner] = useState(true);
   const [showMobileDetails, setShowMobileDetails] = useState(false);
-  const { openFounderModal } = useFounderModal();
-
-  const visibleSteps = useMemo(() => isDemo ? ITV_STEPS.filter(s => s.demo) : ITV_STEPS, [isDemo]);
+  const visibleSteps = useMemo(() => ITV_STEPS, []);
   const step = visibleSteps[stepIdx];
   const isLast = stepIdx === visibleSteps.length - 1;
   const StepIcon = step.iconComponent;
 
-  const next = () => setStepIdx(i => Math.min(i + 1, visibleSteps.length - 1));
+  const next = useCallback(() => setStepIdx(i => Math.min(i + 1, visibleSteps.length - 1)), [visibleSteps.length]);
   const prev = () => setStepIdx(i => Math.max(i - 1, 0));
 
   // Animación del medidor de frenos en el paso 9
@@ -809,7 +805,7 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
     if (isLast) { setAutoPlay(false); return; }
     const t = setTimeout(() => next(), 5000);
     return () => clearTimeout(t);
-  }, [autoPlay, stepIdx, isLast]);
+  }, [autoPlay, stepIdx, isLast, next]);
 
   useEffect(() => {
     setShowMobileDetails(false);
@@ -914,7 +910,7 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
                         Inspector ITV
                       </div>
                       <p className="text-[12px] leading-snug" style={{ color: '#fff', fontStyle: 'italic' }}>
-                        "{step.inspector}"
+                        «{step.inspector}»
                       </p>
                     </div>
                   </div>
@@ -942,7 +938,7 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
                           Inspector ITV
                         </div>
                         <p className="text-[12.5px] leading-snug" style={{ color: '#fff', fontStyle: 'italic' }}>
-                          "{step.inspector}"
+                          «{step.inspector}»
                         </p>
                       </div>
                     </div>
@@ -975,11 +971,6 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
                     </React.Fragment>
                   );
                 })}
-                {isDemo && (
-                  <div className="ml-2 inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] shrink-0" style={{ background: tokens.color.bgDeep, color: tokens.color.muted }}>
-                    <Lock size={10} /> +6 pasos · acceso Founder
-                  </div>
-                )}
               </div>
             </div>
 
@@ -1098,25 +1089,6 @@ const RecorridoITVScreen: React.FC<RecorridoITVProps> = ({ isDemo = false, onBac
               )}
             </div>
 
-            {isDemo && isLast && (
-              <div className="mx-6 mb-6 rounded-xl p-5 relative overflow-hidden"
-                   style={{ background: 'linear-gradient(135deg, #0B1F3A 0%, #16335E 100%)', color: '#fff' }}>
-                <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full opacity-20 blur-3xl" style={{ background: '#C8862E' }} />
-                <div className="relative">
-                  <div className="text-[10px] tracking-[0.22em] uppercase mb-1.5 flex items-center gap-1.5" style={{ color: tokens.color.accent }}>
-                    <Lock size={10} /> 6 pasos más · Acceso Founder
-                  </div>
-                  <p className="text-[12.5px] leading-relaxed mb-4" style={{ color: '#B4BECE' }}>
-                    Has visto los primeros 5 pasos. Con acceso Founder desbloqueas los 6 restantes: luces traseras, dirección, ruedas, frenos en rodillos, emisiones y resultado final.
-                  </p>
-                  <button onClick={openFounderModal}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-[12.5px] font-medium transition-transform hover:scale-[1.02]"
-                    style={{ background: tokens.color.accent, color: tokens.color.ink }}>
-                    <Crown size={13} /> Desbloquear ITV completo · 49 €
-                  </button>
-                </div>
-              </div>
-            )}
           </motion.div>
         </div>
 

@@ -6,8 +6,7 @@ export type ModuleState =
   | 'alert'
   | 'recommended'
   | 'special'
-  | 'premium'
-  | 'demo';
+  | 'premium';
 
 export interface ModuleDef {
   id: string;
@@ -19,7 +18,6 @@ export interface ModuleDef {
   state: ModuleState;
   hot?: boolean;
   premium?: boolean;
-  demo?: boolean;
 }
 
 export interface RouteStep {
@@ -45,6 +43,5 @@ export interface ITVStep {
   haces: string;
   revisas: string[];
   inspector: string;
-  demo: boolean;
   showBrakeMeter?: boolean;
 }

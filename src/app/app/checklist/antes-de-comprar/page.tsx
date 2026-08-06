@@ -8,7 +8,8 @@ import { ModuleGate } from '@/components/access/ModuleGate';
 export default function Page() {
   return (
     <ModuleGate
-      requiresFounder
+      requiredCapability="use_advanced_simulators"
+      requiredTier="particular"
       moduleName="Checklist antes de comprar"
       moduleCode="M.04"
       description="Lista crítica antes de cerrar la compra: documentación, verificación técnica, legal y fiscal."

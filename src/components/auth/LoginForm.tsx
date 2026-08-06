@@ -3,120 +3,49 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { safeInternalPath } from '@/lib/auth/redirect';
 import { useAuth } from '@/providers/AuthProvider';
 
-interface LoginFormProps {
-  nextUrl?: string;
-}
-
-export function LoginForm({ nextUrl = '/app/dashboard' }: LoginFormProps) {
+export function LoginForm({ nextUrl = '/app/comprobar' }: { nextUrl?: string }) {
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPw, setShowPw] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const safeNextUrl =
-    nextUrl.startsWith('/') && !nextUrl.startsWith('//')
-      ? nextUrl
-      : null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (loading) return;
-
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (busy) return;
+    setBusy(true);
     setError(null);
-    setLoading(true);
-    console.log('[LOGIN] form submit for:', email);
-
     try {
-      const result = await signIn(email, password);
-
+      const result = await signIn(email, password, nextUrl);
       if (result.error) {
-        console.log('[LOGIN] form got error:', result.error);
         setError(result.error);
         return;
       }
-
-      const redirectTo = safeNextUrl ?? result.redirectTo ?? '/app/dashboard';
-      console.log('[LOGIN] redirecting to:', redirectTo);
-      window.location.replace(redirectTo);
-    } catch (err) {
-      console.error('[LOGIN] form exception:', err);
-      setError('No se ha podido iniciar sesión. Inténtalo de nuevo.');
+      window.location.replace(safeInternalPath(result.redirectTo));
     } finally {
-      setLoading(false);
+      setBusy(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-      <div>
-        <label className="block text-[10.5px] tracking-[0.18em] uppercase text-muted mb-1.5">
-          Email
-        </label>
-        <input
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-          autoComplete="email"
-          placeholder="tu@email.com"
-          className="w-full px-3.5 py-3 rounded-lg text-[16px] sm:text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors"
-        />
-      </div>
-
-      <div>
-        <label className="block text-[10.5px] tracking-[0.18em] uppercase text-muted mb-1.5">
-          Contraseña
-        </label>
-        <div className="relative">
-          <input
-            type={showPw ? 'text' : 'password'}
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-            autoComplete="current-password"
-            placeholder="••••••••"
-            className="w-full px-3.5 py-3 rounded-lg text-[16px] sm:text-[13.5px] outline-none bg-surface border border-line focus:border-ink transition-colors pr-10"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPw(v => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-ink transition-colors"
-            aria-label={showPw ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-          >
-            {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
-          </button>
+    <form onSubmit={submit} className="space-y-4" noValidate>
+      <AuthField label="Email"><input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" className={inputClass} /></AuthField>
+      <AuthField label="Contraseña">
+        <div className="relative"><input type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="current-password" className={`${inputClass} pr-11`} />
+          <button type="button" onClick={() => setShowPassword((value) => !value)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-ink" aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}>{showPassword ? <EyeOff size={15} /> : <Eye size={15} />}</button>
         </div>
-      </div>
-
-      {error && (
-        <div role="alert" className="rounded-lg px-3 py-2.5 bg-danger-soft text-danger text-[12.5px] leading-relaxed">
-          {error}
-        </div>
-      )}
-
-      <div className="flex justify-end pt-1">
-        <Link href="/auth/forgot-password" className="text-[12px] text-accent-deep hover:underline font-medium">
-          ¿Olvidaste tu contraseña?
-        </Link>
-      </div>
-
-      <button
-        type="submit"
-        disabled={loading || !email || !password}
-        className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-[13.5px] font-medium transition-transform hover:scale-[1.01] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 bg-ink text-white shadow-soft-md"
-      >
-        {loading ? <><Loader2 size={14} className="animate-spin" /> Entrando...</> : 'Entrar'}
-      </button>
-
-      <p className="text-center text-[12px] text-muted">
-        ¿Acabas de pagar?{' '}
-        <Link href="/acceso-founder" className="text-accent-deep hover:underline font-medium">
-          Activar acceso Founder
-        </Link>
-      </p>
+      </AuthField>
+      <div className="flex justify-end"><Link href="/recuperar-contrasena" className="text-[11.5px] font-medium text-accent-deep hover:underline">¿Has olvidado tu contraseña?</Link></div>
+      {error && <div role="alert" className="rounded-xl bg-danger-soft p-3 text-[12px] text-danger">{error}</div>}
+      <button type="submit" disabled={busy || !email || !password} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-[13px] font-medium text-white disabled:opacity-45">{busy ? <><Loader2 size={14} className="animate-spin" /> Entrando…</> : 'Entrar'}</button>
+      <p className="text-center text-[11.5px] text-muted">¿Aún no tienes cuenta? <Link href={`/registro?next=${encodeURIComponent(nextUrl)}`} className="font-medium text-accent-deep hover:underline">Regístrate gratis</Link></p>
     </form>
   );
 }
+
+function AuthField({ label, children }: { label: string; children: React.ReactNode }) { return <label className="block"><span className="mb-1.5 block text-[10px] font-medium uppercase tracking-[0.16em] text-muted">{label}</span>{children}</label>; }
+const inputClass = 'min-h-12 w-full rounded-xl border border-line bg-bg px-3.5 py-3 text-[16px] text-ink outline-none focus:border-accent';

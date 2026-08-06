@@ -10,7 +10,8 @@ import { ModuleGate } from '@/components/access/ModuleGate';
 export default function CasosPracticosPage() {
   return (
     <ModuleGate
-      requiresFounder
+      requiredCapability="view_historical_paid_data"
+      requiredTier="particular"
       moduleName="Casos prácticos"
       moduleCode="M.08"
       description="5 escenarios reales para poner a prueba lo aprendido: Alemania COC, Francia sin COC, Holanda factura empresa, datos dudosos, posible reforma."

@@ -1,0 +1,16 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "incremental": false,
+    "isolatedModules": false,
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "../../../.test-dist/access",
+    "rootDir": "../../../src",
+    "plugins": []
+  },
+  "include": ["./**/*.ts", "../../../src/lib/payments/catalog.ts", "../../../src/lib/payments/spanish-vat.ts"],
+  "exclude": ["../../../node_modules"]
+}

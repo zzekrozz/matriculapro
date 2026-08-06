@@ -15,7 +15,6 @@ import { RUTA_STEPS, type RutaStep } from '@/data/ruta-steps';
 import { RUTA_PHASES, phaseOfStep, type RutaPhase } from '@/data/ruta-phases';
 import { useCourse, type BoughtState } from '@/providers/CourseProvider';
 import { useAccess } from '@/providers/AccessProvider';
-import { useFounderModal } from '@/providers/FounderModalProvider';
 import { RouteMap } from '@/components/modules/ruta/RouteMap';
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -30,8 +29,9 @@ const stepIdToN: Record<string, number> = Object.fromEntries(
 
 export function RutaScreen() {
   const { completedRouteSteps, toggleRouteStep, bought, setBought } = useCourse();
-  const { canCompleteSteps, isExplorer } = useAccess();
-  const { openFounderModal } = useFounderModal();
+  const { canManageFullCases } = useAccess();
+  const canCompleteSteps = canManageFullCases;
+  const openPlans = () => { window.location.href = '/#precios'; };
   const [expanded, setExpanded] = useState<number | null>(1);
 
   const completedCount = completedRouteSteps.length;
@@ -64,13 +64,13 @@ export function RutaScreen() {
             Ruta de <span className="italic text-accent">matriculación</span>
           </h1>
           <p className="mt-3 max-w-[640px] text-[14px] leading-relaxed text-ink-soft">
-            Antes de los 9 pasos, un mapa rápido del proceso completo en 3 fases. Después, la ruta detallada agrupada por fase, con todo lo que necesitas en cada paso.
+            Mapa formativo de una ruta frecuente, agrupado en 3 fases. Tu expediente puede cambiar el orden, omitir pasos o abrir una revisión especial según procedencia, vendedor, homologación y fiscalidad.
           </p>
         </div>
 
         {/* Progress card */}
         <div className="rounded-2xl p-4 min-w-[220px] bg-surface border border-line">
-          <div className="text-[10.5px] tracking-[0.18em] uppercase mb-2 text-muted">Progreso de la ruta</div>
+          <div className="text-[10.5px] tracking-[0.18em] uppercase mb-2 text-muted">Marcas de aprendizaje</div>
           <div className="flex items-baseline gap-1 mb-2">
             <span className="font-serif text-ink leading-none" style={{ fontSize: 32 }}>{completedCount}</span>
             <span className="text-muted">/ {RUTA_STEPS.length} pasos · {progressPct}%</span>
@@ -124,8 +124,7 @@ export function RutaScreen() {
         {RUTA_PHASES.map(phase => {
           const stepsInPhase = RUTA_STEPS.filter(s => phase.steps.includes(s.n));
           const completedInPhase = stepsInPhase.filter(s => completedRouteSteps.includes(s.id)).length;
-          // Explorer solo puede ver la Fase 1 ('preparar')
-          const isPhaseBlocked = isExplorer && phase.id !== 'preparar';
+          const isPhaseBlocked = false;
           return (
             <section key={phase.id} id={`phase-${phase.id}`} className="scroll-mt-4">
               <PhaseHeader phase={phase} completedCount={completedInPhase} totalCount={stepsInPhase.length} />
@@ -147,16 +146,16 @@ export function RutaScreen() {
                        style={{ background: 'rgba(255,255,255,0.92)' }}>
                     <Lock size={24} className="text-ink mb-3" />
                     <div className="text-[10.5px] tracking-[0.22em] uppercase font-semibold text-accent-deep mb-1">
-                      {phase.shortTitle} · Acceso Founder
+                      {phase.shortTitle} · Modo lectura
                     </div>
                     <p className="text-[13px] text-ink-soft mb-4 max-w-[380px]">
                       {phase.id === 'pagos'
-                        ? 'La Fase 2 (pagos y tasas) está disponible con acceso Founder Alpha.'
-                        : 'La Fase 3 (DGT y placas) está disponible con acceso Founder Alpha.'}
+                        ? 'Renueva una licencia para volver a editar pagos y tasas.'
+                        : 'Renueva una licencia para volver a editar DGT y placas.'}
                     </p>
-                    <button onClick={openFounderModal}
+                    <button onClick={openPlans}
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[12.5px] font-medium bg-ink text-white hover:scale-[1.02] transition-transform">
-                      <Crown size={12} className="text-accent" /> Desbloquear · 49 €
+                      <Crown size={12} className="text-accent" /> Ver licencias
                     </button>
                   </div>
                 </div>
@@ -173,8 +172,7 @@ export function RutaScreen() {
                       onComplete={() => toggleRouteStep(s.id)}
                       bought={bought}
                       canComplete={canCompleteSteps}
-                      isExplorer={isExplorer}
-                      onUpgradeClick={openFounderModal}
+                      onRenewClick={openPlans}
                     />
                   ))}
                 </div>
@@ -271,13 +269,12 @@ interface StepCardProps {
   onComplete: () => void;
   bought: BoughtState;
   canComplete: boolean;
-  isExplorer: boolean;
-  onUpgradeClick: () => void;
+  onRenewClick: () => void;
 }
 
 function RutaStepCard({
   step: s, phase, expanded, onToggle, completed, onComplete, bought,
-  canComplete, isExplorer, onUpgradeClick
+  canComplete, onRenewClick
 }: StepCardProps) {
   const Icon = ICON_MAP[s.icon] ?? FileText;
   const showBoughtMsg = s.n === 1 && bought === 'yes' && s.altMsg;
@@ -407,50 +404,25 @@ function RutaStepCard({
               )}
 
               {/* Linked module CTA */}
-              {s.linkedModule && (
+              {s.linkedModule?.available && (
                 <div className="mt-5 rounded-xl p-3.5 flex items-center gap-3"
                      style={{
                        background: s.linkedModule.available ? tokens.color.bgDeep : 'rgba(11,31,58,0.02)',
                        border: `1px ${s.linkedModule.available ? 'solid' : 'dashed'} ${tokens.color.line}`,
                      }}>
-                  {s.linkedModule.available ? (
-                    <Sparkles size={14} className="shrink-0 text-accent" />
-                  ) : (
-                    <Lock size={14} className="shrink-0 text-muted" />
-                  )}
+                  <Sparkles size={14} className="shrink-0 text-accent" />
                   <div className="flex-1 text-[12px] text-ink-soft">
-                    {s.linkedModule.available ? (
-                      <>Hay un módulo para practicar este paso: <strong className="text-ink">{s.linkedModule.label}</strong></>
-                    ) : (
-                      <><strong className="text-ink">{s.linkedModule.label}</strong> · próximamente</>
-                    )}
+                    Hay un módulo para practicar este paso: <strong className="text-ink">{s.linkedModule.label}</strong>
                   </div>
-                  {s.linkedModule.available && (
-                    <Link href={s.linkedModule.href}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-transform hover:scale-[1.02]"
-                      style={{ background: tokens.color.ink, color: '#fff' }}>
-                      Practicar <ChevronRight size={11} />
-                    </Link>
-                  )}
+                  <Link href={s.linkedModule.href}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium transition-transform hover:scale-[1.02]"
+                    style={{ background: tokens.color.ink, color: '#fff' }}>
+                    Practicar <ChevronRight size={11} />
+                  </Link>
                 </div>
               )}
 
-              {/* Guía completa placeholder + completar */}
-              <div className="mt-5 flex items-center justify-between gap-2 flex-wrap">
-                <button
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11.5px] transition-colors"
-                  style={{
-                    background: tokens.color.bgDeep,
-                    color: isExplorer ? tokens.color.muted : tokens.color.inkSoft,
-                    border: `1px dashed ${tokens.color.line}`,
-                    cursor: 'not-allowed',
-                  }}
-                  disabled
-                  title="Disponible próximamente">
-                  <Lock size={11} />
-                  Ver guía completa del paso · próximamente
-                </button>
-
+              <div className="mt-5 flex items-center justify-end gap-2 flex-wrap">
                 {/* COMPLETAR — gated por nivel */}
                 {canComplete ? (
                   <button onClick={onComplete}
@@ -463,10 +435,10 @@ function RutaStepCard({
                     {completed ? <><Check size={13} /> Paso completado</> : <><Check size={13} /> Marcar como completado</>}
                   </button>
                 ) : (
-                  <button onClick={onUpgradeClick}
+                  <button onClick={onRenewClick}
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-medium transition-transform hover:scale-[1.02]"
                     style={{ background: tokens.color.accent, color: tokens.color.ink, boxShadow: tokens.shadow.md }}>
-                    <Lock size={12} /> Marcar requiere Founder <Crown size={11} />
+                    <Lock size={12} /> Solo lectura · renovar <Crown size={11} />
                   </button>
                 )}
               </div>
