@@ -1,0 +1,142 @@
+import { z } from 'zod';
+import type { RegistrationCase } from './types';
+
+const nullableNumber = z.number().finite().nonnegative().nullable();
+const nullableDate = z.string().date().nullable();
+const nullableText = z.string().trim().nullable();
+
+export const VehicleSchema = z.object({
+  id: z.string().uuid().optional(),
+  brand: z.string().trim().min(1, 'Indica la marca.'),
+  model: z.string().trim().min(1, 'Indica el modelo.'),
+  vin: z.string().trim().toUpperCase().regex(/^[A-HJ-NPR-Z0-9]{17}$/, 'El VIN debe tener 17 caracteres válidos.'),
+  firstRegistrationDate: nullableDate,
+  mileageKm: nullableNumber,
+  category: z.enum(['M1', 'M2', 'M3', 'N1', 'N2', 'N3', 'L', 'O', 'SPECIAL', 'UNKNOWN']),
+  fuel: nullableText,
+  co2GKm: nullableNumber,
+  co2Source: z.enum(['spanish-itv', 'coc', 'manufacturer-certificate', 'foreign-official-document', 'manual-unverified', 'unknown']),
+  co2Verified: z.boolean(),
+  engineCc: nullableNumber,
+  powerKw: nullableNumber,
+  massKg: nullableNumber,
+  seats: z.number().int().positive().nullable(),
+  registrationCountry: z.string().trim().min(2),
+  manufacturingCountry: nullableText,
+  foreignRegistration: nullableText,
+  previouslyRegisteredAbroad: z.boolean(),
+  exportDeregistered: z.boolean().nullable(),
+  transportMethod: z.enum(['driven', 'trailer', 'carrier', 'temporary-plates', 'unknown']),
+  fieldK: nullableText,
+  approvalNumber: nullableText,
+  cocAvailable: z.boolean().nullable(),
+  cocValidityConfirmed: z.boolean(),
+  cocVinMatchConfirmed: z.boolean(),
+  foreignTechnicalDocumentAvailable: z.boolean().nullable(),
+  foreignInspectionCertificateAvailable: z.boolean().nullable(),
+  foreignInspectionDate: nullableDate,
+  foreignInspectionValidUntil: nullableDate,
+  approvalType: z.enum([
+    'eu-type', 'spanish-type', 'individual-eea', 'individual-eu', 'individual-spain',
+    'short-series-eea', 'none', 'unknown',
+  ]),
+  reforms: z.object({
+    suspension: z.boolean().nullable(),
+    nonEquivalentWheels: z.boolean().nullable(),
+    spacers: z.boolean().nullable(),
+    lighting: z.boolean().nullable(),
+    towBar: z.boolean().nullable(),
+    seats: z.boolean().nullable(),
+    classification: z.boolean().nullable(),
+    bodywork: z.boolean().nullable(),
+    camperConversion: z.boolean().nullable(),
+    exhaust: z.boolean().nullable(),
+    powerOrEngine: z.boolean().nullable(),
+    dimensions: z.boolean().nullable(),
+    exteriorElements: z.boolean().nullable(),
+    steeringConversion: z.boolean().nullable(),
+    structural: z.boolean().nullable(),
+  }),
+  previouslyRegisteredInSpain: z.boolean(),
+  categoryConfirmedOnSpanishItv: z.boolean(),
+});
+
+export const RegistrationCaseSchema = z.object({
+  id: z.string().uuid(),
+  userId: z.string().uuid().nullable(),
+  mode: z.enum(['practice', 'case']),
+  title: z.string().trim().min(1),
+  status: z.enum(['draft', 'assessing', 'blocked', 'in-progress', 'ready', 'registered', 'archived']),
+  processStage: z.enum([
+    'not-purchased', 'purchased', 'transported', 'itv-requested', 'itv-passed',
+    'taxes-started', 'dgt-started', 'registered',
+  ]),
+  operation: z.enum(['purchase', 'already-owned', 'relocation', 'inheritance', 'donation']),
+  sellerType: z.enum([
+    'private', 'foreign-professional', 'spanish-professional', 'already-owned',
+    'inheritance', 'donation', 'unknown',
+  ]),
+  sellerCountry: nullableText,
+  purchasePrice: nullableNumber,
+  purchaseCurrency: z.string().trim().length(3),
+  purchaseDate: nullableDate,
+  invoiceVatNumber: nullableText,
+  invoiceVatScheme: nullableText,
+  buyerType: z.enum(['individual', 'self-employed', 'company']),
+  autonomousCommunity: z.enum([
+    'andalucia', 'aragon', 'asturias', 'baleares', 'canarias', 'cantabria',
+    'castilla-la-mancha', 'castilla-y-leon', 'cataluna', 'comunidad-valenciana',
+    'extremadura', 'galicia', 'madrid', 'murcia', 'navarra', 'pais-vasco',
+    'la-rioja', 'ceuta', 'melilla',
+  ]).nullable(),
+  municipality: nullableText,
+  taxableBase: nullableNumber,
+  marketValue: nullableNumber,
+  registrationTaxSubjectConfirmed: z.boolean().nullable(),
+  taxBenefitKind: z.enum(['none', 'no-subjection', 'exemption', 'reduction', 'unknown']),
+  taxBenefitRequiresPriorRecognition: z.boolean().nullable(),
+  n1EconomicUseConfirmed: z.boolean().nullable(),
+  n1VatDeductionPercent: z.number().min(0).max(100).nullable(),
+  customsUnionStatusConfirmed: z.boolean().nullable(),
+  northernIrelandV5cConfirmed: z.boolean().nullable(),
+  relocationDates: z.object({
+    previousResidenceFrom: nullableDate,
+    spanishResidenceFrom: nullableDate,
+    ownershipFrom: nullableDate,
+    useFrom: nullableDate,
+  }),
+  firstEntryIntoSpainDate: nullableDate,
+  firstEntryIntoEuDate: nullableDate,
+  relocationNormalTaxationConfirmed: z.boolean().nullable(),
+  relocationRegistrationDeadlineConfirmed: z.boolean().nullable(),
+  relocationNonTransferAcknowledged: z.boolean(),
+  fiscalHorsepower: nullableNumber,
+  ivtmDate: nullableDate,
+  municipalBenefitKind: z.enum(['none', 'exemption', 'discount', 'unknown']),
+  ivtmStatus: z.enum(['pending', 'requested', 'paid', 'exempt-or-discounted', 'municipal-review']),
+  specialCircumstances: z.array(z.enum([
+    'motorhome', 'historical', 'relocation', 'inheritance', 'donation', 'diplomatic',
+    'taxi-rental-driving-school', 'large-family', 'disability', 'canary-ceuta-melilla',
+    'previously-registered-spain', 'rehabilitation', 'temporary-import',
+    'incomplete-ownership', 'complex-reform',
+  ])),
+  vehicle: VehicleSchema,
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  deletedAt: z.string().datetime().nullable(),
+});
+
+export function parseRegistrationCase(input: unknown): RegistrationCase {
+  return RegistrationCaseSchema.parse(input) as RegistrationCase;
+}
+
+export const CaseDraftSchema = RegistrationCaseSchema.partial({
+  id: true,
+  userId: true,
+  title: true,
+  createdAt: true,
+  updatedAt: true,
+  deletedAt: true,
+}).extend({
+  vehicle: VehicleSchema.partial({ brand: true, model: true, vin: true }),
+});

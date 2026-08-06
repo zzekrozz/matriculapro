@@ -1,0 +1,12 @@
+{
+  "status": "database-seed-generated-not-applied",
+  "note": "No se ha escrito en ninguna base de datos. El SQL es transaccional, idempotente y verifica conteos antes de confirmar.",
+  "catalogVersionId": "hac-1501-2025-annex-i-2026",
+  "identifiedModelRows": 70886,
+  "genericValueBandRows": 45,
+  "totalRows": 70931,
+  "normalizedSha256": "06f05bd480da16fbc0b2e32027bab6fe661ab4ed0052a4842ae3fd2948e9a038",
+  "seedSqlPath": "supabase/seed/fiscal_catalog_2026.sql",
+  "seedSqlBytes": 43078556,
+  "generationElapsedMs": 1702.176
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "incremental": false,
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": ".test-dist",
+    "rootDir": "src/domain/registration",
+    "plugins": []
+  },
+  "include": ["src/domain/registration/**/*.ts"],
+  "exclude": ["node_modules"]
+}

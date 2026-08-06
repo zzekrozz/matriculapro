@@ -5,14 +5,15 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, X, Lock, Sparkles, AlertTriangle, ScrollText } from 'lucide-react';
 import { TechnicalCard3D } from '@/components/modules/ficha/TechnicalCard3D';
-import { DEMO_VEHICLE, DEMO_ACTIVE_FIELDS } from '@/data/demo-vehicle';
+import { PRACTICE_VEHICLE, PRACTICE_ACTIVE_FIELDS } from '@/data/technical-card';
 import { ModuleGate } from '@/components/access/ModuleGate';
 
 export default function FichaTecnicaPage() {
   return (
     <ModuleGate
+      requiredCapability="use_advanced_simulators"
       moduleId="ficha"
-      requiresFounder
+      requiredTier="particular"
       moduleName="Ficha técnica 3D"
       moduleCode="M.03"
       description="Documento técnico vivo con tilt, glow, flip y campos clicables. Aprende a leer una ficha europea sin memorizar los códigos."
@@ -25,8 +26,8 @@ export default function FichaTecnicaPage() {
 
 function FichaContent() {
   const [selectedField, setSelectedField] = useState<string | null>(null);
-  const selectedData = selectedField ? DEMO_VEHICLE.fields[selectedField] : null;
-  const isLocked = selectedField ? !(DEMO_ACTIVE_FIELDS as readonly string[]).includes(selectedField) : false;
+  const selectedData = selectedField ? PRACTICE_VEHICLE.fields[selectedField] : null;
+  const isLocked = selectedField ? !(PRACTICE_ACTIVE_FIELDS as readonly string[]).includes(selectedField) : false;
 
   return (
     <div className="min-h-screen bg-bg">
@@ -53,7 +54,8 @@ function FichaContent() {
 
         <div className="rounded-[20px] p-6 lg:p-10 bg-surface border border-line shadow-soft-md">
           <TechnicalCard3D
-            vehicle={DEMO_VEHICLE}
+            mode="practice"
+            vehicle={PRACTICE_VEHICLE}
             selectedField={selectedField}
             onFieldClick={setSelectedField}
           />
@@ -78,7 +80,7 @@ function FichaContent() {
                 <p className="text-[12.5px] leading-relaxed text-ink-soft">{selectedData.hint}</p>
                 {isLocked && (
                   <div className="mt-2.5 flex items-center gap-1.5 text-[10.5px] text-accent-deep">
-                    <Lock size={10} /> Este campo está bloqueado en la demo del simulador.
+                    <Lock size={10} /> Este campo está bloqueado en esta práctica guiada.
                   </div>
                 )}
                 <div className="mt-3 pt-3 border-t border-line flex items-baseline gap-2">

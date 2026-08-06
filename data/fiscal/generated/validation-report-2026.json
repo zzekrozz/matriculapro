@@ -1,0 +1,88 @@
+{
+  "status": "valid",
+  "catalogVersionId": "hac-1501-2025-annex-i-2026",
+  "counts": {
+    "importedRows": 70931,
+    "identifiedModelRows": 70886,
+    "genericValueBandRows": 45,
+    "rejectedRows": 0,
+    "duplicateGroups": 34,
+    "duplicateRows": 68,
+    "brands": 186,
+    "models": 62294,
+    "uniqueIds": 70931,
+    "uniqueOfficialReferences": 70931,
+    "verificationSamples": 10
+  },
+  "hashes": {
+    "sourceXmlSha256": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26",
+    "normalizedSha256": "06f05bd480da16fbc0b2e32027bab6fe661ab4ed0052a4842ae3fd2948e9a038"
+  },
+  "bytes": {
+    "catalogJsonl": 72238072,
+    "catalogGzip": 7486142,
+    "genericBandsJsonl": 37705,
+    "genericBandsGzip": 4685
+  },
+  "localInMemorySearchBenchmark": {
+    "note": "Mide el filtro del recurso ya cargado; producción usa índices/RPC de PostgreSQL. No incluye red ni cold start.",
+    "measurements": [
+      {
+        "query": "audi a3",
+        "elapsedMs": 12.077,
+        "resultCount": 1398
+      },
+      {
+        "query": "bmw 320 d",
+        "elapsedMs": 10.388,
+        "resultCount": 211
+      },
+      {
+        "query": "mercedes clase c",
+        "elapsedMs": 10.149,
+        "resultCount": 3
+      },
+      {
+        "query": "volkswagen golf",
+        "elapsedMs": 10.661,
+        "resultCount": 791
+      },
+      {
+        "query": "toyota hybrid",
+        "elapsedMs": 11.385,
+        "resultCount": 119
+      },
+      {
+        "query": "renault e tech",
+        "elapsedMs": 10.63,
+        "resultCount": 261
+      },
+      {
+        "query": "porsche 911",
+        "elapsedMs": 9.673,
+        "resultCount": 88
+      },
+      {
+        "query": "peugeot 3008",
+        "elapsedMs": 9.767,
+        "resultCount": 187
+      },
+      {
+        "query": "tesla model 3",
+        "elapsedMs": 10.817,
+        "resultCount": 34
+      },
+      {
+        "query": "abarth 500 elc",
+        "elapsedMs": 10.512,
+        "resultCount": 6
+      }
+    ],
+    "averageMs": 10.606,
+    "p95Ms": 12.077,
+    "maxMs": 12.077
+  },
+  "validationElapsedMs": 1721.472,
+  "warnings": [],
+  "errors": []
+}

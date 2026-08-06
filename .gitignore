@@ -1,0 +1,26 @@
+# dependencies
+/node_modules/
+
+# Next.js build output
+/.next/
+/out/
+
+# local environment files
+.env
+.env.local
+.env.*.local
+
+# tests and tooling
+/coverage/
+/.test-dist/
+*.tsbuildinfo
+
+# operating system and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# local Supabase tooling
+/supabase/.branches/
+/supabase/.temp/

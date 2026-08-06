@@ -1,11 +1,13 @@
 'use client';
 
-import { Lock, Crown, ChevronRight, Sparkles, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
+import { ChevronRight, Lock, type LucideIcon } from 'lucide-react';
+import type { AccessCapability, PaidAccessTier } from '@/domain/access';
 import { useAccess } from '@/providers/AccessProvider';
 
 interface ModuleGateProps {
-  requiresFounder?: boolean;
+  requiredTier?: PaidAccessTier;
+  requiredCapability: AccessCapability;
   moduleId?: string;
   moduleName: string;
   moduleCode: string;
@@ -14,101 +16,30 @@ interface ModuleGateProps {
   children: React.ReactNode;
 }
 
-export function ModuleGate({
-  requiresFounder = true,
-  moduleId,
-  moduleName,
-  moduleCode,
-  description,
-  icon: Icon,
-  children,
-}: ModuleGateProps) {
-  const { isFounder, canAccessModule, hydrated } = useAccess();
-
-  if (!hydrated) return <>{children}</>;
-  if (!requiresFounder || isFounder) return <>{children}</>;
-  if (moduleId && canAccessModule(moduleId)) return <>{children}</>;
-
-  return (
-    <div className="min-h-screen bg-bg">
-      <div className="px-4 sm:px-5 lg:px-8 pt-6 pb-12 max-w-[1100px] mx-auto">
-        <Link href="/app/dashboard" className="mb-5 inline-flex items-center gap-2 text-[12.5px] text-muted hover:text-ink">
-          ← Volver al centro de control
-        </Link>
-
-        <div className="rounded-[24px] overflow-hidden bg-surface border border-line shadow-soft-md">
-          <div className="p-5 sm:p-7 lg:p-10 border-b border-line text-center relative">
-            <div className="absolute -top-32 -right-20 w-[400px] h-[400px] rounded-full opacity-15 blur-3xl bg-accent pointer-events-none" />
-            <div className="relative">
-              <div className="relative w-20 h-20 mx-auto mb-5">
-                <div className="w-20 h-20 rounded-2xl flex items-center justify-center bg-ink text-white relative z-10">
-                  <Lock size={28} />
-                </div>
-                <div className="absolute inset-0 rounded-2xl bg-accent opacity-25 blur-xl -z-10" />
-                <div className="absolute -bottom-2 -right-2 w-9 h-9 rounded-xl flex items-center justify-center bg-accent text-ink shadow-soft-md z-20">
-                  <Icon size={14} />
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 mb-2">
-                <span className="text-[10.5px] font-mono tracking-wider text-muted">{moduleCode}</span>
-                <span className="inline-flex items-center gap-1 text-[9.5px] tracking-[0.04em] uppercase px-1.5 py-0.5 rounded font-semibold bg-accent-soft text-accent-deep">
-                  <Crown size={9} /> Disponible en Founder Alpha
-                </span>
-              </div>
-
-              <h1 className="font-serif text-ink leading-[1.05] tracking-tight mb-3" style={{ fontSize: 'clamp(24px, 3.2vw, 36px)' }}>
-                {moduleName}
-              </h1>
-
-              <p className="text-[14px] leading-relaxed text-ink-soft max-w-[480px] mx-auto mb-6">
-                {description}
-              </p>
-
-              <p className="text-[12.5px] text-ink-soft mb-5 max-w-[470px] mx-auto">
-                Este módulo forma parte del acceso Founder. Compra el acceso o inicia sesión si ya tienes cuenta.
-              </p>
-
-              <div className="flex items-center justify-center gap-2 flex-wrap mb-2">
-                <Link
-                  href="/#precios"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-[13.5px] font-medium transition-transform hover:scale-[1.02] bg-ink text-white shadow-soft-md"
-                >
-                  <Crown size={14} className="text-accent" /> Ver precios Founder
-                </Link>
-                <Link
-                  href="/auth/login"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-[13px] bg-bg-deep text-ink-soft hover:bg-line transition-colors"
-                >
-                  Iniciar sesión <ChevronRight size={13} />
-                </Link>
-              </div>
-              <p className="text-[10.5px] text-muted">Precio Alpha · acceso temprano con futuras actualizaciones</p>
-            </div>
-          </div>
-
-          <div className="p-5 sm:p-7 lg:p-10">
-            <div className="flex items-center gap-1.5 mb-3 text-[10px] tracking-[0.22em] uppercase text-accent-deep">
-              <Sparkles size={11} /> Con acceso Founder desbloqueas
-            </div>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {[
-                'Simulador 576 con corrección campo a campo',
-                'Ficha técnica 3D interactiva',
-                'Recorrido ITV completo (11 pasos)',
-                'Checklists pre-ITV y pre-DGT',
-                'Casos prácticos con escenarios reales',
-                'Biblioteca de documentos y plantillas',
-              ].map((b, i) => (
-                <li key={i} className="flex items-start gap-2 text-[12.5px] text-ink-soft leading-relaxed">
-                  <span className="w-1 h-1 rounded-full bg-accent shrink-0 mt-2" />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+export function ModuleGate({ requiredTier = 'particular', requiredCapability, moduleName, moduleCode, description, icon: Icon, children }: ModuleGateProps) {
+  const access = useAccess();
+  if (!access.hydrated) return <div className="min-h-screen bg-bg px-4 py-12"><div className="mx-auto max-w-[900px] rounded-2xl border border-line bg-surface p-6 text-[12px] text-muted" aria-busy="true">Comprobando la licencia…</div></div>;
+  const capabilityAllowed: Record<AccessCapability, boolean> = {
+    use_free_checker: access.canUseFreeChecker,
+    view_historical_paid_data: access.canViewHistoricalPaidData,
+    create_full_cases: access.canCreateFullCases,
+    edit_full_cases: access.canEditFullCases,
+    run_fiscal_calculations: access.canRunFiscalCalculations,
+    use_advanced_simulators: access.canUseAdvancedSimulators,
+    generate_reports: access.canGenerateReports,
+    export_data: access.canExport,
+    use_professional_tools: access.canUseProfessionalTools,
+    view_paid_cases: access.canViewHistoricalPaidData,
+    create_paid_cases: access.canCreateFullCases,
+    edit_paid_cases: access.canEditFullCases,
+    recalculate_paid_cases: access.canRunFiscalCalculations,
+    use_fiscal_catalog: access.canRunFiscalCalculations,
+  };
+  const tierAllowed = requiredTier === 'professional' ? access.tier === 'professional' : true;
+  const allowed = tierAllowed && capabilityAllowed[requiredCapability];
+  if (allowed) return <>{children}</>;
+  const accessMessage = access.readOnly
+    ? 'Tu licencia ha vencido. Los expedientes anteriores siguen disponibles en modo lectura, pero esta herramienta interactiva requiere renovar.'
+    : 'El comprobador gratuito sigue disponible. Para esta función necesitas una licencia de pago activa; el servidor comprueba el plan antes de guardar o calcular.';
+  return <div className="min-h-screen bg-bg px-4 py-10"><section className="mx-auto max-w-[760px] rounded-[24px] border border-line bg-surface p-6 text-center shadow-soft-md sm:p-10"><span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-ink text-white"><Lock size={24} /></span><div className="mt-5 text-[9.5px] font-mono uppercase tracking-[.16em] text-muted">{moduleCode} · Plan {requiredTier === 'professional' ? 'Profesional' : 'Particular o Profesional'}</div><h1 className="mt-2 font-serif text-[32px] text-ink">{moduleName}</h1><p className="mx-auto mt-3 max-w-xl text-[13px] leading-relaxed text-ink-soft">{description}</p><p className="mx-auto mt-4 max-w-xl text-[11px] leading-relaxed text-muted">{accessMessage}</p><div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row"><Link href="/#precios" className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 text-[12.5px] font-medium text-white"><Icon size={14} /> Ver licencias</Link><Link href={access.readOnly ? '/app/expedientes' : '/app/comprobar'} className="inline-flex items-center justify-center gap-1 rounded-full bg-bg-deep px-6 py-3 text-[12px] text-ink">{access.readOnly ? 'Ver expedientes anteriores' : 'Ir a la comprobación gratuita'} <ChevronRight size={12} /></Link></div></section></div>;
 }

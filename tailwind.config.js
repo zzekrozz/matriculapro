@@ -27,9 +27,9 @@ module.exports = {
         'danger-soft': '#F7DCD4',
       },
       fontFamily: {
-        serif: ['"Instrument Serif"', 'serif'],
-        sans: ['"Geist"', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'monospace'],
+        serif: ['Georgia', 'Cambria', '"Times New Roman"', 'serif'],
+        sans: ['system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
+        mono: ['ui-monospace', '"Cascadia Code"', 'Consolas', 'monospace'],
       },
       boxShadow: {
         'soft-sm': '0 1px 2px rgba(11, 31, 58, 0.04)',

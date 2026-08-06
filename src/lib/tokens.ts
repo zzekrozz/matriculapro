@@ -33,9 +33,9 @@ export const tokens = {
     card3d: '0 30px 60px -20px rgba(11, 31, 58, 0.35), 0 8px 20px -10px rgba(11, 31, 58, 0.18)',
   },
   font: {
-    serif: '"Instrument Serif", serif',
-    sans: '"Geist", system-ui, sans-serif',
-    mono: '"JetBrains Mono", monospace',
+    serif: 'Georgia, Cambria, "Times New Roman", serif',
+    sans: 'system-ui, -apple-system, "Segoe UI", sans-serif',
+    mono: 'ui-monospace, "Cascadia Code", Consolas, monospace',
   },
 } as const;
 

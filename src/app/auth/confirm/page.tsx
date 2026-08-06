@@ -1,96 +1,60 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
-import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
-import { createSupabaseBrowserClient } from '@/lib/supabase/browser';
+import { AlertTriangle } from 'lucide-react';
+import { AuthPageFrame } from '@/components/auth/AuthPageFrame';
+import { safeInternalPath } from '@/lib/auth/redirect';
 
-function ConfirmContent() {
-  const [status, setStatus] = useState<'loading' | 'ok' | 'error'>('loading');
-  const searchParams = useSearchParams();
-  const hasError = searchParams.get('error');
+export const metadata: Metadata = {
+  title: 'Confirmación de cuenta',
+  robots: { index: false, follow: false, nocache: true },
+};
 
-  useEffect(() => {
-    if (hasError) {
-      setStatus('error');
-      return;
-    }
+const explanations = {
+  expired: 'El enlace ha caducado. Solicita un nuevo envío para continuar.',
+  invalid: 'El enlace no es válido o ya fue utilizado. Si ya confirmaste la cuenta, puedes iniciar sesión.',
+  provider: 'El proveedor de autenticación no ha podido completar la confirmación. Inténtalo de nuevo más tarde.',
+} as const;
 
-    // Si llegamos aquí sin error, puede ser que:
-    // a) El callback route ya procesó el code y redirigió (caso normal)
-    // b) Llegamos con token_hash (flujo email OTP antiguo)
-    // En cualquier caso comprobamos si ya hay sesión activa
-    const supabase = createSupabaseBrowserClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setStatus('ok');
-        setTimeout(() => { window.location.href = '/app/dashboard'; }, 2000);
-      } else {
-        setStatus('error');
-      }
-    });
-  }, [hasError]);
+type ConfirmationStatus = keyof typeof explanations;
+
+export default async function ConfirmPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string; next?: string; flow?: string }>;
+}) {
+  const params = await searchParams;
+  const status: ConfirmationStatus = params.status === 'expired' || params.status === 'provider'
+    ? params.status
+    : 'invalid';
+  const next = safeInternalPath(params.next);
+  const nextQuery = encodeURIComponent(next);
+  const recovery = params.flow === 'recovery';
 
   return (
-    <div className="w-full max-w-[400px] text-center">
-      <Link href="/" className="inline-flex items-baseline gap-1.5 mb-8">
-        <span className="text-[9.5px] tracking-[0.22em] uppercase text-muted">Ivan Imports ·</span>
-        <span className="font-serif italic text-2xl text-ink">Matricula</span>
-        <span className="text-[11px] font-semibold text-accent">PRO</span>
-      </Link>
-
-      {status === 'loading' && (
-        <div className="rounded-[20px] p-8 bg-surface border border-line shadow-soft-md">
-          <Loader2 size={32} className="animate-spin text-accent mx-auto mb-3" />
-          <p className="text-[14px] text-ink-soft">Verificando tu cuenta…</p>
-        </div>
-      )}
-
-      {status === 'ok' && (
-        <div className="rounded-[20px] p-8 bg-surface border border-ok shadow-soft-md">
-          <CheckCircle2 size={36} className="text-ok mx-auto mb-3" />
-          <h1 className="font-serif text-[24px] text-ink mb-2">¡Cuenta confirmada!</h1>
-          <p className="text-[13px] text-ink-soft">
-            Redirigiendo al dashboard en un momento…
-          </p>
-        </div>
-      )}
-
-      {status === 'error' && (
-        <div className="rounded-[20px] p-8 bg-surface border border-line shadow-soft-md">
-          <XCircle size={36} className="text-danger mx-auto mb-3" />
-          <h1 className="font-serif text-[24px] text-ink mb-2">El enlace no es válido</h1>
-          <p className="text-[13px] text-ink-soft mb-5">
-            El enlace puede haber caducado o ya se usó. Puedes iniciar sesión directamente si ya confirmaste tu cuenta.
-          </p>
-          <div className="flex flex-col gap-2">
-            <Link href="/auth/login"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-[13px] font-medium bg-ink text-white hover:scale-[1.01] transition-transform">
-              Iniciar sesión
-            </Link>
-            <Link href="/auth/register"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-[13px] bg-bg-deep text-ink-soft hover:bg-line transition-colors">
-              Crear cuenta nueva
-            </Link>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function ConfirmPage() {
-  return (
-    <div className="min-h-screen bg-bg flex items-center justify-center p-4">
-      <Suspense fallback={
-        <div className="rounded-[20px] p-8 bg-surface border border-line">
-          <Loader2 size={28} className="animate-spin text-accent mx-auto" />
-        </div>
-      }>
-        <ConfirmContent />
-      </Suspense>
-    </div>
+    <AuthPageFrame
+      title={recovery ? 'No se ha podido validar la recuperación' : 'No se ha podido confirmar la cuenta'}
+      description={explanations[status]}
+    >
+      <div role="alert" className="rounded-2xl border border-accent/25 bg-accent-soft p-4">
+        <AlertTriangle className="text-accent-deep" size={24} aria-hidden="true" />
+        <p className="mt-2 text-[12px] leading-relaxed text-ink-soft">
+          Por seguridad no mostramos detalles internos del enlace. Un enlace válido conserva el destino que habías elegido.
+        </p>
+      </div>
+      <div className="mt-5 grid gap-2 sm:grid-cols-2">
+        <Link
+          href={`/entrar?next=${nextQuery}`}
+          className="inline-flex min-h-11 items-center justify-center rounded-full bg-ink px-4 text-[12px] font-medium text-white"
+        >
+          Iniciar sesión
+        </Link>
+        <Link
+          href={recovery ? '/recuperar-contrasena' : `/registro?next=${nextQuery}`}
+          className="inline-flex min-h-11 items-center justify-center rounded-full border border-line px-4 text-[12px] font-medium text-ink"
+        >
+          {recovery ? 'Solicitar otro enlace' : 'Volver al registro'}
+        </Link>
+      </div>
+    </AuthPageFrame>
   );
 }

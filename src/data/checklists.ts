@@ -1,180 +1,163 @@
 export interface ChecklistItem {
   id: string;
   label: string;
-  /** Detalle opcional que se muestra al expandir */
   detail?: string;
-  /** Sección a la que pertenece */
   section: string;
-  /** Si es crítico, se marca con borde rojo */
   critical?: boolean;
 }
 
 export interface ChecklistDef {
   code: string;
-  storageKey: string;       // p.ej. 'antes-comprar' (se usará 'mpro:checklist:antes-comprar')
+  storageKey: string;
   title: string;
-  titleAccent: string;      // palabra en italic ámbar dentro del título
+  titleAccent: string;
   subtitle: string;
   intro: string;
   sections: { id: string; title: string; description?: string }[];
   items: ChecklistItem[];
-  /** Tips finales */
   tips: string[];
-  /** Aviso especial al pie */
   warning?: string;
-  /** Link al siguiente paso de la ruta */
   nextStep?: { href: string; label: string };
 }
 
-/* ============================================================
-   M.04 · Antes de comprar
-   ============================================================ */
 export const CHECKLIST_ANTES_COMPRAR: ChecklistDef = {
   code: 'M.04',
   storageKey: 'antes-comprar',
   title: 'Antes de comprar',
   titleAccent: 'comprar',
-  subtitle: 'Lo que tienes que verificar ANTES de pagar un solo euro.',
-  intro: 'Esta lista evita las sorpresas más caras del proceso de matriculación. Si algún punto no se cumple, mejor parar que avanzar.',
+  subtitle: 'Clasifica el expediente antes de comprometer dinero.',
+  intro: 'Marca un punto solo cuando tengas una prueba verificable. “No aplica” también es una respuesta válida si has documentado por qué. Una duda de homologación, titularidad o fiscalidad debe resolverse antes de pagar.',
   sections: [
-    { id: 'doc',  title: 'Documentación del coche', description: 'Lo que el vendedor debe enseñarte antes de cerrar la operación.' },
-    { id: 'tec',  title: 'Verificación técnica', description: 'Comprobaciones físicas en el coche.' },
-    { id: 'leg',  title: 'Verificación legal', description: 'Comprobaciones administrativas.' },
-    { id: 'fis',  title: 'Aspectos fiscales', description: 'Lo que cambia el coste real de la operación.' },
+    { id: 'case', title: 'Clasificación del caso', description: 'Los datos que abren o cierran cada rama.' },
+    { id: 'acq', title: 'Adquisición y origen', description: 'Quién vende, qué entrega y cómo se acredita.' },
+    { id: 'tech', title: 'Viabilidad técnica', description: 'Homologación, categoría y reformas.' },
+    { id: 'tax', title: 'Fiscalidad y coste', description: 'IVA, ITP, aduanas e IEDMT se analizan por separado.' },
   ],
   items: [
-    { id: 'coc-disp',    section: 'doc', label: 'El vendedor tiene el COC del coche, o sabe cómo conseguirlo', critical: true, detail: 'Sin COC ni posibilidad de ficha reducida, no hay matriculación. Verifica esto antes de seguir.' },
-    { id: 'permiso',     section: 'doc', label: 'Permiso de circulación original del país de origen' },
-    { id: 'factura',     section: 'doc', label: 'Factura o contrato de compraventa con datos completos del vendedor' },
-    { id: 'itv-origen',  section: 'doc', label: 'ITV (o equivalente) del país de origen, vigente' },
-    { id: 'historico',   section: 'doc', label: 'Historial del coche revisado (kilometraje, accidentes, embargos)' },
+    { id: 'origin', section: 'case', label: 'País de procedencia, país de matriculación y ubicación actual confirmados', critical: true, detail: '“Comprado en Europa” no basta. Una operación con Reino Unido o un vehículo originario de un tercer país puede exigir revisión aduanera.' },
+    { id: 'seller', section: 'case', label: 'Vendedor clasificado: particular, empresa no profesional o profesional del automóvil', critical: true },
+    { id: 'age-mileage', section: 'case', label: 'Fecha exacta de primera puesta en servicio, fecha de entrega y kilometraje acreditados', critical: true, detail: 'Para IVA intracomunitario es nuevo si se entrega antes de seis meses o si no ha recorrido más de 6.000 km. Verifica ambos datos; no redondees un caso en el límite.' },
+    { id: 'category', section: 'case', label: 'Categoría y configuración contrastadas (por ejemplo M1 o N1)', detail: 'Un N1 no debe tratarse automáticamente como turismo ni como no sujeto al impuesto de matriculación.' },
 
-    { id: 'vin-coincide', section: 'tec', label: 'VIN del coche y VIN del COC coinciden, carácter por carácter', critical: true, detail: 'Compruébalo letra por letra. Una sola diferencia significa que algo no cuadra.' },
-    { id: 'vin-todos',    section: 'tec', label: 'VIN coincide también con factura y permiso de circulación' },
-    { id: 'cuentakm',     section: 'tec', label: 'Cuentakilómetros coherente con el historial' },
-    { id: 'reformas',     section: 'tec', label: 'No hay modificaciones aftermarket sin documentar', detail: 'Escape no original, suspensión rebajada, kits estéticos extremos: cada uno necesita su homologación.' },
+    { id: 'foreign-docs', section: 'acq', label: 'Permiso y documento técnico extranjeros originales identificados', critical: true },
+    { id: 'ownership', section: 'acq', label: 'El vendedor acredita titularidad o poder suficiente para vender', critical: true },
+    { id: 'purchase-proof', section: 'acq', label: 'Borrador de contrato o factura con partes, VIN, precio, fecha y régimen fiscal coherentes', critical: true, detail: 'Contrato para venta entre particulares; factura completa cuando vende una empresa o profesional.' },
+    { id: 'translation', section: 'acq', label: 'Necesidad de traducción o de documentos de baja/exportación confirmada' },
+    { id: 'history', section: 'acq', label: 'Kilometraje, daños, cargas y limitaciones revisados en fuentes disponibles', detail: 'La comprobación posible depende del país; no existe una consulta universal de multas o cargas extranjeras.' },
 
-    { id: 'titular',  section: 'leg', label: 'El vendedor es el titular del coche o tiene poder para venderlo', critical: true },
-    { id: 'cargas',   section: 'leg', label: 'Comprobado que el coche no tiene cargas, embargos o reservas de dominio' },
-    { id: 'multas',   section: 'leg', label: 'Sin multas pendientes asociadas al vehículo' },
-    { id: 'identidad',section: 'leg', label: 'DNI del comprador en regla y a su nombre' },
+    { id: 'vin', section: 'tech', label: 'VIN físico legible y coincidente en todos los documentos', critical: true },
+    { id: 'approval', section: 'tech', label: 'Campo K, contraseña y vía de homologación identificados por una fuente competente', critical: true, detail: 'Distingue homologación UE, homologación individual/serie corta extranjera y ausencia de homologación UE.' },
+    { id: 'coc-route', section: 'tech', label: 'COC disponible o alternativa técnica confirmada por la ITV', critical: true, detail: 'No todos los expedientes necesitan COC y una ficha reducida no arregla por sí sola la ausencia de homologación. Confirma antes de encargarla.' },
+    { id: 'reforms', section: 'tech', label: 'Reformas, accesorios y diferencias respecto a homologación inventariados', critical: true, detail: 'Una reforma puede exigir informe de conformidad, certificado de taller, proyecto u otra regularización; no toda pieza aftermarket se tramita igual.' },
 
-    { id: 'iva',     section: 'fis', label: 'Régimen fiscal del IVA aclarado (vehículo nuevo vs usado)', detail: 'En UE, vehículo < 6 meses o < 6.000 km es "nuevo" fiscalmente: IVA en destino.' },
-    { id: 'tasas',   section: 'fis', label: 'Estimación de costes totales hecha (vehículo + impuestos + tasas + transporte)' },
-    { id: 'gestor',  section: 'fis', label: 'Decidido si vas a hacer todo solo o con gestoría/acompañamiento' },
+    { id: 'vat', section: 'tax', label: 'Tratamiento de IVA documentado cuando la operación es intracomunitaria', critical: true, detail: 'Si se cumple cualquiera de los criterios fiscales de medio de transporte nuevo, revisa el IVA en España. En facturas de usados confirma también el régimen aplicado por el vendedor.' },
+    { id: 'itp', section: 'tax', label: 'ITP revisado cuando la adquisición es a un particular', detail: 'La obligación y el justificante se confirman con la administración tributaria competente.' },
+    { id: 'customs', section: 'tax', label: 'Importación, IVA de importación y aranceles revisados si procede de un tercer país', detail: 'Incluye operaciones vinculadas con Reino Unido cuando, por fecha y circunstancias, no sean intracomunitarias.' },
+    { id: 'iedmt', section: 'tax', label: 'Posible sujeción, exención o no sujeción al IEDMT revisada sin asumir un modelo', detail: 'La salida puede ser 576, 06, 05 u otra acreditación según el supuesto.' },
+    { id: 'budget', section: 'tax', label: 'Presupuesto con impuestos, transporte, ITV, vía técnica, reformas, tasa, IVTM y contingencia' },
   ],
   tips: [
-    'Si el vendedor tiene prisa por cerrar la operación, eso es señal de revisar el doble — no de acelerar.',
-    'Mejor renunciar a un coche que te encaja por dudas documentales que comprometerte y tener problemas después.',
-    'El coste de un asesor o gestoría es muy inferior al de un error en esta fase.',
+    'Pide documentación completa y legible, no capturas recortadas de los datos que interesan al vendedor.',
+    'Formula a la ITV una pregunta concreta con VIN, categoría, contraseña de homologación y reformas.',
+    'Si una factura no deja claro el régimen de IVA, pide que se corrija antes del pago.',
   ],
-  warning: 'Esta lista cubre los puntos más comunes pero no es exhaustiva. Cada coche tiene sus particularidades.',
-  nextStep: { href: '/app/ruta', label: 'Continúa con la Ruta de matriculación' },
+  warning: 'Esta checklist organiza la decisión de compra; no certifica matriculabilidad ni determina impuestos. Los casos de terceros países, N1, reformas, homologación individual o documentos incompletos requieren confirmación competente.',
+  nextStep: { href: '/app/ruta', label: 'Continuar con la ruta condicional' },
 };
 
-/* ============================================================
-   M.05 · Pre-ITV
-   ============================================================ */
 export const CHECKLIST_PRE_ITV: ChecklistDef = {
   code: 'M.05',
   storageKey: 'pre-itv',
   title: 'Antes de la ITV',
   titleAccent: 'ITV',
-  subtitle: 'Lleva el coche y el expediente listos para que no te marquen defectos evitables.',
-  intro: 'La mayoría de los defectos que sacan en una ITV de matriculación se podrían haber detectado en casa. Repasa esta lista antes de ir.',
+  subtitle: 'Alinea vehículo, documentos y vía técnica antes de la inspección.',
+  intro: 'La inspección de documentación/matriculación no es una ITV periódica ordinaria. Confirma con la estación el trámite y los originales para tu caso, y después revisa el vehículo en la configuración que se pretende documentar.',
   sections: [
-    { id: 'cita',  title: 'Cita y documentación', description: 'Antes de salir de casa.' },
-    { id: 'luces', title: 'Luces', description: 'Lo que más se olvida y más fácil de revisar.' },
-    { id: 'inter', title: 'Interior y elementos de seguridad' },
-    { id: 'rued',  title: 'Ruedas y exterior' },
-    { id: 'motor', title: 'Motor y emisiones' },
+    { id: 'appointment', title: 'Trámite y expediente', description: 'Confirmación previa con la estación.' },
+    { id: 'identity', title: 'Identidad y configuración', description: 'Lo que debe coincidir con la documentación.' },
+    { id: 'safety', title: 'Seguridad y visibilidad' },
+    { id: 'running', title: 'Frenos, ruedas, motor y emisiones' },
   ],
   items: [
-    { id: 'cita-mat',  section: 'cita', label: 'Cita pedida específicamente como "ITV de matriculación" (no periódica)', critical: true },
-    { id: 'exped',     section: 'cita', label: 'Expediente completo en una carpeta: COC, permiso origen, factura, DNI' },
-    { id: 'llaves',    section: 'cita', label: 'Llaves y mando del coche (todos los disponibles)' },
+    { id: 'type', section: 'appointment', label: 'Tipo de inspección para documentación/matriculación confirmado con la estación', critical: true },
+    { id: 'foreign-permit', section: 'appointment', label: 'Permiso de circulación extranjero original preparado', critical: true },
+    { id: 'foreign-tech', section: 'appointment', label: 'Documento técnico o de inspección extranjero equivalente, cuando exista, preparado', critical: true },
+    { id: 'technical-route', section: 'appointment', label: 'COC, ficha reducida, equivalencia o resolución técnica aplicable confirmada', critical: true, detail: 'Lleva la opción que corresponda; no todas son acumulativas ni intercambiables.' },
+    { id: 'purchase-and-id', section: 'appointment', label: 'Identidad, prueba de adquisición y documentos adicionales solicitados por la estación preparados' },
+    { id: 'reform-pack', section: 'appointment', label: 'Documentación de reformas completa cuando exista alguna', critical: true, detail: 'Puede incluir informe de conformidad, certificado de taller, proyecto u otros documentos según la reforma.' },
 
-    { id: 'cruce',     section: 'luces', label: 'Luces de cruce funcionan en ambos lados, parejas en intensidad' },
-    { id: 'largas',    section: 'luces', label: 'Luces largas se notan claramente más potentes que el cruce' },
-    { id: 'posicion',  section: 'luces', label: 'Luces de posición delanteras y traseras' },
-    { id: 'intermit',  section: 'luces', label: 'Intermitentes delante, detrás y laterales' },
-    { id: 'freno',     section: 'luces', label: 'Luz de freno se enciende a la vez en ambos pilotos' },
-    { id: 'matricula', section: 'luces', label: 'Luz de matrícula trasera funciona', detail: 'Es la luz que más se olvida. Pide a alguien que mire mientras tú enciendes las luces.' },
-    { id: 'marcha-at', section: 'luces', label: 'Luz de marcha atrás funciona' },
-    { id: 'antinieb',  section: 'luces', label: 'Antiniebla delantero y trasero' },
+    { id: 'vin', section: 'identity', label: 'VIN limpio, legible y coincidente con todos los documentos', critical: true },
+    { id: 'plates-labels', section: 'identity', label: 'Placas del fabricante y etiquetas reglamentarias legibles' },
+    { id: 'configuration', section: 'identity', label: 'Asientos, carrocería, masas, neumáticos y demás configuración coinciden con la vía técnica', critical: true },
+    { id: 'changes', section: 'identity', label: 'No hay cambios sin declarar en iluminación, suspensión, ruedas, escape, enganche o carrocería' },
 
-    { id: 'cinturones', section: 'inter', label: 'Cinturones sin cortes, abrochan y retraen bien (todos)' },
-    { id: 'claxon',     section: 'inter', label: 'Claxon suena claro y a la primera' },
-    { id: 'limpia',     section: 'inter', label: 'Limpiaparabrisas funcionan y dejan limpio (escobillas en buen estado)' },
-    { id: 'testigos',   section: 'inter', label: 'Sin testigos críticos encendidos en el cuadro', critical: true, detail: 'Motor, ABS, airbag, frenos: cualquiera de estos encendido suele ser defecto grave.' },
-    { id: 'extintor',   section: 'inter', label: 'Triángulos / luz de emergencia V16 / chaleco (lo exigido)' },
+    { id: 'lights', section: 'safety', label: 'Alumbrado y señalización funcionan, son simétricos donde corresponde y están configurados para España', critical: true },
+    { id: 'belts', section: 'safety', label: 'Cinturones, anclajes, asientos y cierre de puertas funcionan correctamente' },
+    { id: 'glass', section: 'safety', label: 'Parabrisas, retrovisores, limpiaparabrisas y lavaparabrisas en buen estado' },
+    { id: 'warnings', section: 'safety', label: 'Sin testigos de avería relevantes encendidos', critical: true },
+    { id: 'horn', section: 'safety', label: 'Claxon y mandos principales funcionan' },
 
-    { id: 'neum-medida', section: 'rued', label: 'Cuatro neumáticos con dibujo > 1.6 mm', critical: true },
-    { id: 'neum-eje',    section: 'rued', label: 'Mismas medidas en cada eje (puede ser distintas entre ejes)' },
-    { id: 'neum-danos',  section: 'rued', label: 'Sin cortes, bultos ni deformaciones visibles' },
-    { id: 'matricula-fi','section': 'rued', label: 'Matrícula provisional/del país de origen visible y legible' },
-    { id: 'carroceria',  section: 'rued', label: 'Sin abolladuras o roturas que afecten a la seguridad' },
-
-    { id: 'motor-calien', section: 'motor', label: 'Coche bien caliente al llegar (mejor circular 15 min antes)', detail: 'Para los gases. Coche frío puede dar emisiones fuera de rango aunque esté bien.' },
-    { id: 'aceite',       section: 'motor', label: 'Niveles correctos: aceite, refrigerante, líquido de frenos' },
-    { id: 'humo',         section: 'motor', label: 'Sin humo visible al acelerar' },
-    { id: 'escape',       section: 'motor', label: 'Escape sin fugas ni golpes evidentes' },
+    { id: 'tyres', section: 'running', label: 'Neumáticos sin daños, con dibujo legal y medidas/índices admitidos', critical: true },
+    { id: 'brakes-steering', section: 'running', label: 'Frenos, dirección y suspensión sin síntomas de fallo' },
+    { id: 'leaks', section: 'running', label: 'Sin fugas evidentes y con niveles de servicio correctos' },
+    { id: 'exhaust', section: 'running', label: 'Escape, control de emisiones y ruido en configuración documentada', critical: true },
+    { id: 'engine-ready', section: 'running', label: 'Motor en condiciones normales de funcionamiento para la prueba de emisiones' },
   ],
   tips: [
-    'Llega con 10 minutos de antelación. La ITV de matriculación lleva más papeleo que la periódica.',
-    'Lleva una linterna en el móvil — viene bien para revisar últimas cosas en el aparcamiento.',
-    'Si tienes dudas sobre algún punto, pregunta al inspector al llegar, no después de empezar.',
+    'Envía antes a la estación un resumen con VIN, categoría, homologación, origen y reformas y conserva su respuesta.',
+    'No desmontes ni regularices una modificación basándote solo en una checklist: confirma la solución técnica.',
+    'Al recibir la tarjeta, revisa VIN, categoría, masas, plazas, neumáticos y observaciones antes de marcharte.',
   ],
-  warning: 'Cada estación ITV puede tener matices propios. Esta lista cubre lo común; no sustituye a la inspección oficial.',
-  nextStep: { href: '/app/recorrido-itv', label: 'Repasa el Recorrido ITV interactivo' },
+  warning: 'La estación y el órgano de industria determinan la documentación y pruebas aplicables. Esta lista no anticipa un resultado favorable.',
+  nextStep: { href: '/app/recorrido-itv', label: 'Repasar el recorrido educativo ITV' },
 };
 
-/* ============================================================
-   M.07 · Pre-DGT
-   ============================================================ */
 export const CHECKLIST_PRE_DGT: ChecklistDef = {
   code: 'M.07',
   storageKey: 'pre-dgt',
-  title: 'Antes de pisar Tráfico',
+  title: 'Antes de presentar en Tráfico',
   titleAccent: 'Tráfico',
-  subtitle: 'Si falta un solo papel, te hacen volver. Revisa todo antes de salir de casa.',
-  intro: 'La DGT es el último paso. Llegar con el expediente completo es la diferencia entre salir con matrícula asignada en una visita o tener que volver dos o tres veces. Marca cada punto con calma.',
+  subtitle: 'Revisa por ramas, no con una lista universal de papeles.',
+  intro: 'Marca cada elemento como aportado solo si aplica a tu expediente. Si no aplica, conserva la razón y el justificante alternativo. Comprueba siempre la ficha vigente del trámite y el canal de presentación.',
   sections: [
-    { id: 'tec',  title: 'Documentación técnica' },
-    { id: 'fis',  title: 'Documentación fiscal' },
-    { id: 'pers', title: 'Documentación personal' },
-    { id: 'cita', title: 'Cita y logística' },
+    { id: 'identity', title: 'Solicitud e identidad' },
+    { id: 'ownership', title: 'Titularidad y procedencia' },
+    { id: 'technical', title: 'Rama técnica' },
+    { id: 'tax', title: 'Ramas fiscales y pagos' },
+    { id: 'submission', title: 'Presentación y control final' },
   ],
   items: [
-    { id: 'ficha-esp',  section: 'tec', label: 'Ficha técnica española emitida por la ITV de matriculación', critical: true },
-    { id: 'itv-fav',    section: 'tec', label: 'Informe de ITV favorable de matriculación' },
-    { id: 'coc-fr',     section: 'tec', label: 'COC original (o ficha reducida del laboratorio)' },
-    { id: 'permiso-or', section: 'tec', label: 'Permiso de circulación del país de origen' },
+    { id: 'application', section: 'identity', label: 'Solicitud y datos del titular revisados con el trámite vigente', critical: true },
+    { id: 'id', section: 'identity', label: 'Identidad vigente y acreditación adicional exigible preparada', critical: true },
+    { id: 'representation', section: 'identity', label: 'Representación acreditada si presenta otra persona', detail: 'No aplica cuando el titular actúa por sí mismo.' },
 
-    { id: 'm576-pres',  section: 'fis', label: 'Modelo 576 presentado y pagado (con sello/justificante)', critical: true },
-    { id: 'ivtm-pag',   section: 'fis', label: 'IVTM pagado en el ayuntamiento del domicilio del titular', critical: true },
-    { id: 'tasa-dgt',   section: 'fis', label: 'Tasa DGT pagada (modelo correcto)', critical: true, detail: 'Hay varias tasas DGT distintas. La de matriculación de vehículos es específica.' },
-    { id: 'iva-justif', section: 'fis', label: 'Justificante de IVA si aplica (operaciones intracomunitarias)' },
+    { id: 'purchase', section: 'ownership', label: 'Contrato o factura aplicable acredita la adquisición y coincide con titular, VIN y precio', critical: true },
+    { id: 'foreign-docs', section: 'ownership', label: 'Documentación extranjera original exigible y situación de baja/exportación revisadas', critical: true },
+    { id: 'translation-customs', section: 'ownership', label: 'Traducción y documentación aduanera aportadas cuando correspondan' },
 
-    { id: 'dni',        section: 'pers', label: 'DNI/NIE del titular en regla y vigente', critical: true },
-    { id: 'empadron',   section: 'pers', label: 'Justificante de empadronamiento (no siempre lo piden, llévalo por si)' },
-    { id: 'factura',    section: 'pers', label: 'Factura o contrato de compraventa original' },
+    { id: 'spanish-itv', section: 'technical', label: 'Tarjeta ITV española y resultado/documentación técnica exigible revisados', critical: true },
+    { id: 'technical-support', section: 'technical', label: 'COC, ficha reducida, homologación o documentos de reforma solo si el trámite los exige', detail: 'No conviertas documentos alternativos usados en ITV en anexos universales para DGT.' },
 
-    { id: 'cita-dgt',   section: 'cita', label: 'Cita previa en la Jefatura Provincial de Tráfico correspondiente', critical: true, detail: 'Sin cita no te atienden. Pídela con tiempo: hay esperas.' },
-    { id: 'copias',     section: 'cita', label: 'Tienes copias de TODO (no solo originales)' },
-    { id: 'tiempo',     section: 'cita', label: 'Llegada con 15 min de antelación a la cita' },
+    { id: 'acquisition-tax', section: 'tax', label: 'IVA, ITP o régimen de factura acreditado según vendedor y condición fiscal del vehículo', critical: true },
+    { id: 'iedmt-proof', section: 'tax', label: 'Justificante IEDMT correcto: 576, 06, 05 u otro que corresponda', critical: true, detail: 'No marques 576 por defecto; confirma sujeción, exención o no sujeción.' },
+    { id: 'ivtm', section: 'tax', label: 'Alta, pago o exención del IVTM acreditados como corresponda', critical: true },
+    { id: 'fee', section: 'tax', label: 'Tasa vigente del trámite pagada y justificante vinculable', critical: true },
+
+    { id: 'channel', section: 'submission', label: 'Canal, cita y jefatura competentes confirmados' },
+    { id: 'cross-check', section: 'submission', label: 'VIN, titular, fechas y categoría coinciden en todo el expediente', critical: true },
+    { id: 'copies', section: 'submission', label: 'Originales, copias y resguardos guardados; sistema para registrar subsanaciones preparado' },
   ],
   tips: [
-    'Si te falta un solo papel, vuelves otro día. Mejor 5 minutos extra revisando que un viaje extra a la jefatura.',
-    'Llévalo todo en una carpeta organizada por secciones. El funcionario te lo agradecerá.',
-    'Una vez asignada la matrícula, no fabricates las placas hasta tener el permiso de circulación español impreso.',
+    'Separa la carpeta en identidad, adquisición, técnica, IVA/ITP, IEDMT, IVTM y tasa.',
+    'Descarga o consulta la ficha vigente del trámite el mismo día de la revisión final.',
+    'Tras la resolución, revisa los datos del permiso y de la tarjeta ITV antes de fabricar placas.',
   ],
-  warning: 'Plazos, tasas y documentación pueden variar según jefatura. Esta lista cubre lo común; consulta antes con la jefatura concreta donde tengas cita.',
-  nextStep: { href: '/app/ruta', label: 'Vuelve a la Ruta · Paso 8' },
+  warning: 'Los requisitos, importes, canales y justificantes cambian. Esta checklist organiza el expediente, pero la DGT, AEAT, la comunidad autónoma, aduanas y el ayuntamiento determinan qué corresponde.',
+  nextStep: { href: '/app/ruta', label: 'Volver a la ruta · presentación' },
 };
 
 export const CHECKLISTS: Record<string, ChecklistDef> = {
   'antes-de-comprar': CHECKLIST_ANTES_COMPRAR,
-  'pre-itv':          CHECKLIST_PRE_ITV,
-  'pre-dgt':          CHECKLIST_PRE_DGT,
+  'pre-itv': CHECKLIST_PRE_ITV,
+  'pre-dgt': CHECKLIST_PRE_DGT,
 };

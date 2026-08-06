@@ -25,7 +25,8 @@ interface DecisionResult {
 export function CaseRunner({ practicalCase }: { practicalCase: PracticalCase }) {
   return (
     <ModuleGate
-      requiresFounder
+      requiredCapability="use_advanced_simulators"
+      requiredTier="particular"
       moduleName="Casos prácticos"
       moduleCode="M.08"
       description="5 escenarios reales para poner a prueba lo aprendido. Cada caso plantea una historia con sus documentos, decisiones y consecuencias."

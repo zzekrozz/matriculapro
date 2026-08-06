@@ -1,0 +1,376 @@
+[
+  {
+    "naturalRowHash": "adab5abd364716ae669acd04069e0c2fa1ceabfc7d33e6c9689210474a87e0c4",
+    "ids": [
+      "boe-2026-7cb1af211a9469d8c93f03439f7dc7e0",
+      "boe-2026-1af592bacfa43820502d23c79327bdc6"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:FIAT:00221:L165171",
+      "BOE-A-2025-26357:ANEXO-I:FIAT:00223:L165195"
+    ]
+  },
+  {
+    "naturalRowHash": "ca63f7eeed7b119cd9a18f42d6e9dafd643c9ff9f46991e178c80d7000a9123d",
+    "ids": [
+      "boe-2026-ccf28dd2504dd92f25868b96169cbf02",
+      "boe-2026-da0e840bbdb51f49375d5f150e52430e"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:NISSAN:01139:L432711",
+      "BOE-A-2025-26357:ANEXO-I:NISSAN:01140:L432723"
+    ]
+  },
+  {
+    "naturalRowHash": "7099da8568f085e7d65c2c9277216fdfbcc41b5d0e92d95b85f075fa7a9db1c4",
+    "ids": [
+      "boe-2026-b6080b1ce227b907ef2ced4571ccf19a",
+      "boe-2026-fba63c24cb8ed39587b0df5ab50fb54e"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:RENAULT:00430:L524185",
+      "BOE-A-2025-26357:ANEXO-I:RENAULT:00431:L524197"
+    ]
+  },
+  {
+    "naturalRowHash": "722d9b158c7ec851c04adade2d0dbff6b2d93cc7598a967a876ff1be81c8f76f",
+    "ids": [
+      "boe-2026-c5929bced40f5ab76d3888d991dc1a1d",
+      "boe-2026-4554cc71a0378f1df2197e4e2aba957a"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:RENAULT:00607:L526309",
+      "BOE-A-2025-26357:ANEXO-I:RENAULT:00608:L526321"
+    ]
+  },
+  {
+    "naturalRowHash": "2c6b7a108cf12827027591dfa39bf5b8597a259c92e2c2c7c22c230ec39e2e70",
+    "ids": [
+      "boe-2026-d6a3c059946476e4f2e4226f0efb536e",
+      "boe-2026-7a0361429c06caed93f62ff40af360e6"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:SEAT:00293:L572706",
+      "BOE-A-2025-26357:ANEXO-I:SEAT:00294:L572718"
+    ]
+  },
+  {
+    "naturalRowHash": "14bb8b90a6f8aab66230da983b5246efa9eb9207477698e22eabca20a4553ec7",
+    "ids": [
+      "boe-2026-6fe70e8c3784dc075afb37b8b3309055",
+      "boe-2026-64fb328c5d171ba481971cd2ac35f33b"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:SEAT:00312:L572934",
+      "BOE-A-2025-26357:ANEXO-I:SEAT:00313:L572946"
+    ]
+  },
+  {
+    "naturalRowHash": "b7971a7b5db89d3d6f53bca5e36575012da746538062748ebca221e91b666117",
+    "ids": [
+      "boe-2026-8ca4438ed35b4f10ea1d8d30d3048403",
+      "boe-2026-959a24299dbda373d796371f02b43c97"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:SEAT:00334:L573198",
+      "BOE-A-2025-26357:ANEXO-I:SEAT:00335:L573210"
+    ]
+  },
+  {
+    "naturalRowHash": "3a079aa69ec267a3a43c511bd242c6ac57b4deb6176918a7977ae129c21fc2dd",
+    "ids": [
+      "boe-2026-7f2fe8507971523301e24b122de52f11",
+      "boe-2026-88f66566f078b28e79f135052583cee7"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:BURSTNER:00101:L755790",
+      "BOE-A-2025-26357:ANEXO-I:BURSTNER:00102:L755802"
+    ]
+  },
+  {
+    "naturalRowHash": "5235dd68ffad9419fa2896f1bdfaaecaacfb5b143cf39e5f2708981e7a1aa036",
+    "ids": [
+      "boe-2026-bf6e06bef1be2ca055188dca50918be2",
+      "boe-2026-0b4c6cbf70ea19ae59369abaf47b2eb4"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:BURSTNER:00103:L755814",
+      "BOE-A-2025-26357:ANEXO-I:BURSTNER:00104:L755826"
+    ]
+  },
+  {
+    "naturalRowHash": "1767dd00eeab05f65915944a9046e82d5a950d6e66c1d135addfbb6cbbc778d0",
+    "ids": [
+      "boe-2026-7c7a6d6d151a668c471d562a75b990d8",
+      "boe-2026-d626ea4e6dc844cc6925cc1feb3749bb"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:CLEVER-VANS:00006:L771373",
+      "BOE-A-2025-26357:ANEXO-I:CLEVER-VANS:00007:L771385"
+    ]
+  },
+  {
+    "naturalRowHash": "d62e98570b0a626a936f67929dbeb79e60cb58da93ca7de746e6a443f478fbf8",
+    "ids": [
+      "boe-2026-c9496d742c57ffaedd9ae14c5d433c47",
+      "boe-2026-001360377bdc0951c91a1879a9be1185"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:DETHLEFFS:00584:L779475",
+      "BOE-A-2025-26357:ANEXO-I:DETHLEFFS:00587:L779511"
+    ]
+  },
+  {
+    "naturalRowHash": "0ca5b5e819eaa7e6fe0a1bc0101ebcefa8957e4fa65e0a99b3c32d762d98bfca",
+    "ids": [
+      "boe-2026-cf8f3716a84f77c6963855a5920b73aa",
+      "boe-2026-5ef09686c2be1392301e3605a233701b"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:DETHLEFFS:00589:L779535",
+      "BOE-A-2025-26357:ANEXO-I:DETHLEFFS:00592:L779571"
+    ]
+  },
+  {
+    "naturalRowHash": "3e5a2fe979acc46bc354692a0e8116f8e739f8fe43b3b93ec2dc912ff28348a2",
+    "ids": [
+      "boe-2026-dd59bdfcad3d1418a74dd0d26e007ed4",
+      "boe-2026-88fadcaa7b7a520036308107e8b162d8"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HOBBY:00047:L801184",
+      "BOE-A-2025-26357:ANEXO-I:HOBBY:00048:L801196"
+    ]
+  },
+  {
+    "naturalRowHash": "4f722805396321482b40718ecb5c492577d1532a9a6da6c97b5cb66735e46e61",
+    "ids": [
+      "boe-2026-e7dc9cb0671c212f102499f2fd449a60",
+      "boe-2026-eea8dabbe9a0ac7b45a2bc4fcde3e41f"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00145:L803789",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00146:L803801"
+    ]
+  },
+  {
+    "naturalRowHash": "d5338970bafa56ac4ef2a04e5ea4802e10e80dde985e84122bf2ccae549dc751",
+    "ids": [
+      "boe-2026-c7496109e49de6de17f029fc1ed19092",
+      "boe-2026-c794617f3f1167f33ea02d624414207b"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00149:L803837",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00150:L803849"
+    ]
+  },
+  {
+    "naturalRowHash": "5ab5c6d7506628e4e5835c2ff6366d44ab63f20a9d15be145cb3611f35355532",
+    "ids": [
+      "boe-2026-d72ec722e7908d855fd764b1048db541",
+      "boe-2026-02b7f9a666c7d50132ab1e82a6858160"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00151:L803861",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00152:L803873"
+    ]
+  },
+  {
+    "naturalRowHash": "190c0cd7771b49b66d4d9668f8f656743d442402c7bae1e0813c064846247efd",
+    "ids": [
+      "boe-2026-b1d5ad09188fad8c78b2a864e655123a",
+      "boe-2026-6e96c130829c7eb989410678dacc048a"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00154:L803897",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00155:L803909"
+    ]
+  },
+  {
+    "naturalRowHash": "8e2f949f2280aef5437164610915985c831af4c5dd71e5940ffdcff5cf79ff31",
+    "ids": [
+      "boe-2026-7b2d9917ebac7ee824785c2704245cfe",
+      "boe-2026-b98a60ad7a0e58ef84ca767126b11bc1"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00156:L803921",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00157:L803933"
+    ]
+  },
+  {
+    "naturalRowHash": "9d62873df881137a3a4a8e08104fc2d1e6f1cb33dab16bc093c5e12c5d62b9c4",
+    "ids": [
+      "boe-2026-0ea16d75ea4523f415e97ce8c478dd61",
+      "boe-2026-b611ed824b2a1549aba80a62a0cbf509"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00159:L803957",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00160:L803969"
+    ]
+  },
+  {
+    "naturalRowHash": "6c46943a7187f9b2d1643d6b3d72febe1f386c8b1004a25652c98f8cbeba4006",
+    "ids": [
+      "boe-2026-86dea965cd87dcb673ab398f19594d21",
+      "boe-2026-262018dfa4fc6e10aea70db287bbf3b0"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00161:L803981",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00162:L803993"
+    ]
+  },
+  {
+    "naturalRowHash": "89a790fd978a3352227b81d4af3a414cd6d2baad4b79ed78e647f552304b7fd2",
+    "ids": [
+      "boe-2026-c2383dea7e7f6fecd3dc984c2d7fb466",
+      "boe-2026-9612de94d163c4c19c95a3909cebf295"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00164:L804017",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00165:L804029"
+    ]
+  },
+  {
+    "naturalRowHash": "7033b08872750a5bd2b572d9ee559a00ad3ef8ba72dc400e3b5ddafcc70637f3",
+    "ids": [
+      "boe-2026-fbed126e4dad4bb617ed5b3bbf02ec2d",
+      "boe-2026-b35fc3179a10bf64f754f3a07f1fb60a"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00166:L804041",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00167:L804053"
+    ]
+  },
+  {
+    "naturalRowHash": "609b95fc18b996c1e3fc7abc4777a8dada94ded6e15af803215aab12ff6ab847",
+    "ids": [
+      "boe-2026-5dbea433185be4e9ebaa14a512949e00",
+      "boe-2026-76d2579f3d658aedd1be8fdc284405b8"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00169:L804077",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00170:L804089"
+    ]
+  },
+  {
+    "naturalRowHash": "d6c74d56f28ea5a20cf8d24957c6c9d95316dec4914acd5a7ebba11523b63ca3",
+    "ids": [
+      "boe-2026-d0748ea3a271371709b63e9471ddd8d6",
+      "boe-2026-63506d6ff270b415d6a0a875cb892629"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00171:L804101",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00172:L804113"
+    ]
+  },
+  {
+    "naturalRowHash": "11b93cbf3b24e3425146c0268c2d1a10871f0cd15775d2691d4be91c8a7dcc6a",
+    "ids": [
+      "boe-2026-2dc2d822ce11c0531a6b59f3c7b5da90",
+      "boe-2026-c92f45cfbbe52cbab1fc3798219aae43"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00174:L804137",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00175:L804149"
+    ]
+  },
+  {
+    "naturalRowHash": "c34701ff15a82056bb141bd1134ae4fcc8cf9b4c894d28fb54c93e6106d814a8",
+    "ids": [
+      "boe-2026-34e47c068bf3dd7e4c604d60f9be7104",
+      "boe-2026-0cdefacf22f1b52e0fe38d30953491c7"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00176:L804161",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00177:L804173"
+    ]
+  },
+  {
+    "naturalRowHash": "b19b71af41f82d9be17e8a9eac2dac809efe65cffb1424748c5247dfd5605331",
+    "ids": [
+      "boe-2026-5cfdedb83906fed7e2fd97f81d25c785",
+      "boe-2026-1f9624c007e6396b2193bb0a23dabb0b"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00179:L804197",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00180:L804209"
+    ]
+  },
+  {
+    "naturalRowHash": "d2f9c25aaa280086eddca613950c0e4675232fa28af4f3055da0c7c905c8c419",
+    "ids": [
+      "boe-2026-20c7cc47d2526b29246dd84c232a10e2",
+      "boe-2026-d99ad9af3fba44157566baae6276ca99"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00181:L804221",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00182:L804233"
+    ]
+  },
+  {
+    "naturalRowHash": "5ef5931f0666a7454c1c7ce7b7ccc4623d9b0a7bd7db25bca50998660fd0de57",
+    "ids": [
+      "boe-2026-c43aaefddda198af27987b666e77b874",
+      "boe-2026-c3c739f59a03e5456cfa3ba33bc5a5d2"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00184:L804257",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00185:L804269"
+    ]
+  },
+  {
+    "naturalRowHash": "a37de35b8e212d23cba5c22ebe36acf16649ac81a2f2466efa0a3f886d6ff9d8",
+    "ids": [
+      "boe-2026-55c1729a879efbbe9f416b123a48a887",
+      "boe-2026-9c13889e96803697d3f5e228ecdafa31"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00186:L804281",
+      "BOE-A-2025-26357:ANEXO-I:HYMER:00187:L804293"
+    ]
+  },
+  {
+    "naturalRowHash": "09b01fd9e5d23fe71befcf9de5c31c4768c323719e78c017c2b95b147b0cc786",
+    "ids": [
+      "boe-2026-81f77c0804f08ffeab3a0a1aa7526f3b",
+      "boe-2026-e040d2a7b312acbb49b92a88cc76651c"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:P-L-A:00102:L831690",
+      "BOE-A-2025-26357:ANEXO-I:P-L-A:00106:L831738"
+    ]
+  },
+  {
+    "naturalRowHash": "3f859061803e897bb059b48b2aab5530eedb8e9c408a4a6e11db6c23680e4adc",
+    "ids": [
+      "boe-2026-b6c4fc5c90fc85fa1259a4725ff4d6d9",
+      "boe-2026-5e93c3472b503e0fefc8cdda746454fa"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:P-L-A:00107:L831750",
+      "BOE-A-2025-26357:ANEXO-I:P-L-A:00111:L831798"
+    ]
+  },
+  {
+    "naturalRowHash": "d8394129499cbaa5ea47f03138b6c04fa81fc13fa2e4398bcf5ee901bf663585",
+    "ids": [
+      "boe-2026-71ebae1c55cabb1c530a05f4fa83ea8f",
+      "boe-2026-32c8987605f0fe9663055ed1646d9132"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:RAPIDO:00143:L838342",
+      "BOE-A-2025-26357:ANEXO-I:RAPIDO:00144:L838354"
+    ]
+  },
+  {
+    "naturalRowHash": "a05234c5fc7410a7aa16ce269408c04c250568e3b70826ca7c1328430eb34920",
+    "ids": [
+      "boe-2026-eedc3cc8c5962d24adf2b52e08231e1b",
+      "boe-2026-5c572dbb1a3e6499eb7f330d957cc035"
+    ],
+    "officialRowReferences": [
+      "BOE-A-2025-26357:ANEXO-I:RAPIDO:00147:L838390",
+      "BOE-A-2025-26357:ANEXO-I:RAPIDO:00148:L838402"
+    ]
+  }
+]

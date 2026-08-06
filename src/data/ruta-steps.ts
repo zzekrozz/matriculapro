@@ -2,163 +2,261 @@ export interface RutaStep {
   n: number;
   id: string;
   title: string;
-  /** Nombre del icono lucide-react */
+  /** Nombre del icono lucide-react. */
   icon: string;
   state: 'recommended' | 'pending';
-  /** Resumen corto del paso (subtítulo) */
   summary: string;
-  /** Qué haces en este paso */
   what: string;
-  /** Qué necesitas para completarlo */
   need: string[];
-  /** Errores comunes a evitar */
   errors: string[];
-  /** Si es true, marcar como "punto delicado" */
   delicate?: boolean;
-  /** Mensaje alternativo (mostrado en paso 1 cuando bought === 'yes') */
   altMsg?: string;
-  /** Módulo asociado (para CTA "Practicar este paso") */
   linkedModule?: {
     href: string;
     label: string;
     available: boolean;
   };
-  /** Por qué este paso importa (sprint 3 fases) */
   why?: string;
-  /** Cuándo deberías consultar a un organismo (sprint 3 fases) */
   consult?: string;
 }
 
+/**
+ * Ruta educativa de nueve hitos. No es una secuencia administrativa universal:
+ * el orden y los documentos cambian con el origen, la fiscalidad y la vía técnica.
+ */
 export const RUTA_STEPS: RutaStep[] = [
   {
-    n: 1, id: 'antes-comprar', title: 'Antes de comprar o revisar lo comprado',
+    n: 1,
+    id: 'antes-comprar',
+    title: 'Clasificar el caso y comprobar viabilidad',
     icon: 'ShoppingCart',
     state: 'recommended',
-    summary: 'Lo ideal es revisar la documentación ANTES de comprar. Si ya compraste, ordenamos el expediente.',
-    what: 'Revisar la documentación del vehículo, comprobar coherencia entre documentos y, si hay dudas, escribir a la ITV antes de comprar.',
-    need: ['Anuncio o ficha del vendedor', 'Fotos de documentación', 'Bastidor visible (VIN)', 'COC si está disponible'],
-    errors: ['Comprar sin ver el COC ni la ficha técnica', 'No comprobar que el bastidor coincide en todos los documentos', 'Asumir que cualquier coche UE se matricula igual'],
-    altMsg: 'Si ya compraste el coche, no pasa nada. Ahora el objetivo es ordenar el expediente, detectar puntos críticos y avanzar con cuidado.',
+    summary: 'Antes de pagar, identifica origen, vendedor, antigüedad, kilometraje, categoría, homologación y reformas.',
+    what: 'Crear una ficha del caso con VIN, país de procedencia, quién vende, fecha de primera matriculación, kilometraje, categoría M1/N1, contraseña de homologación y cualquier reforma. Con esos datos se decide qué ramas fiscales y técnicas hay que revisar.',
+    need: [
+      'VIN y fotos legibles de la documentación extranjera',
+      'Fecha de primera matriculación y kilometraje acreditable',
+      'Identidad y condición del vendedor: particular, empresa o profesional',
+      'Categoría, homologación y lista de reformas o accesorios',
+    ],
+    errors: [
+      'Asumir que todos los vehículos procedentes de Europa siguen la misma vía',
+      'Tratar un N1 como turismo M1 sin verificar la categoría y configuración',
+      'Ignorar que Reino Unido puede implicar importación aduanera según la operación y su fecha',
+    ],
+    altMsg: 'Si ya compraste el vehículo, documenta el caso antes de seguir. Detectar ahora una carencia técnica o fiscal evita encadenar trámites incompatibles.',
     linkedModule: {
       href: '/app/checklist/antes-de-comprar',
-      label: 'Checklist antes de comprar',
-      available: false,
+      label: 'Abrir checklist de compra',
+      available: true,
     },
-    why: 'Es el único momento en que puedes echar atrás sin perder dinero. Una vez has pagado, los errores se vuelven caros.',
-    consult: 'Antes de comprar si tienes dudas sobre si el coche se puede matricular: pregunta a la estación ITV donde piensas matricularlo.',
+    why: 'La clasificación inicial determina las ramas de IVA o ITP, aduanas, homologación e ITV. Es el mejor momento para descubrir un bloqueo.',
+    consult: 'Consulta antes de comprar si no puedes identificar la homologación, faltan originales, existen reformas, el vehículo es N1 o procede de un tercer país.',
   },
   {
-    n: 2, id: 'docs', title: 'Reunir documentación',
+    n: 2,
+    id: 'docs',
+    title: 'Acreditar adquisición, origen y fiscalidad',
     icon: 'FileText',
     state: 'pending',
-    summary: 'Documentación extranjera, factura/contrato y datos de identidad. Todo coherente entre sí.',
-    what: 'Reunir todos los documentos del vehículo y del titular en una sola carpeta.',
-    need: ['Permiso de circulación del país de origen', 'Factura o contrato de compraventa', 'COC o ficha reducida', 'DNI/NIE del titular'],
-    errors: ['Documentos con datos que no cuadran entre sí', 'Falta el COC y no se ha pedido ficha reducida', 'Factura sin datos completos del vendedor'],
+    summary: 'Reúne la prueba de titularidad y determina si hay ITP, IVA en España, régimen de factura o aduanas.',
+    what: 'Conservar contrato o factura completos, justificantes de pago, documentación extranjera y, cuando proceda, traducción, datos de IVA del vendedor, liquidación de ITP o documentación aduanera. Un vehículo es nuevo a efectos de IVA intracomunitario si se entrega antes de seis meses desde la primera puesta en servicio o no supera 6.000 km.',
+    need: [
+      'Contrato si vende un particular o factura si vende una empresa/profesional',
+      'Permiso y documento técnico extranjeros; baja o exportación cuando corresponda',
+      'Prueba del tratamiento fiscal: ITP, régimen de IVA, IVA español o aduanas según el caso',
+      'Traducción cuando el organismo no pueda tramitar el documento original',
+    ],
+    errors: [
+      'Pedir factura a un particular o aceptar una factura empresarial sin datos fiscales suficientes',
+      'Usar “seis meses o 6.000 km” como regla de vehículo usado: basta cumplir uno de los criterios de nuevo para activar la revisión de IVA',
+      'Confundir compra intracomunitaria con importación de un tercer país',
+    ],
     linkedModule: {
       href: '/app/biblioteca',
-      label: 'Biblioteca de documentos',
-      available: false,
+      label: 'Consultar documentos y justificantes',
+      available: true,
     },
-    why: 'Sin documentación completa y coherente, ni la ITV ni Hacienda ni la DGT te van a procesar el expediente. Un dato mal puesto te puede bloquear semanas.',
-    consult: 'Si te falta el COC y no estás seguro de si necesitas ficha reducida: pregunta a un laboratorio acreditado o a la propia ITV.',
+    why: 'La DGT necesita acreditar la titularidad y la situación tributaria aplicable; una prueba de compra incoherente contamina todo el expediente.',
+    consult: 'Consulta a AEAT o a un asesor fiscal ante factura intracomunitaria, vehículo nuevo a efectos de IVA, régimen del margen, traslado de residencia o cualquier duda sobre aduanas.',
   },
   {
-    n: 3, id: 'coc', title: 'COC o ficha reducida',
+    n: 3,
+    id: 'coc',
+    title: 'Confirmar la vía técnica',
     icon: 'FileCheck2',
     state: 'pending',
-    summary: 'Documento técnico que homologa el vehículo. Si no hay COC, ficha reducida en laboratorio.',
-    what: 'Obtener el Certificado de Conformidad (COC) o, si no está disponible, una ficha reducida emitida por laboratorio autorizado.',
-    need: ['Solicitud al fabricante o ficha reducida', 'Datos técnicos del vehículo', 'Documentación de origen'],
-    errors: ['Pedir el COC sin VIN coincidente', 'Asumir que el COC del país de origen es directo'],
+    summary: 'COC, ficha reducida, equivalencia u homologación individual no son sustitutos automáticos.',
+    what: 'Identificar la homologación aplicable y preguntar a la ITV qué soporte técnico acepta. Un COC válido puede acreditar una homologación UE; una ficha reducida puede documentar características cuando existe una homologación identificable. Los vehículos sin homologación UE, de serie corta/individual o con reformas pueden requerir equivalencia, autorización u homologación individual.',
+    need: [
+      'COC si existe y corresponde exactamente al VIN y variante',
+      'Contraseña de homologación, placa del fabricante fotografiada y datos técnicos verificables',
+      'Ficha reducida emitida por fabricante, servicio técnico designado o técnico competente cuando sea admisible',
+      'Informes de conformidad, certificados de taller o proyecto para reformas, cuando proceda',
+    ],
+    errors: [
+      'Decir que la ficha reducida siempre sustituye al COC',
+      'Afirmar que solo un laboratorio puede emitir cualquier ficha reducida',
+      'Dar por válida en España una homologación individual extranjera sin confirmación',
+    ],
+    delicate: true,
     linkedModule: {
       href: '/app/ficha-tecnica',
-      label: 'Aprende a leer la ficha 3D',
+      label: 'Explorar los campos técnicos',
       available: true,
     },
-    why: 'El COC (o su sustituto, la ficha reducida) es el documento técnico que demuestra que el coche está homologado en la UE. Sin él no hay ficha técnica española.',
-    consult: 'Si el fabricante no emite el COC retroactivamente: contacta con un laboratorio acreditado para tramitar ficha reducida.',
+    why: 'La vía técnica es el principal punto de bloqueo: determina si la ITV puede documentar el vehículo y qué pruebas adicionales exigirá.',
+    consult: 'Confirma por escrito con una estación ITV o con el órgano competente antes de encargar documentos técnicos caros, especialmente en vehículos de EE. UU., N1, series cortas, homologaciones individuales o reformas.',
   },
   {
-    n: 4, id: 'itv', title: 'ITV de matriculación',
+    n: 4,
+    id: 'itv',
+    title: 'Preparar y realizar la ITV española',
     icon: 'Wrench',
     state: 'pending',
-    summary: 'Inspección técnica con expediente especial de matriculación. Resultado favorable obligatorio.',
-    what: 'Acudir a una ITV con cita de matriculación y entregar el expediente completo. Te emiten la ficha técnica española.',
-    need: ['Cita previa', 'Documentación original', 'Vehículo en condiciones (luces, ruedas, frenos, emisiones)'],
-    errors: ['Llegar sin cita de matriculación específica', 'No revisar testigos del cuadro antes', 'Neumáticos sin medidas coherentes'],
+    summary: 'Solicita el tipo de inspección correcto y lleva la vía técnica previamente confirmada.',
+    what: 'Reservar una inspección para documentación/matriculación, presentar los originales y acondicionar el vehículo. La estación verifica identidad, características, seguridad, emisiones y reformas, y emite o completa la tarjeta ITV española si el resultado y el expediente son conformes.',
+    need: [
+      'Permiso y documento técnico extranjeros originales',
+      'COC, ficha reducida o resolución técnica que corresponda al caso',
+      'Documentación de reformas y acreditación adicional solicitada por la estación',
+      'Vehículo con VIN legible y elementos reglamentarios en estado conforme',
+    ],
+    errors: [
+      'Reservar una ITV periódica ordinaria en vez del trámite requerido',
+      'Presentarse con luces, neumáticos o reformas diferentes de la configuración documentada',
+      'Suponer que una ITV extranjera vigente sustituye automáticamente la documentación española',
+    ],
     linkedModule: {
       href: '/app/recorrido-itv',
-      label: 'Practicar el Recorrido ITV',
+      label: 'Practicar el recorrido ITV',
       available: true,
     },
-    why: 'Aquí se emite tu ficha técnica española. Sin ella no puedes presentar el Modelo 576, ni pagar IVTM, ni ir a la DGT. Es el cuello de botella técnico del proceso.',
-    consult: 'Llama a la ITV antes de ir si tienes modificaciones aftermarket, si el VIN no se ve bien o si tienes dudas sobre el tipo de cita.',
+    why: 'La tarjeta ITV española enlaza el vehículo físico con sus datos técnicos y con la vía de homologación aceptada.',
+    consult: 'Contacta previamente con la estación si el vehículo tiene reformas, contraseña no identificable, homologación individual, categoría N1, documentación no UE o discrepancias de VIN.',
   },
   {
-    n: 5, id: '576', title: 'Modelo 576',
+    n: 5,
+    id: '576',
+    title: 'Impuesto de matriculación: 576, 06, 05 o revisión especial',
     icon: 'Receipt',
     state: 'pending',
-    summary: 'Impuesto de matriculación. Se presenta en Hacienda con los datos técnicos del vehículo.',
-    what: 'Presentar el Modelo 576 ante la Agencia Tributaria con los datos del vehículo (V.7, E, etc.).',
-    need: ['Ficha técnica española', 'V.7 (CO₂)', 'Bastidor', 'Base imponible orientativa'],
-    errors: ['Confundir V.7 con potencia', 'Presentar sin ficha técnica española emitida', 'Errores en bastidor (no coincide)'],
+    summary: 'Primero se decide sujeción y beneficio fiscal; después se usa 576, 06, 05 o revisión especial.',
+    what: 'Analizar el Impuesto Especial sobre Determinados Medios de Transporte. El Modelo 576 autoliquida casos sujetos y no exentos; el 05 se utiliza en determinados supuestos de no sujeción, exención o reducción que requieren reconocimiento previo; el 06 cubre determinados supuestos sin reconocimiento previo. Puede ser necesario otro justificante o revisión profesional.',
+    need: [
+      'Tarjeta ITV española y datos de categoría, combustible y emisiones',
+      'Fecha de primera matriculación, valor y demás datos fiscales acreditables',
+      'Pruebas de la exención, no sujeción o reducción invocada, si existe',
+      'Confirmación específica en N1, traslado de residencia, uso profesional o datos antiguos/incompletos',
+    ],
+    errors: [
+      'Presentar el 576 como obligación universal',
+      'Usar V.7 como si fuera la base imponible de un vehículo usado',
+      'Asignar automáticamente el Modelo 06 a cualquier N1 sin verificar categoría, configuración y supuesto legal',
+    ],
+    delicate: true,
     linkedModule: {
       href: '/app/simulador-576',
-      label: 'Practicar el Simulador 576',
+      label: 'Practicar campos del 576',
       available: true,
     },
-    why: 'El Modelo 576 es el impuesto de matriculación. Si lo presentas con datos incorrectos, Hacienda lo devuelve y tienes que volver a empezar. Es la pieza más delicada de la Fase 2.',
-    consult: 'Antes de presentarlo, consulta con asesor fiscal si tu caso tiene factura de empresa UE, IVA intracomunitario o vehículo con menos de 6 meses / 6.000 km.',
+    why: 'Elegir el modelo incorrecto puede producir una autoliquidación improcedente o un justificante que no corresponda al expediente.',
+    consult: 'Contrasta el supuesto en la AEAT antes de presentar, especialmente si existe exención, no sujeción, reducción, N1, traslado de residencia o falta de emisiones homologadas comparables.',
   },
   {
-    n: 6, id: 'ivtm', title: 'IVTM (Ayuntamiento)',
+    n: 6,
+    id: 'ivtm',
+    title: 'Gestionar el IVTM municipal',
     icon: 'Building2',
     state: 'pending',
-    summary: 'Impuesto municipal anual. Se paga en el ayuntamiento del domicilio del titular.',
-    what: 'Dar de alta en el padrón del IVTM y pagar el primer recibo en el ayuntamiento correspondiente.',
-    need: ['Justificante de empadronamiento o domicilio', 'Datos del vehículo', 'Ficha técnica española'],
-    errors: ['Confundir municipio del vehículo con el del titular', 'Olvidar el IVTM antes de DGT'],
-    why: 'La DGT no te termina la matriculación sin justificante del IVTM pagado. Es un trámite municipal corto pero obligatorio.',
-    consult: 'Si tu domicilio fiscal y tu domicilio real no coinciden, consulta con el ayuntamiento dónde te toca pagar.',
+    summary: 'Confirma el alta y el justificante exigido por el ayuntamiento competente.',
+    what: 'Solicitar el alta o liquidación del Impuesto sobre Vehículos de Tracción Mecánica en el municipio que corresponda al domicilio del permiso, siguiendo su procedimiento y conservando el justificante.',
+    need: [
+      'Identidad y domicilio del titular',
+      'Datos técnicos solicitados por el ayuntamiento',
+      'Justificante de alta, pago o exención que corresponda',
+    ],
+    errors: [
+      'Dar por hecho que todos los ayuntamientos piden los mismos documentos',
+      'Confundir domicilio de notificaciones, domicilio fiscal y domicilio del permiso',
+    ],
+    why: 'La situación del IVTM forma parte de las comprobaciones previas a la matriculación y se resuelve a nivel municipal.',
+    consult: 'Pregunta al ayuntamiento si hay dudas sobre competencia municipal, bonificaciones, exenciones o forma de alta.',
   },
   {
-    n: 7, id: 'tasa-dgt', title: 'Tasa DGT',
+    n: 7,
+    id: 'tasa-dgt',
+    title: 'Cerrar tasas y expediente de Tráfico',
     icon: 'Banknote',
     state: 'pending',
-    summary: 'Pago de la tasa por la matriculación ante la Dirección General de Tráfico.',
-    what: 'Pagar la tasa correspondiente a la matriculación de un vehículo en la DGT.',
-    need: ['Datos del vehículo', 'Datos del titular', 'Justificante de pago'],
-    errors: ['Pagar tasa equivocada (no es la misma para todos los trámites)', 'No conservar el justificante'],
-    why: 'Es el último pago antes de poder presentar todo en la DGT. Hay varias tasas distintas — pagar la equivocada significa volver a la cola.',
-    consult: 'Si dudas qué tasa pagar, consúltalo directamente en la sede electrónica de la DGT o por teléfono antes de pagar.',
+    summary: 'Monta un expediente por ramas: identidad, adquisición, técnica, fiscalidad, IVTM y tasa.',
+    what: 'Verificar el trámite y la tasa vigentes en la sede de la DGT, ordenar originales y justificantes y preparar representación si actúa otra persona. No añadas documentos por intuición: marca cada uno como aplicable, no aplicable o pendiente de confirmar.',
+    need: [
+      'Solicitud, identidad y, cuando proceda, representación',
+      'Prueba de adquisición y situación fiscal aplicable',
+      'Tarjeta ITV española y documentación extranjera requerida',
+      'Justificantes de IEDMT, IVTM y tasa que correspondan',
+    ],
+    errors: [
+      'Pagar una tasa distinta o usar un justificante caducado/no vinculable',
+      'Meter COC, Modelo 576 o empadronamiento en todos los expedientes como requisitos universales',
+      'No conservar originales o traducciones cuando sean necesarios',
+    ],
+    linkedModule: {
+      href: '/app/checklist/pre-dgt',
+      label: 'Revisar checklist pre-DGT',
+      available: true,
+    },
+    why: 'Una revisión por ramas permite detectar exactamente qué falta sin confundir documentos alternativos con acumulativos.',
+    consult: 'Comprueba la ficha del trámite vigente en la DGT cuando el titular sea una empresa, exista representación, falten documentos extranjeros o el caso tenga particularidades fiscales.',
   },
   {
-    n: 8, id: 'dgt', title: 'Presentación en DGT',
+    n: 8,
+    id: 'dgt',
+    title: 'Presentar la matriculación en DGT',
     icon: 'ScrollText',
     state: 'pending',
-    summary: 'Expediente completo en DGT. Si todo es correcto, te asignan matrícula.',
-    what: 'Presentar el expediente completo en la Jefatura Provincial de Tráfico. Te asignan la matrícula española.',
-    need: ['Toda la documentación anterior', 'Justificantes de pago', 'Cita previa DGT'],
-    errors: ['Faltar un solo justificante (te hacen volver)', 'Datos del titular mal escritos en algún documento'],
+    summary: 'Presenta el expediente aplicable por el canal admitido y atiende cualquier subsanación.',
+    what: 'Presentar la solicitud con los documentos y justificantes que correspondan. Si la DGT requiere subsanar, registra la petición concreta, su plazo y la fuente del documento antes de responder.',
+    need: [
+      'Expediente final revisado y justificantes vinculables al vehículo y titular',
+      'Canal de presentación y cita cuando sean necesarios',
+      'Medio para recibir notificaciones o requerimientos',
+    ],
+    errors: [
+      'Prometer que toda presentación termina en una sola visita',
+      'Corregir una discrepancia en un documento sin actualizar los demás',
+      'Circular solo porque el expediente ya se presentó',
+    ],
     delicate: true,
     linkedModule: {
       href: '/app/checklist/pre-dgt',
-      label: 'Checklist pre-DGT',
-      available: false,
+      label: 'Volver a la revisión pre-DGT',
+      available: true,
     },
-    why: 'Es la última puerta. Si llegas con un solo papel mal, te hacen volver otro día. Si llegas con todo, sales con matrícula asignada en una sola visita.',
-    consult: 'Si tu caso tiene reformas, factura intracomunitaria con IVA o documentación incompleta, considera ir con gestoría para evitar revueltas.',
+    why: 'La DGT decide sobre el expediente aportado; una solicitud completa reduce incidencias, pero no sustituye la revisión administrativa.',
+    consult: 'Busca ayuda profesional si recibes un requerimiento que cuestiona titularidad, homologación, tributación, importación o autenticidad documental.',
   },
   {
-    n: 9, id: 'placas-seguro', title: 'Placas y seguro',
+    n: 9,
+    id: 'placas-seguro',
+    title: 'Permiso, placas, seguro y archivo',
     icon: 'KeyRound',
     state: 'pending',
-    summary: 'Fabricar las placas con la matrícula asignada y contratar el seguro antes de circular.',
-    what: 'Una vez asignada la matrícula, fabricar placas y contratar seguro obligatorio antes de circular.',
-    need: ['Matrícula asignada por DGT', 'Permiso de circulación español', 'Seguro contratado'],
-    errors: ['Fabricar placas antes de que DGT asigne la matrícula', 'Circular sin seguro vigente'],
-    why: 'No puedes fabricar las placas hasta tener la matrícula asignada por DGT, y no puedes circular legalmente sin el seguro contratado y vigente.',
-    consult: 'Si vas a usar el coche para uso profesional o flota, consulta con tu aseguradora antes de la matriculación para evitar tener que cambiar la póliza después.',
+    summary: 'Cierra el expediente solo cuando la matrícula esté asignada y la circulación sea legal.',
+    what: 'Comprobar los datos del permiso de circulación y de la tarjeta ITV, fabricar las placas con la matrícula asignada, activar el seguro obligatorio antes de circular y archivar el expediente completo.',
+    need: [
+      'Matrícula asignada y permiso de circulación',
+      'Tarjeta ITV española sin discrepancias pendientes',
+      'Seguro vigente antes de poner el vehículo en circulación',
+      'Copias de documentos, recibos y resoluciones finales',
+    ],
+    errors: [
+      'Fabricar placas con un dato provisional o circular sin seguro',
+      'No revisar errores en VIN, titular, categoría o fechas de los documentos españoles',
+      'Perder justificantes que pueden hacer falta en futuras transferencias o inspecciones',
+    ],
+    why: 'El cierre ordenado evita que una incidencia administrativa reaparezca en la siguiente ITV, venta o gestión fiscal.',
+    consult: 'Consulta a la DGT, ITV o aseguradora antes de circular si el permiso es provisional, hay limitaciones anotadas o persiste cualquier discrepancia.',
   },
 ];

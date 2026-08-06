@@ -8,10 +8,11 @@ import { ModuleGate } from '@/components/access/ModuleGate';
 export default function Page() {
   return (
     <ModuleGate
-      requiresFounder
+      requiredCapability="use_advanced_simulators"
+      requiredTier="particular"
       moduleName="Checklist pre-DGT"
       moduleCode="M.07"
-      description="Lista de documentación obligatoria antes de presentar el expediente en Tráfico."
+      description="Checklist generada desde vendedor, procedencia, ITV y decisión fiscal del expediente activo."
       icon={Stamp}
     >
       <ChecklistScreen checklist={CHECKLIST_PRE_DGT} />

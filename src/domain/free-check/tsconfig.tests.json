@@ -1,0 +1,17 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "incremental": false,
+    "isolatedModules": false,
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "../../../.test-dist/free-check",
+    "rootDir": "../../../src",
+    "plugins": []
+  },
+  "include": ["./**/*.ts", "../registration/**/*.ts"],
+  "exclude": ["../../../node_modules"]
+}
+

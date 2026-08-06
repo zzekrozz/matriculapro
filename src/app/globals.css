@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -33,7 +31,7 @@ html, body {
   padding: 0;
   background: var(--color-bg);
   color: var(--color-ink);
-  font-family: 'Geist', system-ui, -apple-system, sans-serif;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -46,4 +44,52 @@ html, body {
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+@media print {
+  @page { size: A4 landscape; margin: 10mm; }
+
+  html, body {
+    background: #fff !important;
+    color: #0B1F3A !important;
+  }
+
+  .print-shell-hidden,
+  .professional-print-page .print\:hidden {
+    display: none !important;
+  }
+
+  .print-report {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-report .overflow-x-auto {
+    overflow: visible !important;
+  }
+
+  .print-report table {
+    width: 100% !important;
+    min-width: 0 !important;
+    table-layout: fixed;
+    font-size: 8px !important;
+  }
+
+  .print-report th,
+  .print-report td {
+    overflow-wrap: anywhere;
+  }
+
+  .print-report section,
+  .print-report article,
+  .print-report tr {
+    break-inside: avoid;
+  }
+
+  .print-report a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
 }

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "catalogVersionId": "hac-1501-2025-annex-i-2026",
+  "catalogYear": 2026,
+  "sourceDocumentId": "BOE-A-2025-26357",
+  "sourceOrder": "Orden HAC/1501/2025, de 17 de diciembre",
+  "sourceAnnex": "Anexo I",
+  "effectiveFrom": "2026-01-01",
+  "effectiveTo": "2026-12-31",
+  "sourcePdfSha256": "16e392a1222e892b1d86eab21ffa4d0b371e50dd48cbb3252348a6925f18eceb",
+  "sourceXmlSha256": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26",
+  "normalizedSha256": "06f05bd480da16fbc0b2e32027bab6fe661ab4ed0052a4842ae3fd2948e9a038",
+  "counts": {
+    "annexTables": 193,
+    "sourceRows": 70931,
+    "importedRows": 70931,
+    "identifiedModelRows": 70886,
+    "genericValueBandRows": 45,
+    "rejectedRows": 0,
+    "duplicateGroups": 34,
+    "duplicateRows": 68,
+    "brands": 186,
+    "models": 62294
+  },
+  "bytes": {
+    "normalizedJsonl": 72238072,
+    "normalizedGzip": 7486142,
+    "genericBandsJsonl": 37705,
+    "genericBandsGzip": 4685,
+    "sourcePdf": 20127606,
+    "sourceXml": 42575375
+  },
+  "extraction": {
+    "method": "Regex estructural acotada al XML oficial bien formado del BOE, entre los marcadores exactos ANEXO I y ANEXO II.",
+    "officialColumns": [
+      "Modelo-Tipo",
+      "Periodo comercial: Inicio",
+      "Periodo comercial: Fin",
+      "C.C.",
+      "N.º de cilindros",
+      "Tipo de motor",
+      "P kW",
+      "cvf",
+      "cv",
+      "2026 Valor euros"
+    ],
+    "normalizedOnlyFields": [
+      "id",
+      "normalizedSearchText",
+      "naturalRowHash",
+      "officialRowReference"
+    ],
+    "absentOfficialFields": [
+      "CO₂ g/km",
+      "versión separada de Modelo-Tipo"
+    ],
+    "modelMapping": "model conserva literalmente Modelo-Tipo; version es null. No se divide heurísticamente una columna que el BOE publica combinada."
+  },
+  "generatedFiles": {
+    "catalog": "data/fiscal/generated/official-vehicle-values-2026.jsonl",
+    "compressedCatalog": "data/fiscal/generated/official-vehicle-values-2026.jsonl.gz",
+    "genericValueBands": "data/fiscal/generated/official-generic-value-bands-2026.jsonl",
+    "compressedGenericValueBands": "data/fiscal/generated/official-generic-value-bands-2026.jsonl.gz",
+    "samples": "data/fiscal/generated/verification-samples-2026.json",
+    "rejects": "data/fiscal/generated/rejected-rows-2026.jsonl",
+    "duplicates": "data/fiscal/generated/duplicate-rows-2026.json"
+  }
+}

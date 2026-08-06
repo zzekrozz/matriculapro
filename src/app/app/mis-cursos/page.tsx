@@ -1,12 +1,5 @@
-import { ComingSoon } from '@/components/ui/ComingSoon';
+import { redirect } from 'next/navigation';
 
-export default function Page() {
-  return (
-    <ComingSoon
-      code=""
-      title="Más herramientas"
-      description="Hub de herramientas. Aquí verás más recursos y utilidades de Ivan Imports a los que tienes acceso."
-      iconName="GraduationCap"
-    />
-  );
+export default function MisCursosPage() {
+  redirect('/app/dashboard');
 }

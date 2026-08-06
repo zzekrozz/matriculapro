@@ -1,271 +1,82 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  LayoutDashboard, Route, Calculator, ScrollText, Car, Wrench, Stamp,
-  BookOpen, FileText, Mail, Phone, CheckSquare, Sparkles, Lock, Star,
-  ChevronRight, CheckCircle2, Crown, type LucideIcon
-} from 'lucide-react';
+import { AlertCircle, ArrowRight, BookOpen, CheckCircle2, FileCheck2, FolderPlus, ShieldAlert } from 'lucide-react';
+import { buildRegistrationDecision } from '@/domain/registration';
 import { MODULES } from '@/data/modules';
-import { useCourse } from '@/providers/CourseProvider';
+import { useRegistrationCases } from '@/providers/RegistrationCaseProvider';
 import { useAccess } from '@/providers/AccessProvider';
-import { FeedbackCard } from '@/components/founder/FeedbackCard';
-import type { ModuleDef, ModuleState } from '@/lib/types';
-
-const ICONS: Record<string, LucideIcon> = {
-  Route, Calculator, ScrollText, Car, Wrench, Stamp,
-  BookOpen, FileText, Mail, Phone, CheckSquare, LayoutDashboard,
-};
-
-const STATE_LABEL: Record<ModuleState, string> = {
-  'pending': 'Pendiente',
-  'in-progress': 'En curso',
-  'completed': 'Completado',
-  'locked': 'Bloqueado',
-  'alert': 'Atención',
-  'recommended': 'Recomendado',
-  'special': 'Destacado',
-  'premium': 'Premium',
-  'demo': 'Demo',
-};
+import { PageLoading, maskVin, nextActionHref } from '@/components/cases/CaseChrome';
+import { cn } from '@/lib/cn';
 
 export default function DashboardPage() {
-  const { completedModules, completedRouteSteps, completedCases } = useCourse();
-  const { canAccessModule, isExplorer, isFounder } = useAccess();
-  const moduleWithLiveState = (m: ModuleDef): ModuleDef => {
-    if (completedModules.includes(m.id)) return { ...m, state: 'completed' };
-    if (m.id === 'ruta' && completedRouteSteps.length > 0) {
-      return { ...m, state: completedRouteSteps.length === 9 ? 'completed' : 'in-progress' };
-    }
-    if (m.id === 'casos' && completedCases.length > 0) {
-      return { ...m, state: completedCases.length === 5 ? 'completed' : 'in-progress' };
-    }
-    // Para explorer: módulos con demo muestran 'demo', el resto 'locked'
-    if (isExplorer && !canAccessModule(m.id)) {
-      return { ...m, state: 'locked' };
-    }
-    if (isExplorer && canAccessModule(m.id) && m.demo) {
-      return { ...m, state: 'demo' };
-    }
-    return m;
-  };
+  const { activeCase, loading, persistent, getDocument } = useRegistrationCases();
+  const { canViewPaidCases, canManageFullCases } = useAccess();
+  if (loading) return <PageLoading label="Preparando tu centro de control…" />;
 
-  // Progreso global = % de pasos de la ruta completados (refleja el viaje real)
-  const routeStepsTotal = 9;
-  const routeStepsDone = completedRouteSteps.length;
-  const progressPct = Math.round((routeStepsDone / routeStepsTotal) * 100);
+  if (!canViewPaidCases) return (
+    <div className="mx-auto max-w-[920px] px-5 py-12 lg:px-8"><section className="rounded-[26px] bg-ink p-8 text-white lg:p-12"><div className="text-[10px] uppercase tracking-[0.2em] text-accent">Plan Gratis</div><h1 className="mt-2 max-w-2xl font-serif text-[40px] leading-tight">Empieza con una comprobación previa.</h1><p className="mt-4 max-w-xl text-[13px] leading-relaxed text-muted-soft">Analiza documentación y riesgos sin tarjeta. Los expedientes completos, el Modelo 576 y el seguimiento ITV–DGT requieren Particular o Profesional.</p><div className="mt-6 flex flex-wrap gap-3"><Link href="/app/comprobar" className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-[13px] font-medium text-ink">Comprobar un vehículo <ArrowRight size={14} /></Link><Link href="/#precios" className="inline-flex items-center rounded-full border border-white/20 px-5 py-3 text-[13px] text-white">Ver licencias</Link></div></section></div>
+  );
 
-  const completedCount = MODULES.filter(m => completedModules.includes(m.id)).length;
-  const hotModule = MODULES.find(m => m.hot)!;
-  const restModules = MODULES.filter(m => !m.hot);
+  if (!activeCase) return (
+    <div className="mx-auto max-w-[1050px] px-5 py-12 lg:px-8">
+      <section className="rounded-[26px] bg-ink p-8 text-white lg:p-12"><div className="text-[10px] uppercase tracking-[0.2em] text-accent">Centro de control</div><h1 className="mt-2 max-w-2xl font-serif text-[42px] leading-tight">Empieza por el vehículo, no por un módulo.</h1><p className="mt-4 max-w-xl text-[13px] leading-relaxed text-muted-soft">Crea un expediente para obtener documentos dinámicos, ruta técnica, fiscalidad, bloqueos y siguiente acción.</p><Link href="/app/expedientes/nuevo" className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-[13px] font-medium text-ink"><FolderPlus size={15} /> Crear mi expediente</Link></section>
+    </div>
+  );
 
-  // CTA principal: si hay ruta en marcha, "Continuar con la ruta"; si no, módulo hot
-  const hasStartedRoute = routeStepsDone > 0;
-  const ctaHref = hasStartedRoute ? '/app/ruta' : hotModule.href;
-  const ctaLabel = hasStartedRoute
-    ? (routeStepsDone === routeStepsTotal ? 'Revisar la Ruta' : 'Continuar con la Ruta')
-    : `Empezar por ${hotModule.title}`;
+  const decision = buildRegistrationDecision(activeCase);
+  const docs = decision.requiredDocuments.map((document) => getDocument(activeCase.id, document.type)?.status ?? document.status);
+  const reviewed = docs.filter((status) => status === 'verified').length;
+  const next = decision.nextAction;
+  const learningModules = MODULES.filter((module) => ['casos', 'biblioteca', 'itv-recorrido', 'ruta'].includes(module.id)).slice(0, 4);
 
   return (
-    <div className="px-5 lg:px-8 pt-6 pb-12 max-w-[1280px] mx-auto">
-      {/* HERO CARD */}
-      <section className="rounded-[24px] p-8 lg:p-10 relative overflow-hidden mb-8"
-        style={{ background: 'linear-gradient(135deg, #0B1F3A 0%, #16335E 60%, #0B1F3A 100%)' }}>
-        {/* grid SVG */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.08]" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="dash-grid" width="32" height="32" patternUnits="userSpaceOnUse">
-              <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#fff" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#dash-grid)" />
-        </svg>
-        <div className="absolute -top-32 -right-20 w-[500px] h-[500px] rounded-full opacity-25 blur-3xl"
-          style={{ background: 'radial-gradient(circle, #C8862E 0%, transparent 70%)' }} />
-
-        <div className="relative grid lg:grid-cols-[1fr_auto] gap-8 items-center">
+    <div className="mx-auto max-w-[1280px] px-5 pb-14 pt-6 lg:px-8">
+      <section className="relative overflow-hidden rounded-[26px] bg-ink p-6 text-white shadow-soft-lg lg:p-9">
+        <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
+        <div className="relative grid gap-7 xl:grid-cols-[1fr_.8fr] xl:items-end">
           <div>
-            <div className="text-[10.5px] tracking-[0.22em] uppercase mb-2 text-accent">Herramienta activa</div>
-            <h1 className="font-serif italic text-white text-[44px] lg:text-[56px] leading-[1] tracking-tight">
-              Matricula<span className="text-accent">PRO</span>
-            </h1>
-            <p className="mt-4 max-w-[480px] text-[14px] leading-relaxed text-muted-soft">
-              Tu centro de control. Cada módulo es una pieza interactiva dentro de la herramienta. Pulsa, practica y avanza por la ruta de matriculación.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href={ctaHref}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[13px] font-medium bg-accent text-ink hover:scale-[1.02] transition-transform">
-                {ctaLabel} <ChevronRight size={14} />
-              </Link>
-              {hasStartedRoute && (
-                <Link href={hotModule.href}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[13px] text-white border border-white/20 hover:bg-white/5">
-                  Ir a {hotModule.title}
-                </Link>
-              )}
-            </div>
+            <div className="flex flex-wrap items-center gap-2"><span className="text-[9.5px] font-semibold uppercase tracking-[0.2em] text-accent">Expediente activo</span><span className="rounded-full border border-white/15 px-2 py-0.5 text-[9px] text-muted-soft">{persistent ? 'Editable' : 'Solo lectura'}</span></div>
+            <h1 className="mt-3 font-serif text-[38px] leading-none lg:text-[48px]">{activeCase.vehicle.brand || 'Vehículo'} <span className="italic text-accent">{activeCase.vehicle.model || 'sin identificar'}</span></h1>
+            <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[11.5px] text-muted-soft"><span>Origen <strong className="text-white">{activeCase.vehicle.registrationCountry || 'pendiente'}</strong></span><span>Año <strong className="text-white">{activeCase.vehicle.firstRegistrationDate?.slice(0, 4) || 'pendiente'}</strong></span><span>VIN <strong className="font-mono text-white">{maskVin(activeCase.vehicle.vin)}</strong></span></div>
+            <div className="mt-6 flex flex-wrap gap-3"><Link href={`/app/expedientes/${activeCase.id}`} className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-[12.5px] font-medium text-ink">Abrir expediente <ArrowRight size={14} /></Link>{canManageFullCases && <Link href="/app/expedientes/nuevo" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-[12px] text-white">Nuevo vehículo</Link>}</div>
           </div>
-
-          {/* Progress ring */}
-          <div className="relative shrink-0 hidden lg:block">
-            <svg width="180" height="180" className="-rotate-90">
-              <circle cx="90" cy="90" r="74" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="6" />
-              <circle cx="90" cy="90" r="74" fill="none" stroke="#C8862E" strokeWidth="6" strokeLinecap="round"
-                strokeDasharray={`${(progressPct / 100) * 465} 465`} />
-              {/* Tick marks */}
-              {Array.from({ length: 12 }).map((_, i) => {
-                const angle = (i / 12) * 2 * Math.PI;
-                const x1 = 90 + Math.cos(angle) * 64;
-                const y1 = 90 + Math.sin(angle) * 64;
-                const x2 = 90 + Math.cos(angle) * 68;
-                const y2 = 90 + Math.sin(angle) * 68;
-                return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(255,255,255,0.15)" strokeWidth="1" />;
-              })}
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <div className="font-serif italic text-white text-[52px] leading-none">{progressPct}<span className="text-accent text-[28px]">%</span></div>
-              <div className="text-[10px] tracking-[0.18em] uppercase text-muted mt-1">Completado</div>
-            </div>
+          <div className={cn('rounded-2xl border p-5', next?.status === 'blocked' ? 'border-danger/35 bg-danger/10' : 'border-white/10 bg-white/5')}>
+            <div className="flex items-center gap-2 text-[9.5px] uppercase tracking-[0.17em] text-accent">{next?.status === 'blocked' ? <AlertCircle size={12} /> : <CheckCircle2 size={12} />} Siguiente acción</div>
+            <h2 className="mt-2 font-serif text-[24px] leading-tight">{next?.title ?? 'Revisar cierre del expediente'}</h2><p className="mt-2 text-[11.5px] leading-relaxed text-muted-soft">{next?.description ?? 'No quedan tareas calculadas con los datos actuales.'}</p>
+            {next && <Link href={nextActionHref(activeCase.id, next.category)} className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-medium text-accent">Completar ahora <ArrowRight size={12} /></Link>}
           </div>
         </div>
       </section>
 
-      {/* STATS STRIP */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
-        {[
-          { label: 'Pasos de ruta', value: `${routeStepsDone}/${routeStepsTotal}` },
-          { label: 'Casos resueltos', value: `${completedCases.length}/5` },
-          { label: 'Módulos', value: `${completedCount}/${MODULES.length}` },
-          { label: 'Cupón próximo recurso', value: '20%' },
-        ].map((s, i) => (
-          <div key={i} className="rounded-2xl p-4 bg-surface border border-line">
-            <div className="text-[10.5px] tracking-[0.22em] uppercase text-muted mb-1">{s.label}</div>
-            <div className="font-serif italic text-ink text-[28px] leading-none">{s.value}</div>
-          </div>
-        ))}
+      <section className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric label="Bloqueos activos" value={decision.blockers.length} danger={decision.blockers.length > 0} />
+        <Metric label="Documentos revisados por ti" value={`${reviewed}/${docs.length}`} />
+        <Metric label="Ruta técnica" value={technicalShort(decision.technicalPath.outcome)} small />
+        <Metric label="Modelo fiscal" value={taxShort(decision.registrationTaxRoute.outcome)} small />
       </section>
 
-      {/* HOT MODULE — destacado */}
-      <section className="mb-4">
-        <ModuleCardLarge module={moduleWithLiveState(hotModule)} />
+      <section className="mt-5 rounded-[22px] border border-line bg-surface p-5 lg:p-6">
+        <div className="flex flex-wrap items-end justify-between gap-3"><div><div className="text-[9.5px] uppercase tracking-[0.18em] text-muted">Progreso operativo</div><h2 className="mt-1 font-serif text-[25px]">Siete áreas, sin porcentaje académico</h2></div><Link href={`/app/expedientes/${activeCase.id}`} className="text-[11px] font-medium text-accent-deep">Ver detalle</Link></div>
+        <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-7">{decision.route.map((step) => <div key={step.id} className={cn('rounded-xl border p-3', step.status === 'completed' ? 'border-ok/20 bg-ok-soft' : step.status === 'blocked' ? 'border-danger/20 bg-danger-soft' : step.status === 'current' ? 'border-accent/30 bg-accent-soft' : 'border-line bg-bg')}><div className="flex items-center justify-between"><span className="font-mono text-[9px] text-muted">0{step.order}</span><span className={cn('h-2 w-2 rounded-full', step.status === 'completed' ? 'bg-ok' : step.status === 'blocked' ? 'bg-danger' : step.status === 'current' ? 'bg-accent' : 'bg-muted-soft')} /></div><div className="mt-2 text-[10.5px] font-medium leading-tight text-ink">{step.title}</div><div className="mt-1 text-[8.5px] uppercase tracking-[0.08em] text-muted">{routeStatus(step.status)}</div></div>)}</div>
       </section>
 
-      {/* RESTO MÓDULOS */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {restModules.map(m => (
-          <ModuleCard key={m.id} module={moduleWithLiveState(m)} />
-        ))}
-      </section>
+      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+        <section className="rounded-[22px] border border-line bg-surface p-5"><div className="flex items-center gap-2"><ShieldAlert size={16} className={decision.blockers.length ? 'text-danger' : 'text-ok'} /><h2 className="font-serif text-[22px]">Bloqueos</h2></div><div className="mt-4 space-y-2">{decision.blockers.length ? decision.blockers.slice(0, 4).map((blocker) => <div key={blocker.id} className="rounded-xl bg-danger-soft p-3 text-[10.5px] leading-relaxed text-ink-soft"><strong className="text-danger">{blocker.title}</strong><p className="mt-1">{blocker.reason}</p></div>) : <div className="rounded-xl bg-ok-soft p-3 text-[11px] text-ok">No hay bloqueos calculados.</div>}</div></section>
+        <section className="rounded-[22px] border border-line bg-surface p-5"><div className="flex items-center gap-2"><FileCheck2 size={16} className="text-accent-deep" /><h2 className="font-serif text-[22px]">Documentación</h2></div><div className="mt-4 grid grid-cols-3 gap-2"><MiniMetric label="Necesarios" value={docs.length} /><MiniMetric label="Revisados" value={reviewed} /><MiniMetric label="Incidencias" value={docs.filter((status) => status === 'issue').length} /></div><Link href={`/app/expedientes/${activeCase.id}/documentos`} className="mt-4 inline-flex items-center gap-1 text-[11.5px] font-medium text-accent-deep">Gestionar documentos <ArrowRight size={12} /></Link></section>
+      </div>
 
       <section className="mt-8">
-        <FeedbackCard variant="card" />
+        <div className="flex items-end justify-between gap-3"><div><div className="text-[9.5px] uppercase tracking-[0.18em] text-muted">Centro de aprendizaje</div><h2 className="mt-1 font-serif text-[25px]">Consulta y práctica, como apoyo</h2></div><BookOpen size={18} className="text-muted" /></div>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{learningModules.map((module) => <Link key={module.id} href={module.href} className="rounded-2xl border border-line bg-surface p-4 transition hover:-translate-y-0.5 hover:shadow-soft-md"><span className="font-mono text-[9px] text-muted">{module.code}</span><h3 className="mt-2 text-[12.5px] font-semibold text-ink">{module.title}</h3><p className="mt-1 text-[10.5px] leading-relaxed text-ink-soft">{module.description}</p></Link>)}</div>
       </section>
 
-      {/* CTA FOUNDER para Explorer */}
-      {isExplorer && (
-        <div className="mt-6 rounded-[20px] p-6 lg:p-8 relative overflow-hidden"
-             style={{ background: 'linear-gradient(135deg, #0B1F3A 0%, #16335E 100%)', color: '#fff' }}>
-          <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full opacity-25 blur-3xl bg-accent pointer-events-none" />
-          <div className="relative grid lg:grid-cols-[1fr_auto] gap-4 items-center">
-            <div>
-              <div className="text-[10px] tracking-[0.22em] uppercase text-accent mb-1">Modo Explorador activo</div>
-              <h3 className="font-serif italic text-white leading-[1.1] tracking-tight" style={{ fontSize: 'clamp(20px, 2.4vw, 28px)' }}>
-                Desbloquea el acceso completo por 49 €.
-              </h3>
-              <p className="mt-2 text-[13px] text-muted-soft leading-relaxed max-w-[480px]">
-                Acceso Founder Alpha: entra por 49 €, accede a los módulos actuales y recibe futuras mejoras mientras MatriculaPRO evoluciona.
-              </p>
-            </div>
-            <Link href="/#precios"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[13.5px] font-medium transition-transform hover:scale-[1.02] bg-accent text-ink whitespace-nowrap shrink-0">
-              <Crown size={14} /> Ver precios Founder
-            </Link>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
-function ModuleCardLarge({ module: m }: { module: ModuleDef }) {
-  const Icon = ICONS[m.icon] ?? FileText;
-  return (
-    <Link href={m.href}
-      className="block rounded-3xl p-6 lg:p-8 bg-surface border border-line shadow-soft-md hover:shadow-soft-lg transition-all hover:-translate-y-0.5 relative overflow-hidden group">
-      {/* Glow ámbar */}
-      <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full opacity-15 blur-3xl bg-accent" />
-      <div className="relative grid lg:grid-cols-[auto_1fr_auto] gap-5 items-center">
-        <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-ink text-white shrink-0">
-          <Icon size={22} />
-        </div>
-        <div className="min-w-0">
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-[10.5px] font-mono text-muted">{m.code}</span>
-            <StateBadge state={m.state} />
-            {m.hot && (
-              <span className="inline-flex items-center gap-1 text-[9.5px] tracking-[0.16em] uppercase px-1.5 py-0.5 rounded bg-accent-soft text-accent-deep font-semibold">
-                <Sparkles size={9} /> Hot
-              </span>
-            )}
-          </div>
-          <h3 className="font-serif text-ink text-[24px] leading-[1.1] tracking-tight">{m.title}</h3>
-          <p className="mt-1.5 text-[13.5px] text-ink-soft leading-relaxed max-w-[520px]">{m.description}</p>
-        </div>
-        <ChevronRight size={20} className="hidden lg:block text-muted group-hover:text-accent transition-colors" />
-      </div>
-    </Link>
-  );
-}
-
-function ModuleCard({ module: m }: { module: ModuleDef }) {
-  const Icon = ICONS[m.icon] ?? FileText;
-  const isLocked = m.state === 'locked';
-  return (
-    <Link href={m.href}
-      className="block rounded-2xl p-5 bg-surface border border-line shadow-soft-sm hover:shadow-soft-md hover:-translate-y-0.5 transition-all group min-h-[160px] flex flex-col"
-      style={{ opacity: isLocked ? 0.7 : 1 }}>
-      <div className="flex items-start justify-between gap-2 mb-3">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isLocked ? 'bg-line-soft text-muted' : 'bg-bg-deep text-ink'}`}>
-          {isLocked ? <Lock size={15} /> : <Icon size={16} />}
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-[9.5px] font-mono text-muted">{m.code}</span>
-        </div>
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
-          <h3 className={`font-medium text-[14px] leading-tight ${isLocked ? 'text-ink-soft' : 'text-ink'}`}>{m.title}</h3>
-        </div>
-        <p className="text-[12px] text-ink-soft leading-relaxed">{m.description}</p>
-      </div>
-      <div className="mt-3 flex items-center justify-between">
-        <StateBadge state={m.state} />
-        {isLocked
-          ? <span className="text-[9.5px] text-muted">Founder</span>
-          : <ChevronRight size={13} className="text-muted group-hover:text-accent transition-colors" />}
-      </div>
-    </Link>
-  );
-}
-
-function StateBadge({ state }: { state: ModuleState }) {
-  const map: Record<ModuleState, { bg: string; text: string; icon?: LucideIcon }> = {
-    'pending':      { bg: 'bg-line-soft',   text: 'text-muted' },
-    'in-progress':  { bg: 'bg-accent-soft', text: 'text-accent-deep', icon: Sparkles },
-    'completed':    { bg: 'bg-ok-soft',     text: 'text-ok', icon: CheckCircle2 },
-    'locked':       { bg: 'bg-line-soft',   text: 'text-muted', icon: Lock },
-    'alert':        { bg: 'bg-warn-soft',   text: 'text-warn' },
-    'recommended':  { bg: 'bg-accent-soft', text: 'text-accent-deep', icon: Star },
-    'special':      { bg: 'bg-accent-soft', text: 'text-accent-deep', icon: Sparkles },
-    'premium':      { bg: 'bg-ink',         text: 'text-accent' },
-    'demo':         { bg: 'bg-accent-soft', text: 'text-accent-deep' },
-  };
-  const conf = map[state];
-  const Icon = conf.icon;
-  return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9.5px] font-semibold tracking-[0.06em] uppercase ${conf.bg} ${conf.text}`}>
-      {Icon && <Icon size={10} />}
-      {STATE_LABEL[state]}
-    </span>
-  );
-}
+function Metric({ label, value, danger, small }: { label: string; value: string | number; danger?: boolean; small?: boolean }) { return <div className="rounded-2xl border border-line bg-surface p-4"><div className={cn('font-serif leading-none', small ? 'text-[21px]' : 'text-[28px]', danger ? 'text-danger' : 'text-ink')}>{value}</div><div className="mt-1.5 text-[9.5px] uppercase tracking-[0.13em] text-muted">{label}</div></div>; }
+function MiniMetric({ label, value }: { label: string; value: number }) { return <div className="rounded-xl bg-bg p-3"><div className="font-serif text-[23px] leading-none">{value}</div><div className="mt-1 text-[8.5px] uppercase tracking-[0.1em] text-muted">{label}</div></div>; }
+function technicalShort(value: string): string { return ({ 'eu-coc': 'COC UE', 'eu-reduced-sheet': 'Ficha reducida', 'eea-equivalence-review': 'Equivalencia', 'spanish-individual-approval': 'Individual', 'special-review': 'Revisión' } as Record<string, string>)[value] ?? value; }
+function taxShort(value: string): string { return ({ 'model-576': '576', 'model-06': '06', 'model-05': '05', 'special-review': 'Revisión' } as Record<string, string>)[value] ?? value; }
+function routeStatus(value: string): string { return ({ completed: 'Completado', blocked: 'Bloqueado', current: 'Actual', pending: 'Pendiente', 'not-applicable': 'No aplica' } as Record<string, string>)[value] ?? value; }

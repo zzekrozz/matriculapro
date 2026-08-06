@@ -1,0 +1,14 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "plugins": []
+  },
+  "include": [
+    "../../domain/access/*.ts",
+    "../../lib/payments/*.ts",
+    "../access/*.ts",
+    "./*.ts"
+  ],
+  "exclude": ["../../../node_modules", "../../domain/access/__tests__"]
+}

@@ -1,0 +1,2708 @@
+{
+  "schemaVersion": 1,
+  "verificationDate": "2026-08-05",
+  "catalogVersionId": "hac-1501-2025-annex-i-2026",
+  "sourceDocumentId": "BOE-A-2025-26357",
+  "sourceCatalogRelativePath": "data/fiscal/generated/official-vehicle-values-2026.jsonl",
+  "scenarioDisclosure": {
+    "fictitious": true,
+    "co2FromAnnexI": false,
+    "statement": "Las fechas de expediente, el kilometraje, el territorio y el CO2 son entradas ficticias de verificación. El CO2 no figura en el Anexo I y no se ha inferido de la tabla.",
+    "sharedAssumptions": {
+      "registrationTaxSubjectConfirmed": true,
+      "currentAutonomousCommunity": "madrid",
+      "historicalTaxTerritory": "peninsula-balearics-common",
+      "noOtherIndirectTaxesConfirmed": true,
+      "noReductionsClaimed": true,
+      "previouslyRegisteredAbroad": true
+    }
+  },
+  "historicalCurrentRateSeparationCheck": {
+    "sampleNumber": 4,
+    "brand": "VOLKSWAGEN",
+    "firstRegistrationDate": "2021-08-15",
+    "scenarioCo2GKm": 130,
+    "historicalEpigraph": 1,
+    "historicalIedmtRateForResidualTax": 0,
+    "currentEpigraph": 2,
+    "currentIedmtRateForLiquidation": 0.0475,
+    "passed": true,
+    "statement": "La fecha histórica cae en los umbrales temporales de 2021: 130 g/km tributaba al 0 %. En Madrid en 2026 corresponde el epígrafe 2 y el 4,75 %. Los tipos no se mezclan."
+  },
+  "totalVerifiedCalculations": 10,
+  "calculations": [
+    {
+      "sampleNumber": 1,
+      "officialRow": {
+        "normalizedRowId": "boe-2026-49e5363fc3a770c8564186135e84de06",
+        "catalogVersionId": "hac-1501-2025-annex-i-2026",
+        "sourceDocumentId": "BOE-A-2025-26357",
+        "sourceOrder": "Orden HAC/1501/2025, de 17 de diciembre",
+        "sourceAnnex": "Anexo I",
+        "officialPdfUrl": "https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf",
+        "officialRowReference": "BOE-A-2025-26357:ANEXO-I:BMW:00001:L73025",
+        "sourceXmlLine": 73025,
+        "sourceChecksum": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26",
+        "brand": "BMW",
+        "officialModelType": "114 d 3p",
+        "commercialStartYear": 2012,
+        "commercialEndYear": 2015,
+        "fuelType": "D",
+        "engineCapacityCc": 1598,
+        "powerKw": 70,
+        "newVehicleOfficialValue": 19900,
+        "rawOfficialCells": [
+          "114 d 3p",
+          "2012",
+          "2015",
+          "1598",
+          "4",
+          "D",
+          "70",
+          "11,64",
+          "95",
+          "19.900"
+        ],
+        "sampleVerificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+        "verifiedPdfLocation": {
+          "mappingVerified": true,
+          "documentPageNumber": 178,
+          "boePrintedPageNumber": 171757,
+          "numberingNote": "Página del documento PDF contada desde 1 / página impresa en el pie del BOE."
+        }
+      },
+      "exactMatch": {
+        "status": "exact-confirmed",
+        "selectedNormalizedRowId": "boe-2026-49e5363fc3a770c8564186135e84de06",
+        "discrepancies": [],
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-i"
+        ],
+        "explanation": "La persona usuaria confirmó una fila oficial única y los datos comparables son coherentes."
+      },
+      "fictitiousScenarioInputs": {
+        "explicitlyFictitious": true,
+        "suggestedFixtureUsedUnchanged": true,
+        "firstRegistrationDate": "2012-06-15",
+        "accrualDate": "2026-08-05",
+        "referenceDate": "2026-08-05",
+        "mileageKm": 10000,
+        "co2GKm": 165,
+        "co2VerifiedForScenario": true,
+        "co2FromAnnexI": false,
+        "co2Disclosure": "Valor ficticio exclusivo de la prueba; no consta en el Anexo I.",
+        "singleNonCombustionEngine": false,
+        "category": "M1",
+        "vehicleKind": "standard",
+        "currentAutonomousCommunity": "madrid",
+        "registrationTaxSubjectConfirmed": true,
+        "historicalTaxTerritory": "peninsula-balearics-common",
+        "noOtherIndirectTaxesConfirmed": true,
+        "noReductionsClaimed": true,
+        "noProfessionalUseAdjustment": true,
+        "previouslyRegisteredAbroad": true,
+        "originalFixtureNote": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+      },
+      "depreciation": {
+        "status": "complete",
+        "completedYears": 14,
+        "completedMonthsAfterAnniversary": 1,
+        "nextAnniversary": "2027-06-15",
+        "percentage": 0.1,
+        "percentageExact": "0.1",
+        "officialNewValue": 19900,
+        "valueBeforeProfessionalUseReduction": 1990,
+        "professionalUseFactor": null,
+        "marketValueAfterDepreciation": 1990,
+        "marketValueExact": "1990",
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-iv"
+        ]
+      },
+      "historicalRatesForResidualTax": {
+        "historicalEpigraph": 3,
+        "historicalVatRate": 0.18,
+        "historicalIedmtRate": 0.0975,
+        "otherIndirectTaxRateTotal": 0,
+        "historicalVatSourceIds": [
+          "boe-law-26-2009-art-79"
+        ],
+        "historicalIedmtSourceIds": [
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ],
+        "sourceIds": [
+          "boe-law-26-2009-art-79",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "residualTaxMinorationAndBase": {
+        "formula": "BI = VM / [1 + (IVA histórico + IEDMT histórico + otros impuestos indirectos)]",
+        "marketValueBeforeMinoration": 1990,
+        "denominator": 1.2775,
+        "residualTaxAmountRemoved": 432.27005870841487,
+        "box01TaxableBase": 1557.73,
+        "box01TaxableBaseExact": "1557.729941291585127202",
+        "reductionKind": null,
+        "box02ReducedTaxableBase": null,
+        "sourceIds": [
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-26-2009-art-79",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "currentLiquidation": {
+        "epigraph": 3,
+        "currentIedmtRate": 0.0975,
+        "box04TaxQuota": 151.88,
+        "box04TaxQuotaExact": "151.878669275929549902",
+        "box05LinearDeduction": 0,
+        "box06AmountAfterDeduction": 151.88,
+        "box07PreviousReturnsToDeduct": 0,
+        "box08FinalResult": 151.88,
+        "box08FinalResultExact": "151.878669275929549902"
+      },
+      "result": {
+        "status": "complete-official-table",
+        "vehicleStatus": "used",
+        "valuationMethod": "official-table",
+        "catalogVersion": "hac-1501-2025-annex-i-2026",
+        "sourceIds": [
+          "aeat-model-576-instructions",
+          "boe-law-38-1992",
+          "boe-law-37-1992-art-13",
+          "aeat-vat-new-vehicle",
+          "boe-order-hac-1501-2025-annex-i",
+          "boe-order-hac-1501-2025-annex-iv",
+          "boe-law-26-2009-art-79",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51",
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-38-1992-art-66-4-5",
+          "aeat-model-576-instructions-box-02",
+          "boe-law-38-1992-art-70-current",
+          "aeat-model-576-instructions-box-03",
+          "aeat-registration-tax-rates-2026"
+        ],
+        "warnings": [],
+        "blockers": [],
+        "boxGuidance": [
+          {
+            "box": "01",
+            "title": "Base imponible",
+            "value": 1557.73,
+            "origin": "Precio oficial, depreciación y, si procede, minoración residual.",
+            "formula": "valor de mercado / (1 + impuestos indirectos residuales)",
+            "sourceIds": [
+              "boe-law-38-1992-art-69-residual-tax",
+              "aeat-model-576-instructions-box-01"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "02",
+            "title": "Base imponible reducida",
+            "value": null,
+            "origin": "Sin reducción declarada como aplicable",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-66-4-5",
+              "aeat-model-576-instructions-box-02"
+            ],
+            "warnings": [
+              "La casilla 02 solo se cumplimenta cuando existe una reducción legal aplicable."
+            ]
+          },
+          {
+            "box": "03",
+            "title": "Tipo o epígrafe",
+            "value": "3.º · 9.75 %",
+            "origin": "Epígrafe legal y tipo vigente en la comunidad autónoma a la fecha de devengo.",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-70-current",
+              "aeat-registration-tax-rates-2026"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "04",
+            "title": "Cuota",
+            "value": 151.88,
+            "origin": "Base aplicable por tipo actual de liquidación.",
+            "formula": "(casilla 02 si existe; en otro caso casilla 01) × tipo actual",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-04"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "05",
+            "title": "Deducción lineal",
+            "value": 0,
+            "origin": "No se ha aplicado una medida oficial extraordinaria.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-05"
+            ],
+            "warnings": [
+              "No es un campo de descuento libre."
+            ]
+          },
+          {
+            "box": "06",
+            "title": "Cuota a ingresar",
+            "value": 151.88,
+            "origin": "Cuota tras la deducción lineal oficial aplicable.",
+            "formula": "casilla 04 − casilla 05",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-06"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "07",
+            "title": "A deducir",
+            "value": 0,
+            "origin": "Autoliquidaciones anteriores del mismo ejercicio y periodo.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-07"
+            ],
+            "warnings": [
+              "Solo se usa en una autoliquidación complementaria."
+            ]
+          },
+          {
+            "box": "08",
+            "title": "Resultado de la liquidación",
+            "value": 151.88,
+            "origin": "Resultado final preparado para revisión; MatriculaPro no presenta el modelo.",
+            "formula": "casilla 06 − casilla 07",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-08"
+            ],
+            "warnings": [
+              "Revisa los datos en la AEAT antes de presentar."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sampleNumber": 2,
+      "officialRow": {
+        "normalizedRowId": "boe-2026-a57636969878eb02a26de20cca060b0a",
+        "catalogVersionId": "hac-1501-2025-annex-i-2026",
+        "sourceDocumentId": "BOE-A-2025-26357",
+        "sourceOrder": "Orden HAC/1501/2025, de 17 de diciembre",
+        "sourceAnnex": "Anexo I",
+        "officialPdfUrl": "https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf",
+        "officialRowReference": "BOE-A-2025-26357:ANEXO-I:MERCEDES:00002:L343387",
+        "sourceXmlLine": 343387,
+        "sourceChecksum": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26",
+        "brand": "MERCEDES",
+        "officialModelType": "65 AMG Largo Aut.",
+        "commercialStartYear": 2017,
+        "commercialEndYear": null,
+        "fuelType": "G",
+        "engineCapacityCc": 5980,
+        "powerKw": 450,
+        "newVehicleOfficialValue": 275500,
+        "rawOfficialCells": [
+          "65 AMG Largo Aut.",
+          "2017",
+          "",
+          "5980",
+          "8",
+          "G",
+          "450",
+          "33,91",
+          "612",
+          "275.500"
+        ],
+        "sampleVerificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+        "verifiedPdfLocation": {
+          "mappingVerified": true,
+          "documentPageNumber": 844,
+          "boePrintedPageNumber": 172423,
+          "numberingNote": "Página del documento PDF contada desde 1 / página impresa en el pie del BOE."
+        }
+      },
+      "exactMatch": {
+        "status": "exact-confirmed",
+        "selectedNormalizedRowId": "boe-2026-a57636969878eb02a26de20cca060b0a",
+        "discrepancies": [],
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-i"
+        ],
+        "explanation": "La persona usuaria confirmó una fila oficial única y los datos comparables son coherentes."
+      },
+      "fictitiousScenarioInputs": {
+        "explicitlyFictitious": true,
+        "suggestedFixtureUsedUnchanged": true,
+        "firstRegistrationDate": "2017-06-15",
+        "accrualDate": "2026-08-05",
+        "referenceDate": "2026-08-05",
+        "mileageKm": 10000,
+        "co2GKm": 220,
+        "co2VerifiedForScenario": true,
+        "co2FromAnnexI": false,
+        "co2Disclosure": "Valor ficticio exclusivo de la prueba; no consta en el Anexo I.",
+        "singleNonCombustionEngine": false,
+        "category": "M1",
+        "vehicleKind": "standard",
+        "currentAutonomousCommunity": "madrid",
+        "registrationTaxSubjectConfirmed": true,
+        "historicalTaxTerritory": "peninsula-balearics-common",
+        "noOtherIndirectTaxesConfirmed": true,
+        "noReductionsClaimed": true,
+        "noProfessionalUseAdjustment": true,
+        "previouslyRegisteredAbroad": true,
+        "originalFixtureNote": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+      },
+      "depreciation": {
+        "status": "complete",
+        "completedYears": 9,
+        "completedMonthsAfterAnniversary": 1,
+        "nextAnniversary": "2027-06-15",
+        "percentage": 0.19,
+        "percentageExact": "0.19",
+        "officialNewValue": 275500,
+        "valueBeforeProfessionalUseReduction": 52345,
+        "professionalUseFactor": null,
+        "marketValueAfterDepreciation": 52345,
+        "marketValueExact": "52345",
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-iv"
+        ]
+      },
+      "historicalRatesForResidualTax": {
+        "historicalEpigraph": 4,
+        "historicalVatRate": 0.21,
+        "historicalIedmtRate": 0.1475,
+        "otherIndirectTaxRateTotal": 0,
+        "historicalVatSourceIds": [
+          "boe-rdl-20-2012-art-23"
+        ],
+        "historicalIedmtSourceIds": [
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ],
+        "sourceIds": [
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "residualTaxMinorationAndBase": {
+        "formula": "BI = VM / [1 + (IVA histórico + IEDMT histórico + otros impuestos indirectos)]",
+        "marketValueBeforeMinoration": 52345,
+        "denominator": 1.3575,
+        "residualTaxAmountRemoved": 13785.147329650092,
+        "box01TaxableBase": 38559.85,
+        "box01TaxableBaseExact": "38559.852670349907918969",
+        "reductionKind": null,
+        "box02ReducedTaxableBase": null,
+        "sourceIds": [
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "currentLiquidation": {
+        "epigraph": 4,
+        "currentIedmtRate": 0.1475,
+        "box04TaxQuota": 5687.58,
+        "box04TaxQuotaExact": "5687.578268876611418048",
+        "box05LinearDeduction": 0,
+        "box06AmountAfterDeduction": 5687.58,
+        "box07PreviousReturnsToDeduct": 0,
+        "box08FinalResult": 5687.58,
+        "box08FinalResultExact": "5687.578268876611418048"
+      },
+      "result": {
+        "status": "complete-official-table",
+        "vehicleStatus": "used",
+        "valuationMethod": "official-table",
+        "catalogVersion": "hac-1501-2025-annex-i-2026",
+        "sourceIds": [
+          "aeat-model-576-instructions",
+          "boe-law-38-1992",
+          "boe-law-37-1992-art-13",
+          "aeat-vat-new-vehicle",
+          "boe-order-hac-1501-2025-annex-i",
+          "boe-order-hac-1501-2025-annex-iv",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51",
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-38-1992-art-66-4-5",
+          "aeat-model-576-instructions-box-02",
+          "boe-law-38-1992-art-70-current",
+          "aeat-model-576-instructions-box-03",
+          "aeat-registration-tax-rates-2026"
+        ],
+        "warnings": [],
+        "blockers": [],
+        "boxGuidance": [
+          {
+            "box": "01",
+            "title": "Base imponible",
+            "value": 38559.85,
+            "origin": "Precio oficial, depreciación y, si procede, minoración residual.",
+            "formula": "valor de mercado / (1 + impuestos indirectos residuales)",
+            "sourceIds": [
+              "boe-law-38-1992-art-69-residual-tax",
+              "aeat-model-576-instructions-box-01"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "02",
+            "title": "Base imponible reducida",
+            "value": null,
+            "origin": "Sin reducción declarada como aplicable",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-66-4-5",
+              "aeat-model-576-instructions-box-02"
+            ],
+            "warnings": [
+              "La casilla 02 solo se cumplimenta cuando existe una reducción legal aplicable."
+            ]
+          },
+          {
+            "box": "03",
+            "title": "Tipo o epígrafe",
+            "value": "4.º · 14.75 %",
+            "origin": "Epígrafe legal y tipo vigente en la comunidad autónoma a la fecha de devengo.",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-70-current",
+              "aeat-registration-tax-rates-2026"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "04",
+            "title": "Cuota",
+            "value": 5687.58,
+            "origin": "Base aplicable por tipo actual de liquidación.",
+            "formula": "(casilla 02 si existe; en otro caso casilla 01) × tipo actual",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-04"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "05",
+            "title": "Deducción lineal",
+            "value": 0,
+            "origin": "No se ha aplicado una medida oficial extraordinaria.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-05"
+            ],
+            "warnings": [
+              "No es un campo de descuento libre."
+            ]
+          },
+          {
+            "box": "06",
+            "title": "Cuota a ingresar",
+            "value": 5687.58,
+            "origin": "Cuota tras la deducción lineal oficial aplicable.",
+            "formula": "casilla 04 − casilla 05",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-06"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "07",
+            "title": "A deducir",
+            "value": 0,
+            "origin": "Autoliquidaciones anteriores del mismo ejercicio y periodo.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-07"
+            ],
+            "warnings": [
+              "Solo se usa en una autoliquidación complementaria."
+            ]
+          },
+          {
+            "box": "08",
+            "title": "Resultado de la liquidación",
+            "value": 5687.58,
+            "origin": "Resultado final preparado para revisión; MatriculaPro no presenta el modelo.",
+            "formula": "casilla 06 − casilla 07",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-08"
+            ],
+            "warnings": [
+              "Revisa los datos en la AEAT antes de presentar."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sampleNumber": 3,
+      "officialRow": {
+        "normalizedRowId": "boe-2026-8e0d8a1e32f79a93b65618564ea711e6",
+        "catalogVersionId": "hac-1501-2025-annex-i-2026",
+        "sourceDocumentId": "BOE-A-2025-26357",
+        "sourceOrder": "Orden HAC/1501/2025, de 17 de diciembre",
+        "sourceAnnex": "Anexo I",
+        "officialPdfUrl": "https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf",
+        "officialRowReference": "BOE-A-2025-26357:ANEXO-I:AUDI:00001:L9590",
+        "sourceXmlLine": 9590,
+        "sourceChecksum": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26",
+        "brand": "AUDI",
+        "officialModelType": "A1 1.0 TFSI Active Kit",
+        "commercialStartYear": 2015,
+        "commercialEndYear": 2019,
+        "fuelType": "G",
+        "engineCapacityCc": 999,
+        "powerKw": 70,
+        "newVehicleOfficialValue": 16600,
+        "rawOfficialCells": [
+          "A1 1.0 TFSI Active Kit",
+          "2015",
+          "2019",
+          "999",
+          "3",
+          "G",
+          "70",
+          "7,83",
+          "95",
+          "16.600"
+        ],
+        "sampleVerificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+        "verifiedPdfLocation": {
+          "mappingVerified": true,
+          "documentPageNumber": 27,
+          "boePrintedPageNumber": 171606,
+          "numberingNote": "Página del documento PDF contada desde 1 / página impresa en el pie del BOE."
+        }
+      },
+      "exactMatch": {
+        "status": "exact-confirmed",
+        "selectedNormalizedRowId": "boe-2026-8e0d8a1e32f79a93b65618564ea711e6",
+        "discrepancies": [],
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-i"
+        ],
+        "explanation": "La persona usuaria confirmó una fila oficial única y los datos comparables son coherentes."
+      },
+      "fictitiousScenarioInputs": {
+        "explicitlyFictitious": true,
+        "suggestedFixtureUsedUnchanged": true,
+        "firstRegistrationDate": "2015-06-15",
+        "accrualDate": "2026-08-05",
+        "referenceDate": "2026-08-05",
+        "mileageKm": 10000,
+        "co2GKm": 110,
+        "co2VerifiedForScenario": true,
+        "co2FromAnnexI": false,
+        "co2Disclosure": "Valor ficticio exclusivo de la prueba; no consta en el Anexo I.",
+        "singleNonCombustionEngine": false,
+        "category": "M1",
+        "vehicleKind": "standard",
+        "currentAutonomousCommunity": "madrid",
+        "registrationTaxSubjectConfirmed": true,
+        "historicalTaxTerritory": "peninsula-balearics-common",
+        "noOtherIndirectTaxesConfirmed": true,
+        "noReductionsClaimed": true,
+        "noProfessionalUseAdjustment": true,
+        "previouslyRegisteredAbroad": true,
+        "originalFixtureNote": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+      },
+      "depreciation": {
+        "status": "complete",
+        "completedYears": 11,
+        "completedMonthsAfterAnniversary": 1,
+        "nextAnniversary": "2027-06-15",
+        "percentage": 0.13,
+        "percentageExact": "0.13",
+        "officialNewValue": 16600,
+        "valueBeforeProfessionalUseReduction": 2158,
+        "professionalUseFactor": null,
+        "marketValueAfterDepreciation": 2158,
+        "marketValueExact": "2158",
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-iv"
+        ]
+      },
+      "historicalRatesForResidualTax": {
+        "historicalEpigraph": 1,
+        "historicalVatRate": 0.21,
+        "historicalIedmtRate": 0,
+        "otherIndirectTaxRateTotal": 0,
+        "historicalVatSourceIds": [
+          "boe-rdl-20-2012-art-23"
+        ],
+        "historicalIedmtSourceIds": [
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ],
+        "sourceIds": [
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "residualTaxMinorationAndBase": {
+        "formula": "BI = VM / [1 + (IVA histórico + IEDMT histórico + otros impuestos indirectos)]",
+        "marketValueBeforeMinoration": 2158,
+        "denominator": 1.21,
+        "residualTaxAmountRemoved": 374.5289256198347,
+        "box01TaxableBase": 1783.47,
+        "box01TaxableBaseExact": "1783.471074380165289256",
+        "reductionKind": null,
+        "box02ReducedTaxableBase": null,
+        "sourceIds": [
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "currentLiquidation": {
+        "epigraph": 1,
+        "currentIedmtRate": 0,
+        "box04TaxQuota": 0,
+        "box04TaxQuotaExact": "0",
+        "box05LinearDeduction": 0,
+        "box06AmountAfterDeduction": 0,
+        "box07PreviousReturnsToDeduct": 0,
+        "box08FinalResult": 0,
+        "box08FinalResultExact": "0"
+      },
+      "result": {
+        "status": "complete-official-table",
+        "vehicleStatus": "used",
+        "valuationMethod": "official-table",
+        "catalogVersion": "hac-1501-2025-annex-i-2026",
+        "sourceIds": [
+          "aeat-model-576-instructions",
+          "boe-law-38-1992",
+          "boe-law-37-1992-art-13",
+          "aeat-vat-new-vehicle",
+          "boe-order-hac-1501-2025-annex-i",
+          "boe-order-hac-1501-2025-annex-iv",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51",
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-38-1992-art-66-4-5",
+          "aeat-model-576-instructions-box-02",
+          "boe-law-38-1992-art-70-current",
+          "aeat-model-576-instructions-box-03",
+          "aeat-registration-tax-rates-2026"
+        ],
+        "warnings": [],
+        "blockers": [],
+        "boxGuidance": [
+          {
+            "box": "01",
+            "title": "Base imponible",
+            "value": 1783.47,
+            "origin": "Precio oficial, depreciación y, si procede, minoración residual.",
+            "formula": "valor de mercado / (1 + impuestos indirectos residuales)",
+            "sourceIds": [
+              "boe-law-38-1992-art-69-residual-tax",
+              "aeat-model-576-instructions-box-01"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "02",
+            "title": "Base imponible reducida",
+            "value": null,
+            "origin": "Sin reducción declarada como aplicable",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-66-4-5",
+              "aeat-model-576-instructions-box-02"
+            ],
+            "warnings": [
+              "La casilla 02 solo se cumplimenta cuando existe una reducción legal aplicable."
+            ]
+          },
+          {
+            "box": "03",
+            "title": "Tipo o epígrafe",
+            "value": "1.º · 0 %",
+            "origin": "Epígrafe legal y tipo vigente en la comunidad autónoma a la fecha de devengo.",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-70-current",
+              "aeat-registration-tax-rates-2026"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "04",
+            "title": "Cuota",
+            "value": 0,
+            "origin": "Base aplicable por tipo actual de liquidación.",
+            "formula": "(casilla 02 si existe; en otro caso casilla 01) × tipo actual",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-04"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "05",
+            "title": "Deducción lineal",
+            "value": 0,
+            "origin": "No se ha aplicado una medida oficial extraordinaria.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-05"
+            ],
+            "warnings": [
+              "No es un campo de descuento libre."
+            ]
+          },
+          {
+            "box": "06",
+            "title": "Cuota a ingresar",
+            "value": 0,
+            "origin": "Cuota tras la deducción lineal oficial aplicable.",
+            "formula": "casilla 04 − casilla 05",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-06"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "07",
+            "title": "A deducir",
+            "value": 0,
+            "origin": "Autoliquidaciones anteriores del mismo ejercicio y periodo.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-07"
+            ],
+            "warnings": [
+              "Solo se usa en una autoliquidación complementaria."
+            ]
+          },
+          {
+            "box": "08",
+            "title": "Resultado de la liquidación",
+            "value": 0,
+            "origin": "Resultado final preparado para revisión; MatriculaPro no presenta el modelo.",
+            "formula": "casilla 06 − casilla 07",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-08"
+            ],
+            "warnings": [
+              "Revisa los datos en la AEAT antes de presentar."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sampleNumber": 4,
+      "officialRow": {
+        "normalizedRowId": "boe-2026-b93194a50cdcc020128bdaebdd20301a",
+        "catalogVersionId": "hac-1501-2025-annex-i-2026",
+        "sourceDocumentId": "BOE-A-2025-26357",
+        "sourceOrder": "Orden HAC/1501/2025, de 17 de diciembre",
+        "sourceAnnex": "Anexo I",
+        "officialPdfUrl": "https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf",
+        "officialRowReference": "BOE-A-2025-26357:ANEXO-I:VOLKSWAGEN:00001:L657499",
+        "sourceXmlLine": 657499,
+        "sourceChecksum": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26",
+        "brand": "VOLKSWAGEN",
+        "officialModelType": "ARTEON 1.5 TSI",
+        "commercialStartYear": 2021,
+        "commercialEndYear": 2022,
+        "fuelType": "G",
+        "engineCapacityCc": 1498,
+        "powerKw": 110,
+        "newVehicleOfficialValue": 37700,
+        "rawOfficialCells": [
+          "ARTEON 1.5 TSI",
+          "2021",
+          "2022",
+          "1498",
+          "4",
+          "G",
+          "110",
+          "11,20",
+          "150",
+          "37.700"
+        ],
+        "sampleVerificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+        "verifiedPdfLocation": {
+          "mappingVerified": true,
+          "documentPageNumber": 1605,
+          "boePrintedPageNumber": 173184,
+          "numberingNote": "Página del documento PDF contada desde 1 / página impresa en el pie del BOE."
+        }
+      },
+      "exactMatch": {
+        "status": "exact-confirmed",
+        "selectedNormalizedRowId": "boe-2026-b93194a50cdcc020128bdaebdd20301a",
+        "discrepancies": [],
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-i"
+        ],
+        "explanation": "La persona usuaria confirmó una fila oficial única y los datos comparables son coherentes."
+      },
+      "fictitiousScenarioInputs": {
+        "explicitlyFictitious": true,
+        "suggestedFixtureUsedUnchanged": true,
+        "firstRegistrationDate": "2021-08-15",
+        "accrualDate": "2026-08-05",
+        "referenceDate": "2026-08-05",
+        "mileageKm": 10000,
+        "co2GKm": 130,
+        "co2VerifiedForScenario": true,
+        "co2FromAnnexI": false,
+        "co2Disclosure": "Valor ficticio exclusivo de la prueba; no consta en el Anexo I.",
+        "singleNonCombustionEngine": false,
+        "category": "M1",
+        "vehicleKind": "standard",
+        "currentAutonomousCommunity": "madrid",
+        "registrationTaxSubjectConfirmed": true,
+        "historicalTaxTerritory": "peninsula-balearics-common",
+        "noOtherIndirectTaxesConfirmed": true,
+        "noReductionsClaimed": true,
+        "noProfessionalUseAdjustment": true,
+        "previouslyRegisteredAbroad": true,
+        "originalFixtureNote": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+      },
+      "depreciation": {
+        "status": "complete",
+        "completedYears": 4,
+        "completedMonthsAfterAnniversary": 11,
+        "nextAnniversary": "2026-08-15",
+        "percentage": 0.47,
+        "percentageExact": "0.47",
+        "officialNewValue": 37700,
+        "valueBeforeProfessionalUseReduction": 17719,
+        "professionalUseFactor": null,
+        "marketValueAfterDepreciation": 17719,
+        "marketValueExact": "17719",
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-iv"
+        ]
+      },
+      "historicalRatesForResidualTax": {
+        "historicalEpigraph": 1,
+        "historicalVatRate": 0.21,
+        "historicalIedmtRate": 0,
+        "otherIndirectTaxRateTotal": 0,
+        "historicalVatSourceIds": [
+          "boe-rdl-20-2012-art-23"
+        ],
+        "historicalIedmtSourceIds": [
+          "boe-law-34-2007-additional-8",
+          "boe-law-11-2021-additional-5",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ],
+        "sourceIds": [
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-law-11-2021-additional-5",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "residualTaxMinorationAndBase": {
+        "formula": "BI = VM / [1 + (IVA histórico + IEDMT histórico + otros impuestos indirectos)]",
+        "marketValueBeforeMinoration": 17719,
+        "denominator": 1.21,
+        "residualTaxAmountRemoved": 3075.198347107438,
+        "box01TaxableBase": 14643.8,
+        "box01TaxableBaseExact": "14643.801652892561983471",
+        "reductionKind": null,
+        "box02ReducedTaxableBase": null,
+        "sourceIds": [
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-law-11-2021-additional-5",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "currentLiquidation": {
+        "epigraph": 2,
+        "currentIedmtRate": 0.0475,
+        "box04TaxQuota": 695.58,
+        "box04TaxQuotaExact": "695.580578512396694215",
+        "box05LinearDeduction": 0,
+        "box06AmountAfterDeduction": 695.58,
+        "box07PreviousReturnsToDeduct": 0,
+        "box08FinalResult": 695.58,
+        "box08FinalResultExact": "695.580578512396694215"
+      },
+      "result": {
+        "status": "complete-official-table",
+        "vehicleStatus": "used",
+        "valuationMethod": "official-table",
+        "catalogVersion": "hac-1501-2025-annex-i-2026",
+        "sourceIds": [
+          "aeat-model-576-instructions",
+          "boe-law-38-1992",
+          "boe-law-37-1992-art-13",
+          "aeat-vat-new-vehicle",
+          "boe-order-hac-1501-2025-annex-i",
+          "boe-order-hac-1501-2025-annex-iv",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-law-11-2021-additional-5",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51",
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-38-1992-art-66-4-5",
+          "aeat-model-576-instructions-box-02",
+          "boe-law-38-1992-art-70-current",
+          "aeat-model-576-instructions-box-03",
+          "aeat-registration-tax-rates-2026"
+        ],
+        "warnings": [],
+        "blockers": [],
+        "boxGuidance": [
+          {
+            "box": "01",
+            "title": "Base imponible",
+            "value": 14643.8,
+            "origin": "Precio oficial, depreciación y, si procede, minoración residual.",
+            "formula": "valor de mercado / (1 + impuestos indirectos residuales)",
+            "sourceIds": [
+              "boe-law-38-1992-art-69-residual-tax",
+              "aeat-model-576-instructions-box-01"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "02",
+            "title": "Base imponible reducida",
+            "value": null,
+            "origin": "Sin reducción declarada como aplicable",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-66-4-5",
+              "aeat-model-576-instructions-box-02"
+            ],
+            "warnings": [
+              "La casilla 02 solo se cumplimenta cuando existe una reducción legal aplicable."
+            ]
+          },
+          {
+            "box": "03",
+            "title": "Tipo o epígrafe",
+            "value": "2.º · 4.75 %",
+            "origin": "Epígrafe legal y tipo vigente en la comunidad autónoma a la fecha de devengo.",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-70-current",
+              "aeat-registration-tax-rates-2026"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "04",
+            "title": "Cuota",
+            "value": 695.58,
+            "origin": "Base aplicable por tipo actual de liquidación.",
+            "formula": "(casilla 02 si existe; en otro caso casilla 01) × tipo actual",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-04"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "05",
+            "title": "Deducción lineal",
+            "value": 0,
+            "origin": "No se ha aplicado una medida oficial extraordinaria.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-05"
+            ],
+            "warnings": [
+              "No es un campo de descuento libre."
+            ]
+          },
+          {
+            "box": "06",
+            "title": "Cuota a ingresar",
+            "value": 695.58,
+            "origin": "Cuota tras la deducción lineal oficial aplicable.",
+            "formula": "casilla 04 − casilla 05",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-06"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "07",
+            "title": "A deducir",
+            "value": 0,
+            "origin": "Autoliquidaciones anteriores del mismo ejercicio y periodo.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-07"
+            ],
+            "warnings": [
+              "Solo se usa en una autoliquidación complementaria."
+            ]
+          },
+          {
+            "box": "08",
+            "title": "Resultado de la liquidación",
+            "value": 695.58,
+            "origin": "Resultado final preparado para revisión; MatriculaPro no presenta el modelo.",
+            "formula": "casilla 06 − casilla 07",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-08"
+            ],
+            "warnings": [
+              "Revisa los datos en la AEAT antes de presentar."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sampleNumber": 5,
+      "officialRow": {
+        "normalizedRowId": "boe-2026-2d149d5047e4459620373d813707a1ff",
+        "catalogVersionId": "hac-1501-2025-annex-i-2026",
+        "sourceDocumentId": "BOE-A-2025-26357",
+        "sourceOrder": "Orden HAC/1501/2025, de 17 de diciembre",
+        "sourceAnnex": "Anexo I",
+        "officialPdfUrl": "https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf",
+        "officialRowReference": "BOE-A-2025-26357:ANEXO-I:PORSCHE:00001:L514139",
+        "sourceXmlLine": 514139,
+        "sourceChecksum": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26",
+        "brand": "PORSCHE",
+        "officialModelType": "718 BOXSTER 2.0",
+        "commercialStartYear": 2020,
+        "commercialEndYear": null,
+        "fuelType": "G",
+        "engineCapacityCc": 1988,
+        "powerKw": 221,
+        "newVehicleOfficialValue": 59500,
+        "rawOfficialCells": [
+          "718 BOXSTER 2.0",
+          "2020",
+          "",
+          "1988",
+          "4",
+          "G",
+          "221",
+          "13,27",
+          "300",
+          "59.500"
+        ],
+        "sampleVerificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+        "verifiedPdfLocation": {
+          "mappingVerified": true,
+          "documentPageNumber": 1260,
+          "boePrintedPageNumber": 172839,
+          "numberingNote": "Página del documento PDF contada desde 1 / página impresa en el pie del BOE."
+        }
+      },
+      "exactMatch": {
+        "status": "exact-confirmed",
+        "selectedNormalizedRowId": "boe-2026-2d149d5047e4459620373d813707a1ff",
+        "discrepancies": [],
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-i"
+        ],
+        "explanation": "La persona usuaria confirmó una fila oficial única y los datos comparables son coherentes."
+      },
+      "fictitiousScenarioInputs": {
+        "explicitlyFictitious": true,
+        "suggestedFixtureUsedUnchanged": true,
+        "firstRegistrationDate": "2020-06-15",
+        "accrualDate": "2026-08-05",
+        "referenceDate": "2026-08-05",
+        "mileageKm": 10000,
+        "co2GKm": 210,
+        "co2VerifiedForScenario": true,
+        "co2FromAnnexI": false,
+        "co2Disclosure": "Valor ficticio exclusivo de la prueba; no consta en el Anexo I.",
+        "singleNonCombustionEngine": false,
+        "category": "M1",
+        "vehicleKind": "standard",
+        "currentAutonomousCommunity": "madrid",
+        "registrationTaxSubjectConfirmed": true,
+        "historicalTaxTerritory": "peninsula-balearics-common",
+        "noOtherIndirectTaxesConfirmed": true,
+        "noReductionsClaimed": true,
+        "noProfessionalUseAdjustment": true,
+        "previouslyRegisteredAbroad": true,
+        "originalFixtureNote": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+      },
+      "depreciation": {
+        "status": "complete",
+        "completedYears": 6,
+        "completedMonthsAfterAnniversary": 1,
+        "nextAnniversary": "2027-06-15",
+        "percentage": 0.34,
+        "percentageExact": "0.34",
+        "officialNewValue": 59500,
+        "valueBeforeProfessionalUseReduction": 20230,
+        "professionalUseFactor": null,
+        "marketValueAfterDepreciation": 20230,
+        "marketValueExact": "20230",
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-iv"
+        ]
+      },
+      "historicalRatesForResidualTax": {
+        "historicalEpigraph": 4,
+        "historicalVatRate": 0.21,
+        "historicalIedmtRate": 0.1475,
+        "otherIndirectTaxRateTotal": 0,
+        "historicalVatSourceIds": [
+          "boe-rdl-20-2012-art-23"
+        ],
+        "historicalIedmtSourceIds": [
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ],
+        "sourceIds": [
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "residualTaxMinorationAndBase": {
+        "formula": "BI = VM / [1 + (IVA histórico + IEDMT histórico + otros impuestos indirectos)]",
+        "marketValueBeforeMinoration": 20230,
+        "denominator": 1.3575,
+        "residualTaxAmountRemoved": 5327.605893186003,
+        "box01TaxableBase": 14902.39,
+        "box01TaxableBaseExact": "14902.394106813996316759",
+        "reductionKind": null,
+        "box02ReducedTaxableBase": null,
+        "sourceIds": [
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "currentLiquidation": {
+        "epigraph": 4,
+        "currentIedmtRate": 0.1475,
+        "box04TaxQuota": 2198.1,
+        "box04TaxQuotaExact": "2198.103130755064456722",
+        "box05LinearDeduction": 0,
+        "box06AmountAfterDeduction": 2198.1,
+        "box07PreviousReturnsToDeduct": 0,
+        "box08FinalResult": 2198.1,
+        "box08FinalResultExact": "2198.103130755064456722"
+      },
+      "result": {
+        "status": "complete-official-table",
+        "vehicleStatus": "used",
+        "valuationMethod": "official-table",
+        "catalogVersion": "hac-1501-2025-annex-i-2026",
+        "sourceIds": [
+          "aeat-model-576-instructions",
+          "boe-law-38-1992",
+          "boe-law-37-1992-art-13",
+          "aeat-vat-new-vehicle",
+          "boe-order-hac-1501-2025-annex-i",
+          "boe-order-hac-1501-2025-annex-iv",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51",
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-38-1992-art-66-4-5",
+          "aeat-model-576-instructions-box-02",
+          "boe-law-38-1992-art-70-current",
+          "aeat-model-576-instructions-box-03",
+          "aeat-registration-tax-rates-2026"
+        ],
+        "warnings": [],
+        "blockers": [],
+        "boxGuidance": [
+          {
+            "box": "01",
+            "title": "Base imponible",
+            "value": 14902.39,
+            "origin": "Precio oficial, depreciación y, si procede, minoración residual.",
+            "formula": "valor de mercado / (1 + impuestos indirectos residuales)",
+            "sourceIds": [
+              "boe-law-38-1992-art-69-residual-tax",
+              "aeat-model-576-instructions-box-01"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "02",
+            "title": "Base imponible reducida",
+            "value": null,
+            "origin": "Sin reducción declarada como aplicable",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-66-4-5",
+              "aeat-model-576-instructions-box-02"
+            ],
+            "warnings": [
+              "La casilla 02 solo se cumplimenta cuando existe una reducción legal aplicable."
+            ]
+          },
+          {
+            "box": "03",
+            "title": "Tipo o epígrafe",
+            "value": "4.º · 14.75 %",
+            "origin": "Epígrafe legal y tipo vigente en la comunidad autónoma a la fecha de devengo.",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-70-current",
+              "aeat-registration-tax-rates-2026"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "04",
+            "title": "Cuota",
+            "value": 2198.1,
+            "origin": "Base aplicable por tipo actual de liquidación.",
+            "formula": "(casilla 02 si existe; en otro caso casilla 01) × tipo actual",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-04"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "05",
+            "title": "Deducción lineal",
+            "value": 0,
+            "origin": "No se ha aplicado una medida oficial extraordinaria.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-05"
+            ],
+            "warnings": [
+              "No es un campo de descuento libre."
+            ]
+          },
+          {
+            "box": "06",
+            "title": "Cuota a ingresar",
+            "value": 2198.1,
+            "origin": "Cuota tras la deducción lineal oficial aplicable.",
+            "formula": "casilla 04 − casilla 05",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-06"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "07",
+            "title": "A deducir",
+            "value": 0,
+            "origin": "Autoliquidaciones anteriores del mismo ejercicio y periodo.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-07"
+            ],
+            "warnings": [
+              "Solo se usa en una autoliquidación complementaria."
+            ]
+          },
+          {
+            "box": "08",
+            "title": "Resultado de la liquidación",
+            "value": 2198.1,
+            "origin": "Resultado final preparado para revisión; MatriculaPro no presenta el modelo.",
+            "formula": "casilla 06 − casilla 07",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-08"
+            ],
+            "warnings": [
+              "Revisa los datos en la AEAT antes de presentar."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sampleNumber": 6,
+      "officialRow": {
+        "normalizedRowId": "boe-2026-2f2a445a6ca44bc47ecc973c8a279b15",
+        "catalogVersionId": "hac-1501-2025-annex-i-2026",
+        "sourceDocumentId": "BOE-A-2025-26357",
+        "sourceOrder": "Orden HAC/1501/2025, de 17 de diciembre",
+        "sourceAnnex": "Anexo I",
+        "officialPdfUrl": "https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf",
+        "officialRowReference": "BOE-A-2025-26357:ANEXO-I:PEUGEOT:00021:L482574",
+        "sourceXmlLine": 482574,
+        "sourceChecksum": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26",
+        "brand": "PEUGEOT",
+        "officialModelType": "107 1.0i Active 2 Tronic",
+        "commercialStartYear": 2012,
+        "commercialEndYear": 2014,
+        "fuelType": "G",
+        "engineCapacityCc": 998,
+        "powerKw": 50,
+        "newVehicleOfficialValue": 9300,
+        "rawOfficialCells": [
+          "107 1.0i Active 2 Tronic",
+          "2012",
+          "2014",
+          "998",
+          "3",
+          "G",
+          "50",
+          "7,82",
+          "68",
+          "9.300"
+        ],
+        "sampleVerificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+        "verifiedPdfLocation": {
+          "mappingVerified": true,
+          "documentPageNumber": 1185,
+          "boePrintedPageNumber": 172764,
+          "numberingNote": "Página del documento PDF contada desde 1 / página impresa en el pie del BOE."
+        }
+      },
+      "exactMatch": {
+        "status": "exact-confirmed",
+        "selectedNormalizedRowId": "boe-2026-2f2a445a6ca44bc47ecc973c8a279b15",
+        "discrepancies": [],
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-i"
+        ],
+        "explanation": "La persona usuaria confirmó una fila oficial única y los datos comparables son coherentes."
+      },
+      "fictitiousScenarioInputs": {
+        "explicitlyFictitious": true,
+        "suggestedFixtureUsedUnchanged": true,
+        "firstRegistrationDate": "2012-06-15",
+        "accrualDate": "2026-08-05",
+        "referenceDate": "2026-08-05",
+        "mileageKm": 10000,
+        "co2GKm": 155,
+        "co2VerifiedForScenario": true,
+        "co2FromAnnexI": false,
+        "co2Disclosure": "Valor ficticio exclusivo de la prueba; no consta en el Anexo I.",
+        "singleNonCombustionEngine": false,
+        "category": "M1",
+        "vehicleKind": "standard",
+        "currentAutonomousCommunity": "madrid",
+        "registrationTaxSubjectConfirmed": true,
+        "historicalTaxTerritory": "peninsula-balearics-common",
+        "noOtherIndirectTaxesConfirmed": true,
+        "noReductionsClaimed": true,
+        "noProfessionalUseAdjustment": true,
+        "previouslyRegisteredAbroad": true,
+        "originalFixtureNote": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+      },
+      "depreciation": {
+        "status": "complete",
+        "completedYears": 14,
+        "completedMonthsAfterAnniversary": 1,
+        "nextAnniversary": "2027-06-15",
+        "percentage": 0.1,
+        "percentageExact": "0.1",
+        "officialNewValue": 9300,
+        "valueBeforeProfessionalUseReduction": 930,
+        "professionalUseFactor": null,
+        "marketValueAfterDepreciation": 930,
+        "marketValueExact": "930",
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-iv"
+        ]
+      },
+      "historicalRatesForResidualTax": {
+        "historicalEpigraph": 2,
+        "historicalVatRate": 0.18,
+        "historicalIedmtRate": 0.0475,
+        "otherIndirectTaxRateTotal": 0,
+        "historicalVatSourceIds": [
+          "boe-law-26-2009-art-79"
+        ],
+        "historicalIedmtSourceIds": [
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ],
+        "sourceIds": [
+          "boe-law-26-2009-art-79",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "residualTaxMinorationAndBase": {
+        "formula": "BI = VM / [1 + (IVA histórico + IEDMT histórico + otros impuestos indirectos)]",
+        "marketValueBeforeMinoration": 930,
+        "denominator": 1.2275,
+        "residualTaxAmountRemoved": 172.36252545824848,
+        "box01TaxableBase": 757.64,
+        "box01TaxableBaseExact": "757.637474541751527495",
+        "reductionKind": null,
+        "box02ReducedTaxableBase": null,
+        "sourceIds": [
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-26-2009-art-79",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "currentLiquidation": {
+        "epigraph": 2,
+        "currentIedmtRate": 0.0475,
+        "box04TaxQuota": 35.99,
+        "box04TaxQuotaExact": "35.987780040733197556",
+        "box05LinearDeduction": 0,
+        "box06AmountAfterDeduction": 35.99,
+        "box07PreviousReturnsToDeduct": 0,
+        "box08FinalResult": 35.99,
+        "box08FinalResultExact": "35.987780040733197556"
+      },
+      "result": {
+        "status": "complete-official-table",
+        "vehicleStatus": "used",
+        "valuationMethod": "official-table",
+        "catalogVersion": "hac-1501-2025-annex-i-2026",
+        "sourceIds": [
+          "aeat-model-576-instructions",
+          "boe-law-38-1992",
+          "boe-law-37-1992-art-13",
+          "aeat-vat-new-vehicle",
+          "boe-order-hac-1501-2025-annex-i",
+          "boe-order-hac-1501-2025-annex-iv",
+          "boe-law-26-2009-art-79",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51",
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-38-1992-art-66-4-5",
+          "aeat-model-576-instructions-box-02",
+          "boe-law-38-1992-art-70-current",
+          "aeat-model-576-instructions-box-03",
+          "aeat-registration-tax-rates-2026"
+        ],
+        "warnings": [],
+        "blockers": [],
+        "boxGuidance": [
+          {
+            "box": "01",
+            "title": "Base imponible",
+            "value": 757.64,
+            "origin": "Precio oficial, depreciación y, si procede, minoración residual.",
+            "formula": "valor de mercado / (1 + impuestos indirectos residuales)",
+            "sourceIds": [
+              "boe-law-38-1992-art-69-residual-tax",
+              "aeat-model-576-instructions-box-01"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "02",
+            "title": "Base imponible reducida",
+            "value": null,
+            "origin": "Sin reducción declarada como aplicable",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-66-4-5",
+              "aeat-model-576-instructions-box-02"
+            ],
+            "warnings": [
+              "La casilla 02 solo se cumplimenta cuando existe una reducción legal aplicable."
+            ]
+          },
+          {
+            "box": "03",
+            "title": "Tipo o epígrafe",
+            "value": "2.º · 4.75 %",
+            "origin": "Epígrafe legal y tipo vigente en la comunidad autónoma a la fecha de devengo.",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-70-current",
+              "aeat-registration-tax-rates-2026"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "04",
+            "title": "Cuota",
+            "value": 35.99,
+            "origin": "Base aplicable por tipo actual de liquidación.",
+            "formula": "(casilla 02 si existe; en otro caso casilla 01) × tipo actual",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-04"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "05",
+            "title": "Deducción lineal",
+            "value": 0,
+            "origin": "No se ha aplicado una medida oficial extraordinaria.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-05"
+            ],
+            "warnings": [
+              "No es un campo de descuento libre."
+            ]
+          },
+          {
+            "box": "06",
+            "title": "Cuota a ingresar",
+            "value": 35.99,
+            "origin": "Cuota tras la deducción lineal oficial aplicable.",
+            "formula": "casilla 04 − casilla 05",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-06"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "07",
+            "title": "A deducir",
+            "value": 0,
+            "origin": "Autoliquidaciones anteriores del mismo ejercicio y periodo.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-07"
+            ],
+            "warnings": [
+              "Solo se usa en una autoliquidación complementaria."
+            ]
+          },
+          {
+            "box": "08",
+            "title": "Resultado de la liquidación",
+            "value": 35.99,
+            "origin": "Resultado final preparado para revisión; MatriculaPro no presenta el modelo.",
+            "formula": "casilla 06 − casilla 07",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-08"
+            ],
+            "warnings": [
+              "Revisa los datos en la AEAT antes de presentar."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sampleNumber": 7,
+      "officialRow": {
+        "normalizedRowId": "boe-2026-55bb5859356423d33f7ba0576cf905ac",
+        "catalogVersionId": "hac-1501-2025-annex-i-2026",
+        "sourceDocumentId": "BOE-A-2025-26357",
+        "sourceOrder": "Orden HAC/1501/2025, de 17 de diciembre",
+        "sourceAnnex": "Anexo I",
+        "officialPdfUrl": "https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf",
+        "officialRowReference": "BOE-A-2025-26357:ANEXO-I:RENAULT:00001:L519037",
+        "sourceXmlLine": 519037,
+        "sourceChecksum": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26",
+        "brand": "RENAULT",
+        "officialModelType": "4 E-Tech eléctrico 4 E-Tech eléctrico iconic “plein sud™” autonomía confort",
+        "commercialStartYear": 2026,
+        "commercialEndYear": null,
+        "fuelType": "Elc",
+        "engineCapacityCc": null,
+        "powerKw": 110,
+        "newVehicleOfficialValue": 25600,
+        "rawOfficialCells": [
+          "4 E-Tech eléctrico 4 E-Tech eléctrico iconic “plein sud™” autonomía confort",
+          "2026",
+          "",
+          "",
+          "",
+          "Elc",
+          "110",
+          "15,30",
+          "150",
+          "25.600"
+        ],
+        "sampleVerificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+        "verifiedPdfLocation": {
+          "mappingVerified": true,
+          "documentPageNumber": 1272,
+          "boePrintedPageNumber": 172851,
+          "numberingNote": "Página del documento PDF contada desde 1 / página impresa en el pie del BOE."
+        }
+      },
+      "exactMatch": {
+        "status": "exact-confirmed",
+        "selectedNormalizedRowId": "boe-2026-55bb5859356423d33f7ba0576cf905ac",
+        "discrepancies": [],
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-i"
+        ],
+        "explanation": "La persona usuaria confirmó una fila oficial única y los datos comparables son coherentes."
+      },
+      "fictitiousScenarioInputs": {
+        "explicitlyFictitious": true,
+        "suggestedFixtureUsedUnchanged": true,
+        "firstRegistrationDate": "2026-01-02",
+        "accrualDate": "2026-08-05",
+        "referenceDate": "2026-08-05",
+        "mileageKm": 10000,
+        "co2GKm": 0,
+        "co2VerifiedForScenario": true,
+        "co2FromAnnexI": false,
+        "co2Disclosure": "Valor ficticio exclusivo de la prueba; no consta en el Anexo I.",
+        "singleNonCombustionEngine": true,
+        "category": "M1",
+        "vehicleKind": "standard",
+        "currentAutonomousCommunity": "madrid",
+        "registrationTaxSubjectConfirmed": true,
+        "historicalTaxTerritory": "peninsula-balearics-common",
+        "noOtherIndirectTaxesConfirmed": true,
+        "noReductionsClaimed": true,
+        "noProfessionalUseAdjustment": true,
+        "previouslyRegisteredAbroad": true,
+        "originalFixtureNote": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+      },
+      "depreciation": {
+        "status": "complete",
+        "completedYears": 0,
+        "completedMonthsAfterAnniversary": 7,
+        "nextAnniversary": "2027-01-02",
+        "percentage": 1,
+        "percentageExact": "1",
+        "officialNewValue": 25600,
+        "valueBeforeProfessionalUseReduction": 25600,
+        "professionalUseFactor": null,
+        "marketValueAfterDepreciation": 25600,
+        "marketValueExact": "25600",
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-iv"
+        ]
+      },
+      "historicalRatesForResidualTax": {
+        "historicalEpigraph": 1,
+        "historicalVatRate": 0.21,
+        "historicalIedmtRate": 0,
+        "otherIndirectTaxRateTotal": 0,
+        "historicalVatSourceIds": [
+          "boe-rdl-20-2012-art-23"
+        ],
+        "historicalIedmtSourceIds": [
+          "boe-law-34-2007-additional-8",
+          "boe-law-38-1992-art-70-current",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ],
+        "sourceIds": [
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-law-38-1992-art-70-current",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "residualTaxMinorationAndBase": {
+        "formula": "BI = VM / [1 + (IVA histórico + IEDMT histórico + otros impuestos indirectos)]",
+        "marketValueBeforeMinoration": 25600,
+        "denominator": 1.21,
+        "residualTaxAmountRemoved": 4442.975206611571,
+        "box01TaxableBase": 21157.02,
+        "box01TaxableBaseExact": "21157.024793388429752066",
+        "reductionKind": null,
+        "box02ReducedTaxableBase": null,
+        "sourceIds": [
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-law-38-1992-art-70-current",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "currentLiquidation": {
+        "epigraph": 1,
+        "currentIedmtRate": 0,
+        "box04TaxQuota": 0,
+        "box04TaxQuotaExact": "0",
+        "box05LinearDeduction": 0,
+        "box06AmountAfterDeduction": 0,
+        "box07PreviousReturnsToDeduct": 0,
+        "box08FinalResult": 0,
+        "box08FinalResultExact": "0"
+      },
+      "result": {
+        "status": "complete-official-table",
+        "vehicleStatus": "used",
+        "valuationMethod": "official-table",
+        "catalogVersion": "hac-1501-2025-annex-i-2026",
+        "sourceIds": [
+          "aeat-model-576-instructions",
+          "boe-law-38-1992",
+          "boe-law-37-1992-art-13",
+          "aeat-vat-new-vehicle",
+          "boe-order-hac-1501-2025-annex-i",
+          "boe-order-hac-1501-2025-annex-iv",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-law-38-1992-art-70-current",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51",
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-38-1992-art-66-4-5",
+          "aeat-model-576-instructions-box-02",
+          "aeat-model-576-instructions-box-03",
+          "aeat-registration-tax-rates-2026"
+        ],
+        "warnings": [],
+        "blockers": [],
+        "boxGuidance": [
+          {
+            "box": "01",
+            "title": "Base imponible",
+            "value": 21157.02,
+            "origin": "Precio oficial, depreciación y, si procede, minoración residual.",
+            "formula": "valor de mercado / (1 + impuestos indirectos residuales)",
+            "sourceIds": [
+              "boe-law-38-1992-art-69-residual-tax",
+              "aeat-model-576-instructions-box-01"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "02",
+            "title": "Base imponible reducida",
+            "value": null,
+            "origin": "Sin reducción declarada como aplicable",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-66-4-5",
+              "aeat-model-576-instructions-box-02"
+            ],
+            "warnings": [
+              "La casilla 02 solo se cumplimenta cuando existe una reducción legal aplicable."
+            ]
+          },
+          {
+            "box": "03",
+            "title": "Tipo o epígrafe",
+            "value": "1.º · 0 %",
+            "origin": "Epígrafe legal y tipo vigente en la comunidad autónoma a la fecha de devengo.",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-70-current",
+              "aeat-registration-tax-rates-2026"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "04",
+            "title": "Cuota",
+            "value": 0,
+            "origin": "Base aplicable por tipo actual de liquidación.",
+            "formula": "(casilla 02 si existe; en otro caso casilla 01) × tipo actual",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-04"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "05",
+            "title": "Deducción lineal",
+            "value": 0,
+            "origin": "No se ha aplicado una medida oficial extraordinaria.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-05"
+            ],
+            "warnings": [
+              "No es un campo de descuento libre."
+            ]
+          },
+          {
+            "box": "06",
+            "title": "Cuota a ingresar",
+            "value": 0,
+            "origin": "Cuota tras la deducción lineal oficial aplicable.",
+            "formula": "casilla 04 − casilla 05",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-06"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "07",
+            "title": "A deducir",
+            "value": 0,
+            "origin": "Autoliquidaciones anteriores del mismo ejercicio y periodo.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-07"
+            ],
+            "warnings": [
+              "Solo se usa en una autoliquidación complementaria."
+            ]
+          },
+          {
+            "box": "08",
+            "title": "Resultado de la liquidación",
+            "value": 0,
+            "origin": "Resultado final preparado para revisión; MatriculaPro no presenta el modelo.",
+            "formula": "casilla 06 − casilla 07",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-08"
+            ],
+            "warnings": [
+              "Revisa los datos en la AEAT antes de presentar."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sampleNumber": 8,
+      "officialRow": {
+        "normalizedRowId": "boe-2026-b931fd46e7b84d967949acd634fc8afc",
+        "catalogVersionId": "hac-1501-2025-annex-i-2026",
+        "sourceDocumentId": "BOE-A-2025-26357",
+        "sourceOrder": "Orden HAC/1501/2025, de 17 de diciembre",
+        "sourceAnnex": "Anexo I",
+        "officialPdfUrl": "https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf",
+        "officialRowReference": "BOE-A-2025-26357:ANEXO-I:TOYOTA:00003:L635898",
+        "sourceXmlLine": 635898,
+        "sourceChecksum": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26",
+        "brand": "TOYOTA",
+        "officialModelType": "AURIS 1.3 WT-i Active 3p",
+        "commercialStartYear": 2010,
+        "commercialEndYear": 2012,
+        "fuelType": "G",
+        "engineCapacityCc": 1329,
+        "powerKw": 74,
+        "newVehicleOfficialValue": 12900,
+        "rawOfficialCells": [
+          "AURIS 1.3 WT-i Active 3p",
+          "2010",
+          "2012",
+          "1329",
+          "4",
+          "G",
+          "74",
+          "10,42",
+          "101",
+          "12.900"
+        ],
+        "sampleVerificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+        "verifiedPdfLocation": {
+          "mappingVerified": true,
+          "documentPageNumber": 1553,
+          "boePrintedPageNumber": 173132,
+          "numberingNote": "Página del documento PDF contada desde 1 / página impresa en el pie del BOE."
+        }
+      },
+      "exactMatch": {
+        "status": "exact-confirmed",
+        "selectedNormalizedRowId": "boe-2026-b931fd46e7b84d967949acd634fc8afc",
+        "discrepancies": [],
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-i"
+        ],
+        "explanation": "La persona usuaria confirmó una fila oficial única y los datos comparables son coherentes."
+      },
+      "fictitiousScenarioInputs": {
+        "explicitlyFictitious": true,
+        "suggestedFixtureUsedUnchanged": true,
+        "firstRegistrationDate": "2010-06-15",
+        "accrualDate": "2026-08-05",
+        "referenceDate": "2026-08-05",
+        "mileageKm": 10000,
+        "co2GKm": 105,
+        "co2VerifiedForScenario": true,
+        "co2FromAnnexI": false,
+        "co2Disclosure": "Valor ficticio exclusivo de la prueba; no consta en el Anexo I.",
+        "singleNonCombustionEngine": false,
+        "category": "M1",
+        "vehicleKind": "standard",
+        "currentAutonomousCommunity": "madrid",
+        "registrationTaxSubjectConfirmed": true,
+        "historicalTaxTerritory": "peninsula-balearics-common",
+        "noOtherIndirectTaxesConfirmed": true,
+        "noReductionsClaimed": true,
+        "noProfessionalUseAdjustment": true,
+        "previouslyRegisteredAbroad": true,
+        "originalFixtureNote": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+      },
+      "depreciation": {
+        "status": "complete",
+        "completedYears": 16,
+        "completedMonthsAfterAnniversary": 1,
+        "nextAnniversary": "2027-06-15",
+        "percentage": 0.1,
+        "percentageExact": "0.1",
+        "officialNewValue": 12900,
+        "valueBeforeProfessionalUseReduction": 1290,
+        "professionalUseFactor": null,
+        "marketValueAfterDepreciation": 1290,
+        "marketValueExact": "1290",
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-iv"
+        ]
+      },
+      "historicalRatesForResidualTax": {
+        "historicalEpigraph": 1,
+        "historicalVatRate": 0.16,
+        "historicalIedmtRate": 0,
+        "otherIndirectTaxRateTotal": 0,
+        "historicalVatSourceIds": [
+          "boe-law-41-1994-art-78"
+        ],
+        "historicalIedmtSourceIds": [
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ],
+        "sourceIds": [
+          "boe-law-41-1994-art-78",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "residualTaxMinorationAndBase": {
+        "formula": "BI = VM / [1 + (IVA histórico + IEDMT histórico + otros impuestos indirectos)]",
+        "marketValueBeforeMinoration": 1290,
+        "denominator": 1.16,
+        "residualTaxAmountRemoved": 177.93103448275863,
+        "box01TaxableBase": 1112.07,
+        "box01TaxableBaseExact": "1112.06896551724137931",
+        "reductionKind": null,
+        "box02ReducedTaxableBase": null,
+        "sourceIds": [
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-41-1994-art-78",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "currentLiquidation": {
+        "epigraph": 1,
+        "currentIedmtRate": 0,
+        "box04TaxQuota": 0,
+        "box04TaxQuotaExact": "0",
+        "box05LinearDeduction": 0,
+        "box06AmountAfterDeduction": 0,
+        "box07PreviousReturnsToDeduct": 0,
+        "box08FinalResult": 0,
+        "box08FinalResultExact": "0"
+      },
+      "result": {
+        "status": "complete-official-table",
+        "vehicleStatus": "used",
+        "valuationMethod": "official-table",
+        "catalogVersion": "hac-1501-2025-annex-i-2026",
+        "sourceIds": [
+          "aeat-model-576-instructions",
+          "boe-law-38-1992",
+          "boe-law-37-1992-art-13",
+          "aeat-vat-new-vehicle",
+          "boe-order-hac-1501-2025-annex-i",
+          "boe-order-hac-1501-2025-annex-iv",
+          "boe-law-41-1994-art-78",
+          "boe-law-34-2007-additional-8",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51",
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-38-1992-art-66-4-5",
+          "aeat-model-576-instructions-box-02",
+          "boe-law-38-1992-art-70-current",
+          "aeat-model-576-instructions-box-03",
+          "aeat-registration-tax-rates-2026"
+        ],
+        "warnings": [],
+        "blockers": [],
+        "boxGuidance": [
+          {
+            "box": "01",
+            "title": "Base imponible",
+            "value": 1112.07,
+            "origin": "Precio oficial, depreciación y, si procede, minoración residual.",
+            "formula": "valor de mercado / (1 + impuestos indirectos residuales)",
+            "sourceIds": [
+              "boe-law-38-1992-art-69-residual-tax",
+              "aeat-model-576-instructions-box-01"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "02",
+            "title": "Base imponible reducida",
+            "value": null,
+            "origin": "Sin reducción declarada como aplicable",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-66-4-5",
+              "aeat-model-576-instructions-box-02"
+            ],
+            "warnings": [
+              "La casilla 02 solo se cumplimenta cuando existe una reducción legal aplicable."
+            ]
+          },
+          {
+            "box": "03",
+            "title": "Tipo o epígrafe",
+            "value": "1.º · 0 %",
+            "origin": "Epígrafe legal y tipo vigente en la comunidad autónoma a la fecha de devengo.",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-70-current",
+              "aeat-registration-tax-rates-2026"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "04",
+            "title": "Cuota",
+            "value": 0,
+            "origin": "Base aplicable por tipo actual de liquidación.",
+            "formula": "(casilla 02 si existe; en otro caso casilla 01) × tipo actual",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-04"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "05",
+            "title": "Deducción lineal",
+            "value": 0,
+            "origin": "No se ha aplicado una medida oficial extraordinaria.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-05"
+            ],
+            "warnings": [
+              "No es un campo de descuento libre."
+            ]
+          },
+          {
+            "box": "06",
+            "title": "Cuota a ingresar",
+            "value": 0,
+            "origin": "Cuota tras la deducción lineal oficial aplicable.",
+            "formula": "casilla 04 − casilla 05",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-06"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "07",
+            "title": "A deducir",
+            "value": 0,
+            "origin": "Autoliquidaciones anteriores del mismo ejercicio y periodo.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-07"
+            ],
+            "warnings": [
+              "Solo se usa en una autoliquidación complementaria."
+            ]
+          },
+          {
+            "box": "08",
+            "title": "Resultado de la liquidación",
+            "value": 0,
+            "origin": "Resultado final preparado para revisión; MatriculaPro no presenta el modelo.",
+            "formula": "casilla 06 − casilla 07",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-08"
+            ],
+            "warnings": [
+              "Revisa los datos en la AEAT antes de presentar."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sampleNumber": 9,
+      "officialRow": {
+        "normalizedRowId": "boe-2026-3d98a4556a89922340647c66fc05ed61",
+        "catalogVersionId": "hac-1501-2025-annex-i-2026",
+        "sourceDocumentId": "BOE-A-2025-26357",
+        "sourceOrder": "Orden HAC/1501/2025, de 17 de diciembre",
+        "sourceAnnex": "Anexo I",
+        "officialPdfUrl": "https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf",
+        "officialRowReference": "BOE-A-2025-26357:ANEXO-I:ALFA-ROMEO:00474:L6970",
+        "sourceXmlLine": 6970,
+        "sourceChecksum": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26",
+        "brand": "ALFA ROMEO",
+        "officialModelType": "Junior Ibrida 1.2 eDCT6",
+        "commercialStartYear": 2025,
+        "commercialEndYear": null,
+        "fuelType": "GyE",
+        "engineCapacityCc": 1199,
+        "powerKw": 107,
+        "newVehicleOfficialValue": 23100,
+        "rawOfficialCells": [
+          "Junior Ibrida 1.2 eDCT6",
+          "2025",
+          "",
+          "1199",
+          "3",
+          "GyE",
+          "107",
+          "8,73",
+          "145",
+          "23.100"
+        ],
+        "sampleVerificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+        "verifiedPdfLocation": {
+          "mappingVerified": true,
+          "documentPageNumber": 20,
+          "boePrintedPageNumber": 171599,
+          "numberingNote": "Página del documento PDF contada desde 1 / página impresa en el pie del BOE."
+        }
+      },
+      "exactMatch": {
+        "status": "exact-confirmed",
+        "selectedNormalizedRowId": "boe-2026-3d98a4556a89922340647c66fc05ed61",
+        "discrepancies": [],
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-i"
+        ],
+        "explanation": "La persona usuaria confirmó una fila oficial única y los datos comparables son coherentes."
+      },
+      "fictitiousScenarioInputs": {
+        "explicitlyFictitious": true,
+        "suggestedFixtureUsedUnchanged": true,
+        "firstRegistrationDate": "2025-06-15",
+        "accrualDate": "2026-08-05",
+        "referenceDate": "2026-08-05",
+        "mileageKm": 10000,
+        "co2GKm": 125,
+        "co2VerifiedForScenario": true,
+        "co2FromAnnexI": false,
+        "co2Disclosure": "Valor ficticio exclusivo de la prueba; no consta en el Anexo I.",
+        "singleNonCombustionEngine": false,
+        "category": "M1",
+        "vehicleKind": "standard",
+        "currentAutonomousCommunity": "madrid",
+        "registrationTaxSubjectConfirmed": true,
+        "historicalTaxTerritory": "peninsula-balearics-common",
+        "noOtherIndirectTaxesConfirmed": true,
+        "noReductionsClaimed": true,
+        "noProfessionalUseAdjustment": true,
+        "previouslyRegisteredAbroad": true,
+        "originalFixtureNote": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+      },
+      "depreciation": {
+        "status": "complete",
+        "completedYears": 1,
+        "completedMonthsAfterAnniversary": 1,
+        "nextAnniversary": "2027-06-15",
+        "percentage": 0.84,
+        "percentageExact": "0.84",
+        "officialNewValue": 23100,
+        "valueBeforeProfessionalUseReduction": 19404,
+        "professionalUseFactor": null,
+        "marketValueAfterDepreciation": 19404,
+        "marketValueExact": "19404",
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-iv"
+        ]
+      },
+      "historicalRatesForResidualTax": {
+        "historicalEpigraph": 2,
+        "historicalVatRate": 0.21,
+        "historicalIedmtRate": 0.0475,
+        "otherIndirectTaxRateTotal": 0,
+        "historicalVatSourceIds": [
+          "boe-rdl-20-2012-art-23"
+        ],
+        "historicalIedmtSourceIds": [
+          "boe-law-34-2007-additional-8",
+          "boe-law-38-1992-art-70-current",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ],
+        "sourceIds": [
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-law-38-1992-art-70-current",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "residualTaxMinorationAndBase": {
+        "formula": "BI = VM / [1 + (IVA histórico + IEDMT histórico + otros impuestos indirectos)]",
+        "marketValueBeforeMinoration": 19404,
+        "denominator": 1.2575,
+        "residualTaxAmountRemoved": 3973.383697813121,
+        "box01TaxableBase": 15430.62,
+        "box01TaxableBaseExact": "15430.616302186878727634",
+        "reductionKind": null,
+        "box02ReducedTaxableBase": null,
+        "sourceIds": [
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-law-38-1992-art-70-current",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "currentLiquidation": {
+        "epigraph": 2,
+        "currentIedmtRate": 0.0475,
+        "box04TaxQuota": 732.95,
+        "box04TaxQuotaExact": "732.954274353876739563",
+        "box05LinearDeduction": 0,
+        "box06AmountAfterDeduction": 732.95,
+        "box07PreviousReturnsToDeduct": 0,
+        "box08FinalResult": 732.95,
+        "box08FinalResultExact": "732.954274353876739563"
+      },
+      "result": {
+        "status": "complete-official-table",
+        "vehicleStatus": "used",
+        "valuationMethod": "official-table",
+        "catalogVersion": "hac-1501-2025-annex-i-2026",
+        "sourceIds": [
+          "aeat-model-576-instructions",
+          "boe-law-38-1992",
+          "boe-law-37-1992-art-13",
+          "aeat-vat-new-vehicle",
+          "boe-order-hac-1501-2025-annex-i",
+          "boe-order-hac-1501-2025-annex-iv",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-law-38-1992-art-70-current",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51",
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-38-1992-art-66-4-5",
+          "aeat-model-576-instructions-box-02",
+          "aeat-model-576-instructions-box-03",
+          "aeat-registration-tax-rates-2026"
+        ],
+        "warnings": [],
+        "blockers": [],
+        "boxGuidance": [
+          {
+            "box": "01",
+            "title": "Base imponible",
+            "value": 15430.62,
+            "origin": "Precio oficial, depreciación y, si procede, minoración residual.",
+            "formula": "valor de mercado / (1 + impuestos indirectos residuales)",
+            "sourceIds": [
+              "boe-law-38-1992-art-69-residual-tax",
+              "aeat-model-576-instructions-box-01"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "02",
+            "title": "Base imponible reducida",
+            "value": null,
+            "origin": "Sin reducción declarada como aplicable",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-66-4-5",
+              "aeat-model-576-instructions-box-02"
+            ],
+            "warnings": [
+              "La casilla 02 solo se cumplimenta cuando existe una reducción legal aplicable."
+            ]
+          },
+          {
+            "box": "03",
+            "title": "Tipo o epígrafe",
+            "value": "2.º · 4.75 %",
+            "origin": "Epígrafe legal y tipo vigente en la comunidad autónoma a la fecha de devengo.",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-70-current",
+              "aeat-registration-tax-rates-2026"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "04",
+            "title": "Cuota",
+            "value": 732.95,
+            "origin": "Base aplicable por tipo actual de liquidación.",
+            "formula": "(casilla 02 si existe; en otro caso casilla 01) × tipo actual",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-04"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "05",
+            "title": "Deducción lineal",
+            "value": 0,
+            "origin": "No se ha aplicado una medida oficial extraordinaria.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-05"
+            ],
+            "warnings": [
+              "No es un campo de descuento libre."
+            ]
+          },
+          {
+            "box": "06",
+            "title": "Cuota a ingresar",
+            "value": 732.95,
+            "origin": "Cuota tras la deducción lineal oficial aplicable.",
+            "formula": "casilla 04 − casilla 05",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-06"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "07",
+            "title": "A deducir",
+            "value": 0,
+            "origin": "Autoliquidaciones anteriores del mismo ejercicio y periodo.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-07"
+            ],
+            "warnings": [
+              "Solo se usa en una autoliquidación complementaria."
+            ]
+          },
+          {
+            "box": "08",
+            "title": "Resultado de la liquidación",
+            "value": 732.95,
+            "origin": "Resultado final preparado para revisión; MatriculaPro no presenta el modelo.",
+            "formula": "casilla 06 − casilla 07",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-08"
+            ],
+            "warnings": [
+              "Revisa los datos en la AEAT antes de presentar."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sampleNumber": 10,
+      "officialRow": {
+        "normalizedRowId": "boe-2026-2c19b416acf969ad6ed6ec08a7a19c0b",
+        "catalogVersionId": "hac-1501-2025-annex-i-2026",
+        "sourceDocumentId": "BOE-A-2025-26357",
+        "sourceOrder": "Orden HAC/1501/2025, de 17 de diciembre",
+        "sourceAnnex": "Anexo I",
+        "officialPdfUrl": "https://www.boe.es/boe/dias/2025/12/23/pdfs/BOE-A-2025-26357.pdf",
+        "officialRowReference": "BOE-A-2025-26357:ANEXO-I:ABARTH:00067:L1004",
+        "sourceXmlLine": 1004,
+        "sourceChecksum": "e5e6a496913a7664b8c8d09af86da4a21b6c4d0d63ea725d834e4f5c7f812d26",
+        "brand": "ABARTH",
+        "officialModelType": "ABARTH 500 BEV SCORPIONISSIMA 320 km",
+        "commercialStartYear": 2023,
+        "commercialEndYear": null,
+        "fuelType": "Elc",
+        "engineCapacityCc": null,
+        "powerKw": 113,
+        "newVehicleOfficialValue": 35900,
+        "rawOfficialCells": [
+          "ABARTH 500 BEV SCORPIONISSIMA 320 km",
+          "2023",
+          "",
+          "",
+          "",
+          "Elc",
+          "113",
+          "21,93",
+          "154",
+          "35.900"
+        ],
+        "sampleVerificationMethod": "Coincidencia literal de las diez celdas de la fila con el XML oficial del BOE; referencia de línea incluida para cotejo PDF/XML.",
+        "verifiedPdfLocation": {
+          "mappingVerified": true,
+          "documentPageNumber": 6,
+          "boePrintedPageNumber": 171585,
+          "numberingNote": "Página del documento PDF contada desde 1 / página impresa en el pie del BOE."
+        }
+      },
+      "exactMatch": {
+        "status": "exact-confirmed",
+        "selectedNormalizedRowId": "boe-2026-2c19b416acf969ad6ed6ec08a7a19c0b",
+        "discrepancies": [],
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-i"
+        ],
+        "explanation": "La persona usuaria confirmó una fila oficial única y los datos comparables son coherentes."
+      },
+      "fictitiousScenarioInputs": {
+        "explicitlyFictitious": true,
+        "suggestedFixtureUsedUnchanged": true,
+        "firstRegistrationDate": "2023-06-15",
+        "accrualDate": "2026-08-05",
+        "referenceDate": "2026-08-05",
+        "mileageKm": 10000,
+        "co2GKm": 0,
+        "co2VerifiedForScenario": true,
+        "co2FromAnnexI": false,
+        "co2Disclosure": "Valor ficticio exclusivo de la prueba; no consta en el Anexo I.",
+        "singleNonCombustionEngine": true,
+        "category": "M1",
+        "vehicleKind": "standard",
+        "currentAutonomousCommunity": "madrid",
+        "registrationTaxSubjectConfirmed": true,
+        "historicalTaxTerritory": "peninsula-balearics-common",
+        "noOtherIndirectTaxesConfirmed": true,
+        "noReductionsClaimed": true,
+        "noProfessionalUseAdjustment": true,
+        "previouslyRegisteredAbroad": true,
+        "originalFixtureNote": "Fechas ficticias para que el motor fiscal complete depreciación, minoración, epígrafe y cuota. CO₂ y territorio deben aportarse/acreditarse aparte; no proceden del Anexo I."
+      },
+      "depreciation": {
+        "status": "complete",
+        "completedYears": 3,
+        "completedMonthsAfterAnniversary": 1,
+        "nextAnniversary": "2027-06-15",
+        "percentage": 0.56,
+        "percentageExact": "0.56",
+        "officialNewValue": 35900,
+        "valueBeforeProfessionalUseReduction": 20104,
+        "professionalUseFactor": null,
+        "marketValueAfterDepreciation": 20104,
+        "marketValueExact": "20104",
+        "sourceIds": [
+          "boe-order-hac-1501-2025-annex-iv"
+        ]
+      },
+      "historicalRatesForResidualTax": {
+        "historicalEpigraph": 1,
+        "historicalVatRate": 0.21,
+        "historicalIedmtRate": 0,
+        "otherIndirectTaxRateTotal": 0,
+        "historicalVatSourceIds": [
+          "boe-rdl-20-2012-art-23"
+        ],
+        "historicalIedmtSourceIds": [
+          "boe-law-34-2007-additional-8",
+          "boe-law-38-1992-art-70-current",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ],
+        "sourceIds": [
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-law-38-1992-art-70-current",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "residualTaxMinorationAndBase": {
+        "formula": "BI = VM / [1 + (IVA histórico + IEDMT histórico + otros impuestos indirectos)]",
+        "marketValueBeforeMinoration": 20104,
+        "denominator": 1.21,
+        "residualTaxAmountRemoved": 3489.123966942149,
+        "box01TaxableBase": 16614.88,
+        "box01TaxableBaseExact": "16614.876033057851239669",
+        "reductionKind": null,
+        "box02ReducedTaxableBase": null,
+        "sourceIds": [
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-law-38-1992-art-70-current",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51"
+        ]
+      },
+      "currentLiquidation": {
+        "epigraph": 1,
+        "currentIedmtRate": 0,
+        "box04TaxQuota": 0,
+        "box04TaxQuotaExact": "0",
+        "box05LinearDeduction": 0,
+        "box06AmountAfterDeduction": 0,
+        "box07PreviousReturnsToDeduct": 0,
+        "box08FinalResult": 0,
+        "box08FinalResultExact": "0"
+      },
+      "result": {
+        "status": "complete-official-table",
+        "vehicleStatus": "used",
+        "valuationMethod": "official-table",
+        "catalogVersion": "hac-1501-2025-annex-i-2026",
+        "sourceIds": [
+          "aeat-model-576-instructions",
+          "boe-law-38-1992",
+          "boe-law-37-1992-art-13",
+          "aeat-vat-new-vehicle",
+          "boe-order-hac-1501-2025-annex-i",
+          "boe-order-hac-1501-2025-annex-iv",
+          "boe-rdl-20-2012-art-23",
+          "boe-law-34-2007-additional-8",
+          "boe-law-38-1992-art-70-current",
+          "boe-order-eha-3334-2010-residual-territory",
+          "boe-law-22-2009-art-51",
+          "boe-law-38-1992-art-69-residual-tax",
+          "aeat-model-576-instructions-box-01",
+          "boe-law-38-1992-art-66-4-5",
+          "aeat-model-576-instructions-box-02",
+          "aeat-model-576-instructions-box-03",
+          "aeat-registration-tax-rates-2026"
+        ],
+        "warnings": [],
+        "blockers": [],
+        "boxGuidance": [
+          {
+            "box": "01",
+            "title": "Base imponible",
+            "value": 16614.88,
+            "origin": "Precio oficial, depreciación y, si procede, minoración residual.",
+            "formula": "valor de mercado / (1 + impuestos indirectos residuales)",
+            "sourceIds": [
+              "boe-law-38-1992-art-69-residual-tax",
+              "aeat-model-576-instructions-box-01"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "02",
+            "title": "Base imponible reducida",
+            "value": null,
+            "origin": "Sin reducción declarada como aplicable",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-66-4-5",
+              "aeat-model-576-instructions-box-02"
+            ],
+            "warnings": [
+              "La casilla 02 solo se cumplimenta cuando existe una reducción legal aplicable."
+            ]
+          },
+          {
+            "box": "03",
+            "title": "Tipo o epígrafe",
+            "value": "1.º · 0 %",
+            "origin": "Epígrafe legal y tipo vigente en la comunidad autónoma a la fecha de devengo.",
+            "formula": null,
+            "sourceIds": [
+              "boe-law-38-1992-art-70-current",
+              "aeat-registration-tax-rates-2026"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "04",
+            "title": "Cuota",
+            "value": 0,
+            "origin": "Base aplicable por tipo actual de liquidación.",
+            "formula": "(casilla 02 si existe; en otro caso casilla 01) × tipo actual",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-04"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "05",
+            "title": "Deducción lineal",
+            "value": 0,
+            "origin": "No se ha aplicado una medida oficial extraordinaria.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-05"
+            ],
+            "warnings": [
+              "No es un campo de descuento libre."
+            ]
+          },
+          {
+            "box": "06",
+            "title": "Cuota a ingresar",
+            "value": 0,
+            "origin": "Cuota tras la deducción lineal oficial aplicable.",
+            "formula": "casilla 04 − casilla 05",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-06"
+            ],
+            "warnings": []
+          },
+          {
+            "box": "07",
+            "title": "A deducir",
+            "value": 0,
+            "origin": "Autoliquidaciones anteriores del mismo ejercicio y periodo.",
+            "formula": null,
+            "sourceIds": [
+              "aeat-model-576-instructions-box-07"
+            ],
+            "warnings": [
+              "Solo se usa en una autoliquidación complementaria."
+            ]
+          },
+          {
+            "box": "08",
+            "title": "Resultado de la liquidación",
+            "value": 0,
+            "origin": "Resultado final preparado para revisión; MatriculaPro no presenta el modelo.",
+            "formula": "casilla 06 − casilla 07",
+            "sourceIds": [
+              "aeat-model-576-instructions-box-08"
+            ],
+            "warnings": [
+              "Revisa los datos en la AEAT antes de presentar."
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

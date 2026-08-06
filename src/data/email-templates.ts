@@ -2,125 +2,167 @@ export interface EmailTemplate {
   id: string;
   code: string;
   title: string;
-  /** Para qué sirve */
   purpose: string;
-  /** Cuándo usarla */
   when: string;
   subject: string;
   body: string;
-  /** Notas opcionales */
   notes?: string[];
 }
 
 export const EMAIL_TEMPLATES: EmailTemplate[] = [
   {
-    id: 'consulta-previa',
-    code: 'T.01',
-    title: 'Consulta previa a la compra',
-    purpose: 'Preguntar a una estación ITV si tu caso concreto va a tener problemas antes de comprar un coche.',
-    when: 'Antes de comprar, cuando tienes dudas sobre si el coche se podrá matricular.',
-    subject: 'Consulta previa · Viabilidad de matriculación de vehículo de importación',
-    body: `Buenos días,
+    id: 'solicitar-coc', code: 'T.01', title: 'Solicitar el COC',
+    purpose: 'Pedir al fabricante o representante un certificado de conformidad vinculado al VIN.',
+    when: 'Cuando existe homologación de tipo UE identificable y necesitas confirmar si puede emitirse un COC válido.',
+    subject: 'Solicitud de COC · [MARCA] [MODELO] · VIN [VIN]',
+    body: `Buenos días:
 
-Estoy valorando comprar un vehículo en [PAÍS DE ORIGEN] para matricularlo en España, y me gustaría hacer una consulta previa antes de cerrar la operación.
+Solicito información para obtener el certificado de conformidad del siguiente vehículo:
 
-Datos del vehículo:
 · Marca y modelo: [MARCA] [MODELO]
+· VIN: [VIN]
+· Año de primera matriculación: [AÑO]
+· País de matriculación: [PAÍS]
+· Categoría declarada: [CATEGORÍA]
+· Campo K / homologación: [CAMPO K]
+
+¿Pueden confirmar si existe un COC válido para este VIN, el procedimiento de solicitud y la documentación necesaria?
+
+Gracias.
+[NOMBRE Y DATOS DE CONTACTO]`,
+    notes: ['Comprueba que el documento emitido corresponde exactamente al VIN.', 'La disponibilidad de un COC no sustituye la comprobación de su validez técnica.'],
+  },
+  {
+    id: 'consultar-ficha-reducida', code: 'T.02', title: 'Consultar ficha reducida',
+    purpose: 'Consultar si el supuesto técnico permite documentarse mediante ficha reducida y quién puede emitirla.',
+    when: 'Cuando se identifica homologación UE, pero no existe COC válido o disponible.',
+    subject: 'Consulta de ficha reducida · [MARCA] [MODELO] · [VIN]',
+    body: `Buenos días:
+
+Estoy preparando la matriculación en España de este vehículo:
+
+· Marca y modelo: [MARCA] [MODELO]
+· VIN: [VIN]
+· País de matriculación: [PAÍS]
+· Categoría: [CATEGORÍA]
+· Campo K / homologación: [CAMPO K]
+· COC disponible: [COC]
+· Posibles reformas: [REFORMAS]
+
+¿Pueden confirmar si, para este supuesto concreto, es técnicamente válida una ficha reducida, qué documentación de origen necesitan y quién puede emitirla?
+
+Adjuntaré los documentos y fotografías que me indiquen.
+
+Gracias.
+[NOMBRE Y DATOS DE CONTACTO]`,
+    notes: ['Según el caso puede proceder del fabricante, servicio técnico designado o técnico competente.', 'No presupone que una ficha reducida resuelva una homologación individual.'],
+  },
+  {
+    id: 'consultar-equivalencia', code: 'T.03', title: 'Consultar equivalencia de homologación',
+    purpose: 'Plantear una homologación individual o serie corta concedida en otro Estado del EEE.',
+    when: 'Cuando la contraseña no es una homologación UE ordinaria o la documentación indica homologación individual/serie corta.',
+    subject: 'Consulta de equivalencia o autorización · VIN [VIN]',
+    body: `Buenos días:
+
+Solicito una revisión previa de la vía técnica aplicable al vehículo:
+
+· Marca y modelo: [MARCA] [MODELO]
+· VIN: [VIN]
 · Año: [AÑO]
-· Bastidor (VIN): [VIN]
-· Documentación disponible: COC [SÍ / NO], permiso de circulación de origen, factura.
-· Modificaciones: [DETALLE SI LAS HAY o "ninguna"]
+· País de matriculación: [PAÍS]
+· Categoría: [CATEGORÍA]
+· Campo K / homologación: [CAMPO K]
+· COC: [COC]
+· Reformas o diferencias conocidas: [REFORMAS]
 
-Mis dudas concretas:
-· [LISTA NUMERADA DE LO QUE TE PREOCUPA: bastidor, reformas, COC, etc.]
+La documentación parece corresponder a una homologación individual o de serie corta. ¿Qué procedimiento de equivalencia, autorización española u homologación individual debe revisarse antes de solicitar ITV?
 
-¿Podrían indicarme si ven algún punto que pudiera ser problemático antes de proceder con la compra? Cualquier orientación me ayudaría a evitar sorpresas.
-
-Adjunto documentación disponible.
-
-Gracias por su tiempo,
-[TU NOMBRE]
-[TELÉFONO]`,
-    notes: [
-      'Útil sobre todo si tienes dudas: VIN, reformas, factura de empresa, etc.',
-      'No todas las estaciones responden a consultas previas, pero merece la pena intentarlo.',
-    ],
+Gracias.
+[NOMBRE Y DATOS DE CONTACTO]`,
   },
   {
-    id: 'aclaracion-defecto',
-    code: 'T.02',
-    title: 'Aclaración tras defecto en ITV',
-    purpose: 'Pedir detalles tras un resultado desfavorable para entender qué corregir antes de la segunda visita.',
-    when: 'Después de una ITV desfavorable, cuando el informe no es del todo claro.',
-    subject: 'Solicitud de aclaración · Informe ITV [FECHA] · [MATRÍCULA O VIN]',
-    body: `Buenos días,
+    id: 'consulta-itv-previa', code: 'T.04', title: 'Consultar ITV previa',
+    purpose: 'Confirmar con una estación el tipo de inspección y el paquete documental del vehículo concreto.',
+    when: 'Antes de pedir cita para una inspección previa a matriculación.',
+    subject: 'Consulta previa ITV de matriculación · [MARCA] [MODELO] · [VIN]',
+    body: `Buenos días:
 
-El día [FECHA] realicé en su estación una ITV de matriculación que resultó desfavorable. El número de expediente / matrícula provisional / VIN es: [DATO].
+Quiero solicitar una inspección previa a matriculación para el siguiente vehículo:
 
-Tras revisar el informe, me gustaría aclarar algunos puntos para preparar la segunda visita:
+· Marca y modelo: [MARCA] [MODELO]
+· VIN: [VIN]
+· País de matriculación: [PAÍS]
+· Categoría: [CATEGORÍA]
+· Campo K / homologación: [CAMPO K]
+· COC: [COC]
+· Posibles reformas: [REFORMAS]
 
-1. [DEFECTO 1 según informe]
-   ¿Pueden indicarme con más detalle qué corrección esperan ver?
+¿Pueden confirmar el tipo de inspección que debo solicitar, los originales que debo presentar y si necesitan revisar previamente la documentación técnica?
 
-2. [DEFECTO 2 según informe]
-   ¿Es algo que puedo resolver yo o necesito ir a un taller específico?
-
-Mi intención es volver con todo subsanado en la siguiente cita. Cualquier orientación adicional me sería muy útil.
-
-Gracias por su tiempo,
-[TU NOMBRE]
-[TELÉFONO]`,
+Gracias.
+[NOMBRE Y DATOS DE CONTACTO]`,
+    notes: ['No presupone que una inspección extranjera vigente sustituya la inspección española.', 'Adjunta documentos completos sólo por un canal autorizado por la estación.'],
   },
   {
-    id: 'reforma-consulta',
-    code: 'T.03',
-    title: 'Consulta sobre reformas / modificaciones',
-    purpose: 'Preguntar si una modificación concreta del coche necesita homologación específica o ingeniero.',
-    when: 'Cuando tu coche tiene escape aftermarket, suspensión rebajada, kit estético, etc.',
-    subject: 'Consulta sobre reformas · Viabilidad para ITV de matriculación',
-    body: `Buenos días,
+    id: 'aclaracion-factura', code: 'T.05', title: 'Solicitar aclaración de factura',
+    purpose: 'Pedir al vendedor profesional que identifique las partes, el vehículo y el régimen fiscal aplicado.',
+    when: 'Cuando la factura es ambigua, falta el número de IVA o no permite distinguir el tratamiento fiscal.',
+    subject: 'Aclaración de factura · [MARCA] [MODELO] · VIN [VIN]',
+    body: `Buenos días:
 
-Voy a matricular un vehículo importado y tiene las siguientes modificaciones respecto a su configuración de fábrica:
+Para preparar la matriculación y justificar la adquisición del vehículo [MARCA] [MODELO], VIN [VIN], necesito que la factura identifique claramente:
 
-1. [MODIFICACIÓN 1]: [DESCRIPCIÓN BREVE]
-2. [MODIFICACIÓN 2]: [DESCRIPCIÓN BREVE]
+· Los datos completos y número de IVA del vendedor.
+· Los datos del comprador.
+· VIN, precio, moneda y fecha de entrega.
+· El régimen de IVA aplicado y, si corresponde, su mención fiscal.
 
-¿Podrían indicarme si estas modificaciones:
-· Se pueden mantener al matricular (con homologación específica),
-· Necesitan informe de ingeniero o laboratorio acreditado,
-· O directamente impedirán matricular en su configuración actual?
+¿Pueden revisar la factura y emitir una versión corregida o una aclaración formal? No necesito una declaración genérica de «IVA pagado», sino identificar el tratamiento aplicado a esta operación.
 
-Si necesito gestionar homologación adicional, agradecería que me orienten sobre qué tipo de profesional / informe es el correcto para mi caso.
-
-Gracias y un saludo,
-[TU NOMBRE]
-[TELÉFONO]`,
-    notes: [
-      'MatriculaPRO no cubre homologación de reformas en profundidad.',
-      'Para casos serios, contacta con un ingeniero acreditado o laboratorio.',
-    ],
+Gracias.
+[NOMBRE Y DATOS DE CONTACTO]`,
   },
   {
-    id: 'cita-segunda',
-    code: 'T.04',
-    title: 'Pedir cita para segunda inspección',
-    purpose: 'Solicitar la segunda visita tras corregir defectos.',
-    when: 'Después de un resultado desfavorable, una vez has subsanado las incidencias.',
-    subject: 'Cita para segunda inspección · ITV matriculación · [VIN]',
-    body: `Buenos días,
+    id: 'duplicado-documental', code: 'T.06', title: 'Solicitar duplicado documental',
+    purpose: 'Pedir un duplicado o certificado del permiso/documento técnico de origen.',
+    when: 'Cuando falta un original, está incompleto o sus datos no son legibles.',
+    subject: 'Solicitud de duplicado documental · VIN [VIN]',
+    body: `Buenos días:
 
-El día [FECHA] realicé en su estación una ITV de matriculación que resultó desfavorable (expediente / VIN: [DATO]).
+Solicito información para obtener un duplicado o certificado oficial relativo al vehículo:
 
-He subsanado los defectos indicados en el informe:
-· [DEFECTO 1] → [CÓMO LO HAS CORREGIDO]
-· [DEFECTO 2] → [CÓMO LO HAS CORREGIDO]
+· Marca y modelo: [MARCA] [MODELO]
+· VIN: [VIN]
+· Año: [AÑO]
+· País de matriculación: [PAÍS]
+· Documento que falta o debe sustituirse: [DOCUMENTO PENDIENTE]
 
-Quería solicitar cita para la segunda inspección dentro del plazo previsto. Adjunto justificantes / fotografías de las correcciones realizadas, por si les facilita el trámite.
+¿Pueden indicar quién está legitimado para solicitarlo, qué acreditación de titularidad necesitan y cómo se entrega el documento válido?
 
-Quedo a la espera de la cita que me indiquen.
+Gracias.
+[NOMBRE Y DATOS DE CONTACTO]`,
+  },
+  {
+    id: 'consulta-reforma', code: 'T.07', title: 'Consultar una posible reforma',
+    purpose: 'Pedir una clasificación técnica de modificaciones sin anticipar un veredicto.',
+    when: 'Cuando hay cambios respecto de la configuración documentada o dudas sobre el Manual de Reformas.',
+    subject: 'Consulta de posibles reformas · [MARCA] [MODELO] · [VIN]',
+    body: `Buenos días:
 
-Gracias por su atención,
-[TU NOMBRE]
-[TELÉFONO]`,
+Estoy preparando la matriculación de este vehículo:
+
+· Marca y modelo: [MARCA] [MODELO]
+· VIN: [VIN]
+· Categoría: [CATEGORÍA]
+· Campo K / homologación: [CAMPO K]
+· Modificaciones identificadas: [REFORMAS]
+
+¿Pueden revisar si estas modificaciones están amparadas por la homologación o si encajan en algún código del Manual de Reformas? En ese caso, agradecería que indiquen la documentación técnica exigible para regularizarlas.
+
+Adjuntaré fotografías, medidas y referencias de las piezas disponibles.
+
+Gracias.
+[NOMBRE Y DATOS DE CONTACTO]`,
+    notes: ['Una pieza aftermarket no implica por sí sola una reforma, pero debe compararse con la configuración homologada.', 'La respuesta puede requerir fabricante, taller, servicio técnico o ingeniería según el caso.'],
   },
 ];

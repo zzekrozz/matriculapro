@@ -20,7 +20,8 @@ const APPLIES_BADGE: Record<LibraryDoc['applies'], { label: string; bg: string; 
 export default function BibliotecaPage() {
   return (
     <ModuleGate
-      requiresFounder
+      requiredCapability="view_historical_paid_data"
+      requiredTier="particular"
       moduleName="Biblioteca de documentos"
       moduleCode="M.09"
       description="Los 11 documentos clave del proceso de matriculación: qué es cada uno, dónde se consigue y cuándo se usa."
@@ -103,7 +104,7 @@ function BibliotecaContent() {
           })}
           {filtered.length === 0 && (
             <div className="col-span-full text-center text-[13px] text-muted py-12">
-              No hay documentos que coincidan con "{q}".
+              No hay documentos que coincidan con «{q}».
             </div>
           )}
         </div>

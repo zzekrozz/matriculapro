@@ -4,12 +4,14 @@ import React, { useRef, useState, useMemo } from 'react';
 import { motion, useSpring, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { RotateCcw, MousePointer2, Target, Info, CheckCircle2, XCircle, type LucideIcon } from 'lucide-react';
 import { tokens } from '@/lib/tokens';
-import { DEMO_VEHICLE, FIELD_POSITIONS_BACK, type Vehicle, type VehicleField } from '@/data/demo-vehicle';
+import { FIELD_POSITIONS_BACK, type Vehicle, type VehicleField } from '@/data/technical-card';
+import type { SimulatorMode } from '@/domain/registration';
 
 export type FieldStatus = 'correct' | 'incorrect' | 'shake';
 
 interface TechnicalCard3DProps {
-  vehicle?: Vehicle;
+  mode: SimulatorMode;
+  vehicle: Vehicle;
   fieldStatus?: Record<string, FieldStatus>;
   missionField?: string | null;
   selectedField?: string | null;
@@ -19,7 +21,8 @@ interface TechnicalCard3DProps {
 }
 
 export function TechnicalCard3D({
-  vehicle = DEMO_VEHICLE,
+  mode,
+  vehicle,
   fieldStatus = {},
   missionField = null,
   selectedField = null,
@@ -118,7 +121,7 @@ export function TechnicalCard3D({
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-[9.5px] tracking-[0.3em] uppercase mb-1.5" style={{ color: tokens.color.muted }}>
-                  Ficha técnica · Demo
+                  {mode === 'case' ? 'Datos técnicos · expediente' : 'Ficha recreada · práctica'}
                 </div>
                 <h3 style={{ fontFamily: 'Instrument Serif, serif', fontSize: 32, color: tokens.color.ink, letterSpacing: '-0.01em', lineHeight: 1 }}>
                   {vehicle.brand}
@@ -165,7 +168,7 @@ export function TechnicalCard3D({
 
             <div className="absolute bottom-3 right-4 flex items-center gap-1 text-[9.5px] tracking-[0.15em] uppercase"
                  style={{ color: tokens.color.muted }}>
-              <RotateCcw size={10} /> Pulsa "Girar"
+              <RotateCcw size={10} /> Pulsa «Girar»
             </div>
           </div>
         </motion.div>
@@ -232,8 +235,8 @@ export function TechnicalCard3D({
 
             <div className="mt-2 pt-2 border-t flex items-center justify-between text-[9px] tracking-[0.15em] uppercase"
                  style={{ borderColor: 'rgba(11,31,58,0.12)', color: tokens.color.muted }}>
-              <span>Ficha simulada · uso formativo</span>
-              <span style={{ color: tokens.color.accentDeep }}>Ivan Imports · MatriculaPRO</span>
+              <span>{mode === 'case' ? 'Vista de apoyo · verifica el original' : 'Documento recreado · uso formativo'}</span>
+              <span style={{ color: tokens.color.accentDeep }}>MatriculaPRO</span>
             </div>
           </div>
         </motion.div>
