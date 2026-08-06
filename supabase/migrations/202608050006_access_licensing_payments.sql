@@ -1025,14 +1025,14 @@ begin
       using errcode = '22023';
   end if;
 
-  select authorization.* into v_authorization
-  from public.registration_authorizations authorization
-  where authorization.email = v_email
-    and authorization.token_sha256 = encode(
+  select ra.* into v_authorization
+  from public.registration_authorizations as ra
+  where ra.email = v_email
+    and ra.token_sha256 = encode(
       extensions.digest(v_registration_token, 'sha256'),
       'hex'
     )
-    and authorization.expires_at > now()
+    and ra.expires_at > now()
   for update;
 
   if v_authorization.id is null then

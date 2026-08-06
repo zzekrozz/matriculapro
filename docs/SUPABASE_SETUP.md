@@ -37,7 +37,7 @@ En **Authentication → URL Configuration**:
 - **Site URL staging:** `https://<host-exacto-de-staging>`
 - **Site URL producción:** `https://<dominio-final>`
 
-No mantengas `localhost` como Site URL en un proyecto publicado. Añade como **Redirect URLs** únicamente el callback PKCE en los hosts controlados:
+No mantengas `localhost` como Site URL en un proyecto publicado. Añade como **Redirect URLs** únicamente el callback SSR en los hosts controlados:
 
 ```text
 http://localhost:3000/auth/callback
@@ -45,7 +45,7 @@ https://<host-exacto-de-staging>/auth/callback
 https://<dominio-final>/auth/callback
 ```
 
-`/auth/confirm` y `/restablecer-contrasena` son destinos internos posteriores al callback; no se envían al proveedor como `redirectTo` y no necesitan estar en la allowlist. Los comodines amplios solo son aceptables en previews controladas. En producción usa ruta y host exactos. Configura `NEXT_PUBLIC_SITE_URL` con el mismo origen que Site URL.
+Las plantillas de email construyen el enlace bajo `/auth/confirm` a partir de la Site URL; esa página solo transmite los parámetros permitidos al Route Handler `/auth/callback`. `/restablecer-contrasena` es un destino interno posterior al callback. Los comodines amplios solo son aceptables en previews controladas. En producción usa ruta y host exactos. Configura `NEXT_PUBLIC_SITE_URL` con el mismo origen que Site URL.
 
 ## 4. Confirmación de email y recuperación
 
@@ -57,11 +57,19 @@ En **Authentication → Providers → Email**:
 - Decide la política de cambio seguro de email y documenta la elección.
 - Ajusta rate limits después de probar entrega real; nunca los uses como límite comercial.
 
-En las plantillas usa enlaces compatibles con PKCE/SSR y las rutas implementadas. Cuando se use `redirectTo`, Supabase recomienda construir el enlace con `{{ .RedirectTo }}`, `{{ .TokenHash }}` y `{{ .Type }}` según la plantilla, en lugar de asumir siempre `{{ .SiteURL }}`.
+En **Authentication → Email Templates**, copia los HTML versionados en `supabase/email-templates`. Sus enlaces deben usar exactamente el flujo de hash que consume el servidor:
+
+```text
+Confirm signup: {{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup
+Reset password: {{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery
+Change email:   {{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email_change
+```
+
+`/auth/confirm` reenvía de forma interna a `/auth/callback`. El callback valida el tipo, limita `next` con `safeInternalPath`, ejecuta `verifyOtp({ token_hash, type })`, verifica la sesión con `getUser()` y deja que el adaptador SSR escriba las cookies. No usa `exchangeCodeForSession` para email.
 
 El alta pública permanece disponible en Supabase para que pueda enviar la confirmación por SMTP, pero el trigger de base de datos exige una fila efímera en `registration_authorizations`. Solo `/api/auth/register`, después de validar, limitar y registrar las versiones legales vigentes, crea ese token SHA-256 de un solo uso. Una llamada directa a `auth.signUp` sin autorización se revierte. No concedas políticas cliente sobre esa tabla.
 
-La recuperación añade un `state` aleatorio HttpOnly y, tras un intercambio PKCE válido, un marcador HttpOnly de diez minutos. `/api/auth/reset-password` consume ese marcador y cierra las sesiones; una sesión ordinaria no habilita el formulario.
+La recuperación añade un `state` aleatorio HttpOnly como comprobación adicional cuando el enlace lo conserva. La autoridad sigue siendo el `token_hash` de un solo uso validado por Supabase, por lo que la plantilla directa también funciona sin `state`. Tras `verifyOtp`, el callback crea un marcador HttpOnly de diez minutos. `/api/auth/reset-password` consume ese marcador y cierra las sesiones; una sesión ordinaria no habilita el formulario.
 
 Prueba por separado:
 
@@ -168,7 +176,7 @@ El SMTP de prueba de Supabase solo entrega a direcciones autorizadas del equipo.
 
 ### El email vuelve a `localhost`
 
-Site URL o `NEXT_PUBLIC_SITE_URL` no coinciden con el entorno, o la plantilla usa `{{ .SiteURL }}` cuando el flujo esperaba `{{ .RedirectTo }}`.
+Site URL o `NEXT_PUBLIC_SITE_URL` no coinciden con el entorno, o el HTML del Dashboard no coincide con las plantillas versionadas basadas en `{{ .TokenHash }}`.
 
 ### `redirect_uri` no permitida
 

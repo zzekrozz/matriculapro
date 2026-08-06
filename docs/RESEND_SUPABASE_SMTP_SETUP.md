@@ -65,7 +65,7 @@ Haz primero la configuración en staging. El SMTP incorporado y limitado de Supa
 
 ## 4. URLs de Auth
 
-Antes de enviar correos, configura en Supabase el **Site URL** exacto y Redirect URLs exactas para cada entorno. Los flujos actuales envían al proveedor un `emailRedirectTo` bajo `/auth/callback`; el servidor valida el destino interno y completa el intercambio PKCE.
+Antes de enviar correos, configura en Supabase el **Site URL** exacto y Redirect URLs exactas para cada entorno. El flujo de email entrega `token_hash` a `/auth/confirm`; esta ruta lo transmite al callback SSR, que valida el destino interno y llama a `verifyOtp`.
 
 URL que debe estar permitida en Supabase para cada host real:
 
@@ -73,7 +73,7 @@ URL que debe estar permitida en Supabase para cada host real:
 /auth/callback
 ```
 
-El callback redirige internamente a `/auth/confirm` cuando hay un error o a `/restablecer-contrasena` después de una recuperación válida; esas dos rutas no se entregan como `redirectTo`. Evita comodines amplios en producción. Nunca aceptes un destino externo aportado por query string.
+El callback devuelve los errores sin token a `/auth/confirm` o lleva a `/restablecer-contrasena` después de una recuperación válida. `safeInternalPath` rechaza cualquier destino externo aportado por query string. Evita comodines amplios en producción.
 
 ## 5. Plantillas de Supabase Auth
 
@@ -85,7 +85,7 @@ Los originales están en [`supabase/email-templates`](../supabase/email-template
 
 Supabase no ofrece una plantilla distinta para “reenviar confirmación”. `auth.resend({ type: 'signup' })` vuelve a usar **Confirm signup**. El activo `resend-confirmation.html` documenta el texto de reenvío, pero no debe presentarse como una ranura que el proveedor no tiene.
 
-Las plantillas usan `{{ .ConfirmationURL }}` generado por Supabase. No guardan ni muestran OTP, no escriben un dominio a mano y no cargan recursos remotos.
+Las plantillas usan `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=...`, con `signup`, `recovery` o `email_change` según la ranura. El callback ejecuta `verifyOtp`, crea la sesión SSR y escribe sus cookies; no intercambia un parámetro `code`. No muestran el OTP en el cuerpo, no escriben un dominio a mano y no cargan recursos remotos.
 
 ## 6. Emails de producto
 
@@ -181,7 +181,7 @@ La seguridad SQL de la cola se comprueba con `supabase test db` mediante `supaba
 - **`dead_letter`:** corrige primero configuración o datos. Reintenta solo desde una sesión administrativa controlada y conserva la misma clave idempotente.
 - **SPF/DKIM fallan:** compara los registros DNS carácter por carácter y elimina duplicados incompatibles.
 
-No registres cuerpos, destinatarios completos, `ConfirmationURL`, API keys ni cabeceras Authorization.
+No registres cuerpos, destinatarios completos, `token_hash`, enlaces de confirmación, API keys ni cabeceras Authorization.
 
 ## 12. Datos pendientes del propietario
 
