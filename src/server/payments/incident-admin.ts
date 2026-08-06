@@ -29,12 +29,14 @@ export async function retryPaymentIncident(incidentId: string): Promise<Record<s
     if (
       !validation.valid || !checkout.paymentIntentId || !checkout.chargeId || !checkout.priceId
       || !checkout.customerId || !checkout.taxCountry || checkout.amountTotalCents === null
-      || !checkout.taxRateId || checkout.taxPercentage === null
-      || checkout.taxInclusive !== true
+      || checkout.automaticTaxEnabled !== true || checkout.automaticTaxStatus !== 'complete'
+      || checkout.taxBehavior !== 'inclusive'
       || checkout.subtotalExcludingTaxCents === null || checkout.taxAmountCents === null
       || checkout.totalIncludingTaxCents === null || !checkout.invoiceId
     || !checkout.invoiceNumber || !checkout.invoiceStatus || !checkout.invoiceCountry
-    || !checkout.invoiceCurrency || !checkout.invoiceTaxRateId
+    || !checkout.invoiceCurrency || !checkout.invoicePriceId
+    || checkout.invoiceAutomaticTaxEnabled !== true
+    || checkout.invoiceAutomaticTaxStatus !== 'complete'
     || checkout.invoiceTaxBehavior !== 'inclusive'
     || checkout.invoiceSubtotalExcludingTaxCents === null
       || checkout.invoiceTaxAmountCents === null || checkout.invoiceTotalIncludingTaxCents === null
@@ -62,8 +64,7 @@ export async function retryPaymentIncident(incidentId: string): Promise<Record<s
       amountTotalCents: checkout.amountTotalCents,
       currency: checkout.currency ?? '',
       country: checkout.taxCountry,
-      taxRateId: checkout.taxRateId,
-      taxPercentage: checkout.taxPercentage,
+      automaticTaxStatus: 'complete',
       taxBehavior: 'inclusive',
       subtotalExcludingTaxCents: checkout.subtotalExcludingTaxCents,
       taxAmountCents: checkout.taxAmountCents,
@@ -73,7 +74,7 @@ export async function retryPaymentIncident(incidentId: string): Promise<Record<s
       invoiceStatus: checkout.invoiceStatus,
       invoiceCountry: checkout.invoiceCountry,
       invoiceCurrency: checkout.invoiceCurrency,
-      invoiceTaxRateId: checkout.invoiceTaxRateId,
+      invoiceAutomaticTaxStatus: 'complete',
       invoiceTaxBehavior: 'inclusive',
       invoiceSubtotalExcludingTaxCents: checkout.invoiceSubtotalExcludingTaxCents,
       invoiceTaxAmountCents: checkout.invoiceTaxAmountCents,

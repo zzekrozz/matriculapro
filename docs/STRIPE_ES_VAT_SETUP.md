@@ -1,27 +1,58 @@
-# Configuración de IVA español en Stripe Test
+# Stripe Tax automático para IVA español (Test mode)
 
-Este procedimiento usa únicamente Stripe Test Mode. No copies claves ni objetos live y no inventes datos legales. La promoción a producción permanece bloqueada hasta completar y revisar identidad fiscal, datos comerciales y factura.
+Este procedimiento usa solo Stripe Test. MatriculaPro no utiliza una Tax Rate manual ni una variable equivalente. Checkout envía `automatic_tax.enabled=true`; los Prices ya incluyen el impuesto y el total cobrado debe seguir siendo el precio público.
 
-1. En Stripe Test, crea una Tax Rate manual visible como `IVA`, descripción `IVA España 21 %`, porcentaje `21`, inclusiva, país `ES` y activa. Créala una sola vez.
-2. Copia su ID `txr_…` al secreto de servidor `STRIPE_TAX_RATE_ES_IVA_21`. Nunca uses `NEXT_PUBLIC_` ni lo aceptes del navegador.
-3. Crea o revisa los seis Prices one-time en EUR: Particular 7.900/17.900/27.900 y Profesional 12.900/29.900/44.900 céntimos, todos con `tax_behavior=inclusive`.
-4. Configura los Products con nombre y duración comprensibles. No inventes razón social, NIF ni domicilio.
-5. Ejecuta `npm run env:validate -- --staging` y `npm run stripe:doctor`. El doctor debe validar la Tax Rate y los seis Prices sin imprimir secretos.
-6. Completa en Stripe Test el nombre comercial IvanImports y los datos legales únicamente cuando existan y hayan sido revisados. Configura numeración y pie de factura conforme a esa revisión.
-7. Crea el webhook test para Checkout completado/expirado, refunds y disputas según `docs/STRIPE_TESTING.md`; copia el `whsec_…` al gestor de secretos.
-8. Realiza una compra española sintética. Checkout debe reutilizar `cus_…`, recoger dirección de facturación, aplicar la Tax Rate manual y crear una Invoice pagada.
-9. Descarga la factura de prueba. Comprueba producto, duración, cliente, dirección española, EUR, nombre comercial configurado y estado pagado.
-10. Contrasta base + IVA = total. Para 79 € deben ser 65,29 € + 13,71 €; para 299 €, 247,11 € + 51,89 €. Repite con los seis planes.
-11. Prueba país ausente y país distinto de ES con objetos test controlados: no debe activarse acceso y debe aparecer `country_mismatch` con el mensaje “No vuelvas a pagar”.
-12. Prueba Tax Rate 10 %, exclusiva, inactiva y live, Price no inclusivo, moneda no EUR, redondeo divergente y factura ausente: ninguna variante debe activar.
-13. Reembolsa parcialmente una compra y confirma que se registra el acumulado, se mantiene la licencia y se crea revisión comercial.
-14. Compra un mes, amplía dentro de 15 días y reembolsa totalmente solo la ampliación. Confirma que se restaura la misma licencia original hasta su fecha original; repite con original vencida y original reembolsada.
-15. Para promover a Live Mode, crea objetos live separados, rota secretos, repite doctor/checklist/pgTAP/E2E, completa revisión legal y obtiene aprobación explícita. Nunca reutilices IDs test en live.
+## 1. Activar y revisar Stripe Tax
 
-Comando CLI reproducible:
+1. Activa **Test mode** en Stripe Dashboard.
+2. Abre **Revenue > Tax > Settings** y revisa la dirección fiscal de la sede.
+3. En **Tax > Registrations**, añade o revisa el registro de España que corresponda al titular. No inventes datos fiscales.
+4. En **Tax > Settings**, deja Stripe como proveedor fiscal y comprueba que Stripe Tax figura activo en Test mode.
+5. No crees ni asignes Tax Rates manuales. Elimina `STRIPE_TAX_RATE_ES_IVA_21` del entorno si todavía existe.
+
+## 2. Crear exactamente dos Products
+
+En **Product catalog > Products**, crea o edita:
+
+- `MatriculaPro Particular`: asigna el tax code oficial **Software as a service (SaaS) - personal use**, ID `txcd_10103000`.
+- `MatriculaPro Profesional`: asigna el tax code oficial **Software as a service (SaaS) - business use**, ID `txcd_10103001`.
+
+Ruta de edición: abre el Product, pulsa **Edit product**, busca **Product tax code**, selecciona el nombre anterior y guarda. Son códigos oficiales de Stripe para software alojado, entregado por Internet y no descargable. La distinción personal/business resulta especialmente relevante en Estados Unidos, pero permite clasificar correctamente los dos Products sin usar un código inventado.
+
+## 3. Crear los seis Prices inclusivos
+
+Crea tres Prices dentro de cada Product. En cada Price selecciona **One time**, moneda **EUR** y **Include tax in price / Inclusive** (`tax_behavior=inclusive`). No uses precios recurrentes.
+
+| Product | Duración | Importe final | `unit_amount` | Variable |
+| --- | --- | ---: | ---: | --- |
+| Particular | 1 mes | 79 € | 7900 | `STRIPE_PRICE_PARTICULAR_1M` |
+| Particular | 6 meses | 179 € | 17900 | `STRIPE_PRICE_PARTICULAR_6M` |
+| Particular | 12 meses | 279 € | 27900 | `STRIPE_PRICE_PARTICULAR_12M` |
+| Profesional | 1 mes | 129 € | 12900 | `STRIPE_PRICE_PROFESSIONAL_1M` |
+| Profesional | 6 meses | 299 € | 29900 | `STRIPE_PRICE_PROFESSIONAL_6M` |
+| Profesional | 12 meses | 449 € | 44900 | `STRIPE_PRICE_PROFESSIONAL_12M` |
+
+El Price inclusivo hace que Stripe extraiga el IVA del importe mostrado: no lo suma encima. `npm run stripe:doctor` exige seis IDs Test distintos, exactamente dos Products, los importes anteriores, pago único, EUR, `inclusive`, los tax codes esperados y Stripe Tax activo.
+
+## 4. Checkout, factura y webhook
+
+1. En **Settings > Billing > Invoices**, configura únicamente los datos reales y revisados del emisor, numeración y pie de factura.
+2. Crea un webhook de Test mode para `https://<staging>/api/stripe/webhook`.
+3. Selecciona: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.expired`, `charge.refunded`, `refund.updated`, `charge.dispute.created`, `charge.dispute.updated` y `charge.dispute.closed`.
+4. Guarda su secreto `whsec_…` como `STRIPE_WEBHOOK_SECRET` únicamente en servidor.
+5. Checkout conserva `mode=payment`, Customer persistente, dirección de facturación obligatoria, Tax ID e `invoice_creation.enabled=true`.
+
+## 5. Comprobación obligatoria
+
+Ejecuta:
 
 ```bash
-stripe listen \
-  --events checkout.session.completed,checkout.session.async_payment_succeeded,checkout.session.expired,charge.refunded,refund.updated,charge.dispute.created,charge.dispute.updated,charge.dispute.closed \
-  --forward-to localhost:3000/api/stripe/webhook
+npm run env:validate -- --staging
+npm run stripe:doctor
 ```
+
+Realiza una compra Test con dirección española y confirma en Session e Invoice: `automatic_tax.status=complete`, país `ES`, EUR, Price esperado, Customer esperado, factura `paid`, Price `inclusive`, impuesto mayor que cero y `base + IVA = total`. Para 79 € se esperan 65,29 € + 13,71 €; para 299 €, 247,11 € + 51,89 €.
+
+Prueba también dirección no española, cálculo automático incompleto, impuesto cero, Invoice ausente, Price no inclusivo y discrepancias de base/IVA/total. En todos esos casos debe existir incidencia, no debe crearse licencia y el usuario debe ver que no vuelva a pagar.
+
+No marques Stripe remoto como aprobado hasta ejecutar estas comprobaciones con objetos y credenciales Test reales.

@@ -9,9 +9,9 @@ Estado: preparado para configurar y validar en staging. Este documento no autori
 3. Guarda `STRIPE_SECRET_KEY=sk_test_…` únicamente en el gestor de secretos del servidor.
 4. Configura `APP_BASE_URL` y `NEXT_PUBLIC_SITE_URL` con el mismo origen HTTPS exacto de staging.
 
-## 2. Productos y precios
+## 2. Products, tax codes y Prices
 
-Crea seis precios únicos, activos, en EUR, de pago único y con precio introducido como IVA incluido:
+Crea dos Products: Particular con `txcd_10103000` y Profesional con `txcd_10103001`. Dentro de ellos crea seis Prices únicos, activos, en EUR, de pago único y con `tax_behavior=inclusive`:
 
 | Nivel | Duración | Total visible | `unit_amount` |
 | --- | --- | ---: | ---: |
@@ -24,7 +24,7 @@ Crea seis precios únicos, activos, en EUR, de pago único y con precio introduc
 
 Guarda los seis `price_…` en las variables `STRIPE_PRICE_*` de `.env.example`. No reutilices un Price entre planes. El servidor comprueba nivel, duración, Price ID, importe y moneda contra su catálogo autoritativo.
 
-El catálogo contractual español separa internamente base, IVA al 21 % y total. Antes de lanzar, valida en una factura test que Stripe muestra correctamente base, cuota, total, emisor, NIF, numeración y datos del cliente. `tax_behavior=inclusive` describe el Price, pero la configuración fiscal efectiva de Stripe Tax o de Tax Rates debe revisarse en el Dashboard; no se considera resuelta por el código por sí sola.
+El catálogo contractual español separa internamente base, IVA y total. Stripe Tax debe estar activo en Test mode, cada Product debe usar su tax code SaaS oficial y cada Price debe declarar `tax_behavior=inclusive`. Antes de lanzar, valida en una factura Test que Stripe muestra correctamente base, cuota, total, emisor, NIF, numeración y datos del cliente.
 
 ## 3. Ampliación de 15 días
 

@@ -43,9 +43,6 @@ const stripeWebhookRule = (value: string) =>
 const stripePriceRule = (value: string) =>
   value.startsWith('price_') ? undefined : 'debe ser un identificador de precio price_';
 
-const stripeTaxRateRule = (value: string) =>
-  value.startsWith('txr_') ? undefined : 'debe ser un identificador de tasa fiscal txr_';
-
 const resendApiKeyRule = (value: string) =>
   value.startsWith('re_') ? undefined : 'debe ser una API key de Resend con prefijo re_';
 
@@ -73,7 +70,6 @@ const rules: EnvironmentRule[] = [
   { name: 'TRANSACTIONAL_EMAIL_CRON_SECRET', scope: 'server', requiredFor: ['staging', 'production'], validate: cronSecretRule },
   { name: 'STRIPE_SECRET_KEY', scope: 'server', requiredFor: ['staging', 'production'], validate: stripeSecretRule },
   { name: 'STRIPE_WEBHOOK_SECRET', scope: 'server', requiredFor: ['staging', 'production'], validate: stripeWebhookRule },
-  { name: 'STRIPE_TAX_RATE_ES_IVA_21', scope: 'server', requiredFor: ['staging', 'production'], validate: stripeTaxRateRule },
   { name: 'STRIPE_PRICE_PARTICULAR_1M', scope: 'server', requiredFor: ['staging', 'production'], validate: stripePriceRule },
   { name: 'STRIPE_PRICE_PARTICULAR_6M', scope: 'server', requiredFor: ['staging', 'production'], validate: stripePriceRule },
   { name: 'STRIPE_PRICE_PARTICULAR_12M', scope: 'server', requiredFor: ['staging', 'production'], validate: stripePriceRule },

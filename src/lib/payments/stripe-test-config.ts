@@ -28,7 +28,6 @@ export interface StripeTestConfiguration {
   secretKey: string;
   webhookSecret: string;
   appBaseUrl: string;
-  taxRateId: string;
   priceIds: Readonly<Record<PaidAccessTier, Readonly<Record<LicenseDuration, string>>>>;
   upgradeCreditCouponIds: Readonly<Record<PaidAccessTier, string | null>>;
 }
@@ -43,16 +42,6 @@ function requirePriceId(name: PriceEnvironmentName): string {
   const value = requireEnvironment(name);
   if (!/^price_[A-Za-z0-9]+$/.test(value)) {
     throw new StripeTestConfigurationError(`${name} must contain a Stripe Price ID`);
-  }
-  return value;
-}
-
-function requireTaxRateId(): string {
-  const value = requireEnvironment('STRIPE_TAX_RATE_ES_IVA_21');
-  if (!/^txr_[A-Za-z0-9]+$/.test(value)) {
-    throw new StripeTestConfigurationError(
-      'STRIPE_TAX_RATE_ES_IVA_21 must contain a Stripe Tax Rate ID',
-    );
   }
   return value;
 }
@@ -115,7 +104,6 @@ export function getStripeTestConfiguration(): StripeTestConfiguration {
     secretKey,
     webhookSecret,
     appBaseUrl: normalizeBaseUrl(requireEnvironment('APP_BASE_URL')),
-    taxRateId: requireTaxRateId(),
     priceIds,
     upgradeCreditCouponIds: Object.freeze({
       particular: optionalCouponId('STRIPE_COUPON_PARTICULAR_1M_CREDIT'),

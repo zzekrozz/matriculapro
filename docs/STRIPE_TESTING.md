@@ -1,8 +1,8 @@
-# Stripe Test: checkout, webhooks y casos de cierre
+# Stripe Test: Checkout, Stripe Tax y webhooks
 
-Usa exclusivamente `sk_test_…`, Prices, Tax Rate y Coupons de test. Los seis Prices siguen siendo pago único EUR, IVA incluido y 7.900/17.900/27.900 o 12.900/29.900/44.900 céntimos. Checkout aplica a su única línea `STRIPE_TAX_RATE_ES_IVA_21`, recoge dirección fiscal y Tax ID y crea factura de pago único; la activación exige país final `ES`. Un NIF-IVA no aplica exención automática.
+Usa exclusivamente `sk_test_…`, Products, Prices, Coupons y webhooks de Test mode. Los seis Prices son one-time, EUR, `tax_behavior=inclusive` y 7.900/17.900/27.900 o 12.900/29.900/44.900 céntimos. Checkout habilita Stripe Tax automático, recoge dirección fiscal, reutiliza Customer y crea una Invoice de pago único. No existe Tax Rate manual.
 
-Antes de probar, ejecuta `npm run stripe:doctor`. Con credenciales test valida la tasa activa, inclusiva, 21 %, española y no-live, y contrasta los seis Prices con Stripe. `tax_behavior=inclusive` en el Price no sustituye la aplicación de la Tax Rate manual. No se habilita `automatic_tax` en esta sesión.
+Antes de probar ejecuta `npm run stripe:doctor`. Sin credenciales solo valida el contrato estático y declara remoto `PENDING`; con credenciales comprueba Stripe Tax activo, los dos Products/tax codes y los seis Prices reales.
 
 ## Endpoint
 
@@ -13,30 +13,28 @@ stripe listen \
   --forward-to localhost:3000/api/stripe/webhook
 ```
 
-Copia el `whsec_…` mostrado a `STRIPE_WEBHOOK_SECRET` y reinicia Next. Configura los mismos ocho eventos en el Dashboard de staging. `charge.refunded` y `refund.updated` recuperan la Charge actual para usar el acumulado; el nombre del evento no decide si es total.
+Copia el `whsec_…` a `STRIPE_WEBHOOK_SECRET` y reinicia Next. El handler siempre verifica la firma sobre el cuerpo sin modificar.
 
 ## Secuencia reproducible
 
-1. Registrar y confirmar una cuenta sintética.
-2. Comprar en tarjeta `4242 4242 4242 4242`, fecha futura, CVC cualquiera y dirección española.
-3. Confirmar una fila `billing_customers`, compra pagada y licencia activa. En `purchases`, contrastar Tax Rate, 21 %, `inclusive`, base, IVA, total, Invoice ID y número.
-4. Repetir checkout con la misma cuenta: debe reutilizar `cus_…`.
-5. Probar ampliación dentro de 15 días y renovación en los últimos 30 días.
-6. En Dashboard, reembolsar 1 €, luego hasta 50 %, luego completar. Confirmar que solo el total revoca. Si se reembolsa únicamente la ampliación, debe restaurarse la licencia original solo hasta su vencimiento original.
-7. Usar fixtures/CLI de disputa para `warning/open/won/lost` y confirmar suspensión/restauración/revocación.
-8. Cambiar deliberadamente país, Price, importe, Customer, Tax Rate, porcentaje, redondeo o factura en un objeto de test controlado: debe aparecer una incidencia y nunca acceso.
-9. Reenviar el mismo Event desde Dashboard: no debe duplicar periodos, cantidades ni eventos terminales.
+1. Registra y confirma una cuenta sintética.
+2. Compra con `4242 4242 4242 4242`, fecha futura, CVC cualquiera y dirección de facturación española.
+3. Comprueba Customer persistente, Session `paid`, `automatic_tax.status=complete`, una Invoice `paid`, país ES, EUR, Price esperado e impuesto inclusivo mayor que cero.
+4. En `purchases`, contrasta `automatic_tax_status`, `tax_behavior`, país, base, IVA, total, Invoice ID y número. Exige siempre `base + IVA = total` con los céntimos exactos de Stripe.
+5. Repite el Event ID: debe existir una única licencia y un único efecto económico.
+6. Prueba los seis importes finales: 79, 179, 279, 129, 299 y 449 €.
+7. Prueba ampliación, renovación, reembolso parcial/total y disputa; el orden refund/disputa antes de Checkout tampoco puede crear acceso indebido.
+8. Con fixtures Test controlados prueba país no ES, cálculo `failed` o `requires_location_inputs`, impuesto cero, Invoice ausente/no pagada, Customer/Price/moneda divergentes, Price `exclusive` y discrepancias de base, IVA o total.
+9. Para cualquier pago no activable confirma incidencia `country_mismatch`, `tax_mismatch` o `invoice_mismatch` y el mensaje “No vuelvas a pagar”.
 
-Si no hay Stripe CLI, exporta un Event real de test, conserva exactamente el cuerpo JSON y genera la firma con `stripe.webhooks.generateTestHeaderString` solo en el script de pruebas. El handler productivo sigue usando `constructEvent`; no existe bypass de firma.
+## Eventos fuera de orden
 
-## Eventos Stripe fuera de orden
+La migración 011 conserva primero refunds y disputas; la 012 mantiene ese ordenamiento al sustituir el RPC de activación por el de Stripe Tax automático. Resultados esperados:
 
-La migración 011 registra `charge.refunded`, `refund.updated` y disputas en `pending_payment_reversals` antes de responder 200. Para probar el caso crítico, pausa temporalmente el reenvío del evento Checkout, entrega primero el refund o la disputa y después reenvía `checkout.session.completed` desde Stripe Test. El resultado esperado es:
+- refund total previo: compra `fully_refunded`, ninguna licencia;
+- refund parcial previo: política existente, importe acumulado e incidencia;
+- disputa `open/lost` previa: ninguna licencia;
+- `won` posterior: solo activa si ya existe evidencia automática completa y no hay otro bloqueo;
+- IDs contradictorios: revisión manual, nunca coincidencia basada solo en Customer.
 
-- refund total: compra `fully_refunded`, cero licencias de pago y mensaje específico en cuenta;
-- refund parcial: licencia según la política actual, compra `partially_refunded` e incidencia;
-- disputa `open/lost`: compra disputada y cero licencias; un `won` posterior puede activar únicamente con la evidencia fiscal verificada ya guardada;
-- IDs fuertes contradictorios: `requires_review`, incidencia y cero activación;
-- Customer coincidente por sí solo: nunca empareja.
-
-Reenvía cada evento dos veces y confirma una sola fila por `stripe_event_id`. Simula también un fallo de Supabase: el endpoint debe devolver 500 para que Stripe reintente; no se permite un 200 si la reversión no quedó durable.
+Una caída de persistencia debe producir error reintentable, no HTTP 200 silencioso. Las pruebas remotas solo se declaran aprobadas después de observar Events, Session, Invoice y base de datos reales en Test mode.

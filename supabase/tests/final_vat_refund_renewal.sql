@@ -1,13 +1,13 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(51);
+select plan(52);
 
 select has_table('public', 'upgrade_relationships', 'explicit upgrade relationship table exists');
 select ok((select relrowsecurity from pg_class where oid = 'public.upgrade_relationships'::regclass), 'upgrade relationships use RLS');
 select ok(has_table_privilege('authenticated', 'public.upgrade_relationships', 'SELECT'), 'users can read their own relationship');
 select ok(not has_table_privilege('authenticated', 'public.upgrade_relationships', 'INSERT,UPDATE,DELETE'), 'users cannot mutate relationships');
-select ok(has_function_privilege('service_role', 'public.bind_purchase_tax_rate(uuid,text)', 'EXECUTE'), 'backend can bind a Tax Rate');
-select ok(has_function_privilege('service_role', 'public.process_verified_order_independent_payment(text,text,timestamp with time zone,text,uuid,text,text,text,text,text,bigint,text,text,text,numeric,text,bigint,bigint,bigint,text,text,text,text,text,text,text,bigint,bigint,bigint)', 'EXECUTE'), 'backend can execute order-independent taxed activation');
+select ok(not has_function_privilege('service_role', 'public.bind_purchase_tax_rate(uuid,text)', 'EXECUTE'), 'manual Tax Rate binding is retired');
+select ok(has_function_privilege('service_role', 'public.process_verified_automatic_tax_payment(text,text,timestamp with time zone,text,uuid,text,text,text,text,text,bigint,text,text,text,text,bigint,bigint,bigint,text,text,text,text,text,text,text,bigint,bigint,bigint)', 'EXECUTE'), 'backend can execute automatic Tax activation');
 select ok(has_function_privilege('service_role', 'public.process_verified_final_refund(text,text,timestamp with time zone,text,uuid,text,bigint,bigint,text)', 'EXECUTE'), 'backend can execute final refunds');
 select ok(not has_function_privilege('service_role', 'public.process_verified_staging_payment(text,text,timestamp with time zone,text,uuid,text,text,text,text,bigint,text,text)', 'EXECUTE'), 'legacy activation is not a backend entry point');
 select ok(not has_function_privilege('service_role', 'public.process_verified_staging_refund(text,text,timestamp with time zone,text,uuid,text,bigint,bigint,text)', 'EXECUTE'), 'legacy refund is not a backend entry point');
@@ -16,8 +16,9 @@ select is(
     and table_name = 'purchases' and column_name in (
       'expected_stripe_tax_rate_id', 'applied_stripe_tax_rate_id', 'tax_percentage',
       'tax_behavior', 'subtotal_excluding_tax_cents', 'tax_amount_cents',
-      'total_including_tax_cents', 'stripe_invoice_id', 'stripe_invoice_number'
-    )), 9::bigint, 'all fiscal evidence columns exist'
+      'total_including_tax_cents', 'stripe_invoice_id', 'stripe_invoice_number',
+      'automatic_tax_status'
+    )), 10::bigint, 'all automatic Tax fiscal evidence columns exist'
 );
 
 select is(
@@ -88,25 +89,22 @@ insert into public.purchases (
   'price_finalvat', 'cs_test_finalvat', 'cus_final_vat', 'new'
 );
 
-select lives_ok(
-  $$select public.bind_purchase_tax_rate(
-    '60000000-0000-4000-8000-000000000101', 'txr_final_es_iva21'
-  )$$, 'server binds the configured Tax Rate to the pending purchase'
-);
-select is((select expected_stripe_tax_rate_id from public.purchases
-  where id = '60000000-0000-4000-8000-000000000101'), 'txr_final_es_iva21', 'expected Tax Rate is persisted before Checkout');
+select ok((select expected_stripe_tax_rate_id is null from public.purchases
+  where id = '60000000-0000-4000-8000-000000000101'), 'pending purchase has no manual Tax Rate');
+select ok((select automatic_tax_status is null from public.purchases
+  where id = '60000000-0000-4000-8000-000000000101'), 'automatic Tax evidence starts empty');
 
 insert into public.payment_events (provider_event_id, event_type, payload_sha256, processing_status, event_created_at)
 values ('evt_final_tax_bad', 'checkout.session.completed', repeat('a', 64), 'processing', now());
 select is(
-  public.process_verified_taxed_staging_payment(
+  public.process_verified_automatic_tax_payment(
     'evt_final_tax_bad', 'checkout.session.completed', now(), repeat('a', 64),
     '60000000-0000-4000-8000-000000000101', 'cs_test_finalvat', 'pi_finalvat',
-    'cus_final_vat', 'price_finalvat', 7900, 'EUR', 'ES',
-    'txr_final_es_iva21', 10, 'inclusive', 6529, 1371, 7900,
+    'ch_finalvat', 'cus_final_vat', 'price_finalvat', 7900, 'EUR', 'ES',
+    'failed', 'inclusive', 6529, 1371, 7900,
     'in_final_bad', 'MPR-BAD', 'paid', 'ES', 'EUR',
-    'txr_final_es_iva21', 'inclusive', 6529, 1371, 7900
-  ) ->> 'reason', 'tax_rate_mismatch', '10 percent VAT never activates access'
+    'complete', 'inclusive', 6529, 1371, 7900
+  ) ->> 'reason', 'automatic_tax_incomplete', 'incomplete automatic Tax never activates access'
 );
 select is((select count(*) from public.payment_incidents
   where stripe_event_id = 'evt_final_tax_bad' and kind = 'tax_mismatch'), 1::bigint, 'tax mismatch creates an incident');
@@ -116,32 +114,34 @@ select is((select status from public.purchases
 insert into public.payment_events (provider_event_id, event_type, payload_sha256, processing_status, event_created_at)
 values ('evt_final_tax_ok', 'checkout.session.completed', repeat('b', 64), 'processing', now());
 select is(
-  public.process_verified_taxed_staging_payment(
+  public.process_verified_automatic_tax_payment(
     'evt_final_tax_ok', 'checkout.session.completed', now(), repeat('b', 64),
     '60000000-0000-4000-8000-000000000101', 'cs_test_finalvat', 'pi_finalvat',
-    'cus_final_vat', 'price_finalvat', 7900, 'EUR', 'ES',
-    'txr_final_es_iva21', 21, 'inclusive', 6529, 1371, 7900,
+    'ch_finalvat', 'cus_final_vat', 'price_finalvat', 7900, 'EUR', 'ES',
+    'complete', 'inclusive', 6529, 1371, 7900,
     'in_final_vat', 'MPR-000001', 'paid', 'ES', 'EUR',
-    'txr_final_es_iva21', 'inclusive', 6529, 1371, 7900
-  ) ->> 'processed', 'true', 'correct Spanish inclusive VAT activates the purchase'
+    'complete', 'inclusive', 6529, 1371, 7900
+  ) ->> 'processed', 'true', 'complete Spanish automatic Tax activates the purchase'
 );
 select is((select status from public.purchases where id = '60000000-0000-4000-8000-000000000101'), 'paid', 'VAT-verified purchase is paid');
 select is((select subtotal_excluding_tax_cents || ':' || tax_amount_cents || ':' || total_including_tax_cents
   from public.purchases where id = '60000000-0000-4000-8000-000000000101'), '6529:1371:7900', 'base, IVA and total are stored exactly');
 select is((select stripe_invoice_id || ':' || stripe_invoice_number from public.purchases
   where id = '60000000-0000-4000-8000-000000000101'), 'in_final_vat:MPR-000001', 'paid invoice evidence is stored');
+select is((select automatic_tax_status from public.purchases
+  where id = '60000000-0000-4000-8000-000000000101'), 'complete', 'automatic Tax status is stored');
 select is((select status from public.user_licenses where original_purchase_id = '60000000-0000-4000-8000-000000000101'), 'active', 'only a fiscal-valid event creates active access');
 
 insert into public.payment_events (provider_event_id, event_type, payload_sha256, processing_status, event_created_at)
 values ('evt_final_tax_retry', 'checkout.session.completed', repeat('c', 64), 'processing', now() + interval '1 second');
 select is(
-  public.process_verified_taxed_staging_payment(
+  public.process_verified_automatic_tax_payment(
     'evt_final_tax_retry', 'checkout.session.completed', now() + interval '1 second', repeat('c', 64),
     '60000000-0000-4000-8000-000000000101', 'cs_test_finalvat', 'pi_finalvat',
-    'cus_final_vat', 'price_finalvat', 7900, 'EUR', 'ES',
-    'txr_final_es_iva21', 21, 'inclusive', 6529, 1371, 7900,
+    'ch_finalvat', 'cus_final_vat', 'price_finalvat', 7900, 'EUR', 'ES',
+    'complete', 'inclusive', 6529, 1371, 7900,
     'in_final_vat', 'MPR-000001', 'paid', 'ES', 'EUR',
-    'txr_final_es_iva21', 'inclusive', 6529, 1371, 7900
+    'complete', 'inclusive', 6529, 1371, 7900
   ) ->> 'duplicate', 'true', 'webhook retry is idempotent'
 );
 select is((select count(*) from public.user_licenses where original_purchase_id = '60000000-0000-4000-8000-000000000101'), 1::bigint, 'retry creates no duplicate licence');
