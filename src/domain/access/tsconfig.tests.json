@@ -11,6 +11,11 @@
     "rootDir": "../../../src",
     "plugins": []
   },
-  "include": ["./**/*.ts", "../../../src/lib/payments/catalog.ts", "../../../src/lib/payments/stripe-tax.ts"],
+  "include": [
+    "./**/*.ts",
+    "../../../src/lib/payments/catalog.ts",
+    "../../../src/lib/payments/stripe-tax.ts",
+    "../../../src/server/payments/stripe-webhook-policy.ts"
+  ],
   "exclude": ["../../../node_modules"]
 }

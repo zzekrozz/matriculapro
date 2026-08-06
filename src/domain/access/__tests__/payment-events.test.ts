@@ -7,6 +7,11 @@ import {
   type PurchaseSnapshot,
   type VerifiedCheckoutSnapshot,
 } from '..';
+import {
+  checkoutFailureRequiresStripeRetry,
+  resolvePaidInvoicePaymentIntent,
+  stripeWebhookAction,
+} from '../../../server/payments/stripe-webhook-policy';
 
 function purchase(overrides: Partial<PurchaseSnapshot> = {}): PurchaseSnapshot {
   return {
@@ -132,6 +137,42 @@ describe('trusted Checkout validation', () => {
         { valid: false, reason },
       );
     }
+  });
+});
+
+describe('Stripe webhook payment routing', () => {
+  it('routes invoice.paid back through the verified Checkout payment transition', () => {
+    assert.equal(stripeWebhookAction('checkout.session.completed'), 'checkout_payment');
+    assert.equal(stripeWebhookAction('invoice.paid'), 'invoice_payment');
+    assert.equal(stripeWebhookAction('customer.updated'), 'ignore');
+  });
+
+  it('resolves one paid Invoice Payment to its PaymentIntent', () => {
+    assert.deepEqual(resolvePaidInvoicePaymentIntent([{
+      status: 'paid',
+      payment: { type: 'payment_intent', payment_intent: 'pi_paid' },
+    }]), { paymentIntentId: 'pi_paid', reason: null });
+  });
+
+  it('refuses missing and ambiguous Invoice Payment associations', () => {
+    assert.deepEqual(resolvePaidInvoicePaymentIntent([]), {
+      paymentIntentId: null,
+      reason: 'invoice_payment_intent_missing',
+    });
+    assert.deepEqual(resolvePaidInvoicePaymentIntent([
+      { status: 'paid', payment: { type: 'payment_intent', payment_intent: 'pi_one' } },
+      { status: 'paid', payment: { type: 'payment_intent', payment_intent: 'pi_two' } },
+    ]), {
+      paymentIntentId: null,
+      reason: 'invoice_payment_intent_ambiguous',
+    });
+  });
+
+  it('asks Stripe to retry while the Checkout invoice is not settled', () => {
+    assert.equal(checkoutFailureRequiresStripeRetry('invoice_missing', null), true);
+    assert.equal(checkoutFailureRequiresStripeRetry('invoice_mismatch', 'open'), true);
+    assert.equal(checkoutFailureRequiresStripeRetry('invoice_mismatch', 'paid'), false);
+    assert.equal(checkoutFailureRequiresStripeRetry('tax_breakdown_mismatch', 'paid'), false);
   });
 });
 
