@@ -20,8 +20,8 @@ select ok(not has_function_privilege('authenticated',
   'public.store_pending_payment_reversal(text,text,timestamp with time zone,text,text,text,text,text,text,text,uuid,bigint,bigint,text,text,text)',
   'EXECUTE'), 'authenticated cannot persist a reversal');
 select ok(has_function_privilege('service_role',
-  'public.process_verified_order_independent_payment(text,text,timestamp with time zone,text,uuid,text,text,text,text,text,bigint,text,text,text,numeric,text,bigint,bigint,bigint,text,text,text,text,text,text,text,bigint,bigint,bigint)',
-  'EXECUTE'), 'service role can run guarded activation');
+  'public.process_verified_automatic_tax_payment(text,text,timestamp with time zone,text,uuid,text,text,text,text,text,bigint,text,text,text,text,bigint,bigint,bigint,text,text,text,text,text,text,text,bigint,bigint,bigint)',
+  'EXECUTE'), 'service role can run guarded automatic Tax activation');
 select ok(not has_function_privilege('service_role',
   'public.process_verified_taxed_staging_payment(text,text,timestamp with time zone,text,uuid,text,text,text,text,bigint,text,text,text,numeric,text,bigint,bigint,bigint,text,text,text,text,text,text,text,bigint,bigint,bigint)',
   'EXECUTE'), 'migration 010 activation is no longer a backend entry point');
@@ -61,21 +61,20 @@ insert into public.purchases (
   id, user_id, tier, duration, status, idempotency_key,
   base_cents, vat_cents, total_cents, amount_due_cents, currency,
   vat_rate_basis_points, tax_country, price_source, price_effective_at,
-  stripe_price_id, stripe_checkout_session_id, stripe_customer_id,
-  expected_stripe_tax_rate_id, purchase_kind
+  stripe_price_id, stripe_checkout_session_id, stripe_customer_id, purchase_kind
 ) values
   ('70000000-0000-4000-8000-000000000101', '70000000-0000-4000-8000-000000000001',
    'particular', 'one_month', 'pending', 'ordering_refund_000001',
    6529, 1371, 7900, 7900, 'EUR', 2100, 'ES', 'pgtap', now(),
-   'price_orderrefund', 'cs_test_orderrefund', 'cus_order_refund', 'txr_order_iva21', 'new'),
+   'price_orderrefund', 'cs_test_orderrefund', 'cus_order_refund', 'new'),
   ('70000000-0000-4000-8000-000000000102', '70000000-0000-4000-8000-000000000002',
    'professional', 'one_month', 'pending', 'ordering_dispute_0001',
    10661, 2239, 12900, 12900, 'EUR', 2100, 'ES', 'pgtap', now(),
-   'price_orderdispute', 'cs_test_orderdispute', 'cus_order_dispute', 'txr_order_iva21', 'new'),
+   'price_orderdispute', 'cs_test_orderdispute', 'cus_order_dispute', 'new'),
   ('70000000-0000-4000-8000-000000000103', '70000000-0000-4000-8000-000000000003',
    'particular', 'six_months', 'pending', 'ordering_partial_0001',
    14793, 3107, 17900, 17900, 'EUR', 2100, 'ES', 'pgtap', now(),
-   'price_orderpartial', 'cs_test_orderpartial', 'cus_order_partial', 'txr_order_iva21', 'new');
+   'price_orderpartial', 'cs_test_orderpartial', 'cus_order_partial', 'new');
 
 insert into public.payment_events (provider_event_id, event_type, payload_sha256, processing_status, event_created_at)
 values ('evt_order_unknown', 'charge.refunded', repeat('1', 64), 'processing', now());
@@ -110,12 +109,12 @@ select lives_ok($$select public.store_pending_payment_reversal(
   'pi_order_full', 'ch_order_full', null, null, 'cus_order_refund', null,
   7900, 7900, 'eur', null, null
 )$$, 'full refund arriving first is durable');
-select is(public.process_verified_order_independent_payment(
+select is(public.process_verified_automatic_tax_payment(
   'evt_order_full_checkout', 'checkout.session.completed', now(), repeat('4', 64),
   '70000000-0000-4000-8000-000000000101', 'cs_test_orderrefund',
   'pi_order_full', 'ch_order_full', 'cus_order_refund', 'price_orderrefund',
-  7900, 'EUR', 'ES', 'txr_order_iva21', 21, 'inclusive', 6529, 1371, 7900,
-  'in_order_full', 'MPR-ORDER-001', 'paid', 'ES', 'EUR', 'txr_order_iva21',
+  7900, 'EUR', 'ES', 'complete', 'inclusive', 6529, 1371, 7900,
+  'in_order_full', 'MPR-ORDER-001', 'paid', 'ES', 'EUR', 'complete',
   'inclusive', 6529, 1371, 7900
 ) ->> 'reason', 'fully_refunded_before_activation', 'full refund blocks later checkout activation');
 select is((select status from public.purchases where id = '70000000-0000-4000-8000-000000000101'), 'refunded', 'purchase records full refund');
@@ -126,12 +125,12 @@ select is((select count(*) from public.payment_incidents where purchase_id = '70
   and kind = 'payment_fully_refunded_before_activation' and status = 'resolved'), 1::bigint, 'automatic full-refund outcome is audited and resolved');
 insert into public.payment_events (provider_event_id, event_type, payload_sha256, processing_status, event_created_at)
 values ('evt_order_full_checkout_retry', 'checkout.session.async_payment_succeeded', repeat('a', 64), 'processing', now() + interval '2 seconds');
-select is(public.process_verified_order_independent_payment(
+select is(public.process_verified_automatic_tax_payment(
   'evt_order_full_checkout_retry', 'checkout.session.async_payment_succeeded', now(), repeat('a', 64),
   '70000000-0000-4000-8000-000000000101', 'cs_test_orderrefund',
   'pi_order_full', 'ch_order_full', 'cus_order_refund', 'price_orderrefund',
-  7900, 'EUR', 'ES', 'txr_order_iva21', 21, 'inclusive', 6529, 1371, 7900,
-  'in_order_full', 'MPR-ORDER-001', 'paid', 'ES', 'EUR', 'txr_order_iva21',
+  7900, 'EUR', 'ES', 'complete', 'inclusive', 6529, 1371, 7900,
+  'in_order_full', 'MPR-ORDER-001', 'paid', 'ES', 'EUR', 'complete',
   'inclusive', 6529, 1371, 7900
 ) ->> 'processed', 'false', 'concurrent or repeated payment cannot reactivate a refunded purchase');
 
@@ -150,12 +149,12 @@ select lives_ok($$select public.store_pending_payment_reversal(
   'pi_order_dispute', 'ch_order_dispute', null, null, 'cus_order_dispute', null,
   null, null, null, 'dp_order_dispute', 'open'
 )$$, 'open dispute arriving first is durable');
-select is(public.process_verified_order_independent_payment(
+select is(public.process_verified_automatic_tax_payment(
   'evt_order_dispute_checkout', 'checkout.session.completed', now(), repeat('6', 64),
   '70000000-0000-4000-8000-000000000102', 'cs_test_orderdispute',
   'pi_order_dispute', 'ch_order_dispute', 'cus_order_dispute', 'price_orderdispute',
-  12900, 'EUR', 'ES', 'txr_order_iva21', 21, 'inclusive', 10661, 2239, 12900,
-  'in_order_dispute', 'MPR-ORDER-002', 'paid', 'ES', 'EUR', 'txr_order_iva21',
+  12900, 'EUR', 'ES', 'complete', 'inclusive', 10661, 2239, 12900,
+  'in_order_dispute', 'MPR-ORDER-002', 'paid', 'ES', 'EUR', 'complete',
   'inclusive', 10661, 2239, 12900
 ) ->> 'reason', 'dispute_before_activation', 'open dispute blocks later activation');
 select is((select status from public.purchases where id = '70000000-0000-4000-8000-000000000102'), 'disputed', 'purchase remains disputed without licence');
@@ -187,12 +186,12 @@ select lives_ok($$select public.store_pending_payment_reversal(
   'pi_order_partial', 'ch_order_partial', null, null, 'cus_order_partial', null,
   1000, 17900, 'eur', null, null
 )$$, 'partial refund arriving first is durable');
-select is(public.process_verified_order_independent_payment(
+select is(public.process_verified_automatic_tax_payment(
   'evt_order_partial_checkout', 'checkout.session.completed', now(), repeat('9', 64),
   '70000000-0000-4000-8000-000000000103', 'cs_test_orderpartial',
   'pi_order_partial', 'ch_order_partial', 'cus_order_partial', 'price_orderpartial',
-  17900, 'EUR', 'ES', 'txr_order_iva21', 21, 'inclusive', 14793, 3107, 17900,
-  'in_order_partial', 'MPR-ORDER-003', 'paid', 'ES', 'EUR', 'txr_order_iva21',
+  17900, 'EUR', 'ES', 'complete', 'inclusive', 14793, 3107, 17900,
+  'in_order_partial', 'MPR-ORDER-003', 'paid', 'ES', 'EUR', 'complete',
   'inclusive', 14793, 3107, 17900
 ) ->> 'processed', 'true', 'partial refund follows current activation policy');
 select is((select status from public.purchases where id = '70000000-0000-4000-8000-000000000103'), 'paid', 'partial refund leaves purchase paid');

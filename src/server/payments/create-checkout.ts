@@ -9,6 +9,7 @@ import {
 } from '@/domain/access';
 import { LEGAL_DOCUMENT_VERSIONS } from '@/config/legal';
 import { getPlanPrice, resolveCheckoutTaxConfiguration } from '@/lib/payments/catalog';
+import { STRIPE_PRODUCT_TAX_CODES } from '@/lib/payments/stripe-tax';
 import {
   getStripeTestConfiguration,
   stripePriceIdFor,
@@ -18,7 +19,6 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { recordCheckoutLegalAcceptances } from '@/server/access/legal-acceptance';
 import {
   bindCheckoutSession,
-  bindPurchaseTaxRate,
   cancelPurchaseReservation,
   getPurchaseByUserIdempotency,
   getRenewalSource,
@@ -27,7 +27,6 @@ import {
 } from './access-payment-repository';
 import { getStripeTestClient } from './stripe-test-client';
 import { getOrCreateBillingCustomer } from './billing-customer';
-import { getVerifiedSpanishVatTaxRate } from './spanish-vat';
 
 const IDEMPOTENCY_KEY_PATTERN = /^[A-Za-z0-9_-]{16,128}$/;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -91,8 +90,13 @@ function assertCheckoutRequest(request: CreateCheckoutRequest): void {
 async function verifyConfiguredPrice(
   priceId: string,
   expectedTotalCents: number,
+  expectedTaxCode: string,
 ): Promise<Stripe.Price> {
-  const price = await getStripeTestClient().prices.retrieve(priceId);
+  const stripe = getStripeTestClient();
+  const price = await stripe.prices.retrieve(priceId);
+  const productId = typeof price.product === 'string' ? price.product : price.product.id;
+  const product = await stripe.products.retrieve(productId);
+  const taxCode = typeof product.tax_code === 'string' ? product.tax_code : product.tax_code?.id;
   if (
     !price.active
     || price.type !== 'one_time'
@@ -100,9 +104,13 @@ async function verifyConfiguredPrice(
     || price.unit_amount !== expectedTotalCents
     || price.currency.toUpperCase() !== 'EUR'
     || price.tax_behavior !== 'inclusive'
+    || product.deleted
+    || !product.active
+    || product.livemode
+    || taxCode !== expectedTaxCode
   ) {
     throw new StripeTestConfigurationError(
-      `Stripe Price ${priceId} must be active, one-time, EUR, tax-inclusive and exactly ${expectedTotalCents} cents`,
+      `Stripe Price ${priceId} and its Product must be active test objects, one-time, EUR, tax-inclusive, use ${expectedTaxCode} and total exactly ${expectedTotalCents} cents`,
     );
   }
   return price;
@@ -178,10 +186,11 @@ export async function createCheckoutForCurrentUser(
 
   const price = getPlanPrice(request.tier, request.duration);
   const stripePriceId = stripePriceIdFor(configuration, request.tier, request.duration);
-  await Promise.all([
-    verifyConfiguredPrice(stripePriceId, price.totalCents),
-    getVerifiedSpanishVatTaxRate(configuration.taxRateId),
-  ]);
+  await verifyConfiguredPrice(
+    stripePriceId,
+    price.totalCents,
+    STRIPE_PRODUCT_TAX_CODES[request.tier],
+  );
 
   const requestedSourceLicenseId = request.sourceLicenseId ?? null;
   const requestedRenewalLicenseId = request.renewalOfLicenseId ?? null;
@@ -276,8 +285,6 @@ export async function createCheckoutForCurrentUser(
       purchaseKind: request.purchaseKind,
       stripeCustomerId: billingCustomer.stripeCustomerId,
     });
-  purchase = await bindPurchaseTaxRate(purchase.id, configuration.taxRateId);
-
   await recordCheckoutLegalAcceptances({
     userId: user.id,
     purchaseId: purchase.id,
@@ -293,6 +300,7 @@ export async function createCheckoutForCurrentUser(
   // that exact Session instead of risking a paid but cancelled DB purchase.
   const session = await getStripeTestClient().checkout.sessions.create({
     mode: 'payment',
+    automatic_tax: { enabled: true },
     payment_method_types: ['card'],
     customer: billingCustomer.stripeCustomerId,
     customer_update: { address: 'auto', name: 'auto' },
@@ -306,7 +314,6 @@ export async function createCheckoutForCurrentUser(
     line_items: [{
       price: stripePriceId,
       quantity: 1,
-      tax_rates: [configuration.taxRateId],
     }],
     discounts: couponId ? [{ coupon: couponId }] : undefined,
     success_url: `${configuration.appBaseUrl}/app/cuenta?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
@@ -316,7 +323,6 @@ export async function createCheckoutForCurrentUser(
       access_tier: purchase.tier,
       license_duration: purchase.duration,
       purchase_kind: purchase.purchaseKind,
-      tax_rate_id: configuration.taxRateId,
     },
     payment_intent_data: {
       metadata: { purchase_id: purchase.id },

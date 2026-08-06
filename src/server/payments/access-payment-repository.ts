@@ -83,10 +83,7 @@ function mapPurchase(value: unknown): PurchaseSnapshot {
     checkoutSessionId: optionalString(row, 'stripe_checkout_session_id'),
     paymentIntentId: optionalString(row, 'stripe_payment_intent_id'),
     stripeCustomerId: optionalString(row, 'stripe_customer_id'),
-    expectedStripeTaxRateId: optionalString(row, 'expected_stripe_tax_rate_id'),
-    appliedStripeTaxRateId: optionalString(row, 'applied_stripe_tax_rate_id'),
-    taxPercentage: row.tax_percentage === null || row.tax_percentage === undefined
-      ? null : Number(row.tax_percentage),
+    automaticTaxStatus: optionalString(row, 'automatic_tax_status') as PurchaseSnapshot['automaticTaxStatus'],
     taxBehavior: optionalString(row, 'tax_behavior') as PurchaseSnapshot['taxBehavior'],
     subtotalExcludingTaxCents: row.subtotal_excluding_tax_cents === null
       || row.subtotal_excluding_tax_cents === undefined ? null : integer(row, 'subtotal_excluding_tax_cents'),
@@ -179,19 +176,6 @@ export async function bindCheckoutSession(
     p_checkout_session_id: checkoutSessionId,
   });
   if (error) throw new Error(`Could not bind Checkout Session: ${error.message}`);
-  return mapPurchase(data);
-}
-
-export async function bindPurchaseTaxRate(
-  purchaseId: string,
-  taxRateId: string,
-): Promise<PurchaseSnapshot> {
-  const admin = createSupabaseAdminClient();
-  const { data, error } = await admin.rpc('bind_purchase_tax_rate', {
-    p_purchase_id: purchaseId,
-    p_tax_rate_id: taxRateId,
-  });
-  if (error) throw new Error(`Could not bind Stripe Tax Rate: ${error.message}`);
   return mapPurchase(data);
 }
 
@@ -326,8 +310,7 @@ export async function applyVerifiedCheckoutPayment(input: {
   currency: string;
   customerId: string;
   country: string;
-  taxRateId: string;
-  taxPercentage: number;
+  automaticTaxStatus: 'complete';
   taxBehavior: 'inclusive';
   subtotalExcludingTaxCents: number;
   taxAmountCents: number;
@@ -337,14 +320,14 @@ export async function applyVerifiedCheckoutPayment(input: {
   invoiceStatus: string;
   invoiceCountry: string;
   invoiceCurrency: string;
-  invoiceTaxRateId: string;
+  invoiceAutomaticTaxStatus: 'complete';
   invoiceTaxBehavior: 'inclusive';
   invoiceSubtotalExcludingTaxCents: number;
   invoiceTaxAmountCents: number;
   invoiceTotalIncludingTaxCents: number;
 }): Promise<PaymentTransitionResult> {
   const admin = createSupabaseAdminClient();
-  const { data, error } = await admin.rpc('process_verified_order_independent_payment', {
+  const { data, error } = await admin.rpc('process_verified_automatic_tax_payment', {
     p_provider_event_id: input.providerEventId,
     p_event_type: input.eventType,
     p_event_created_at: input.eventCreatedAt,
@@ -358,8 +341,7 @@ export async function applyVerifiedCheckoutPayment(input: {
     p_amount_total_cents: input.amountTotalCents,
     p_currency: input.currency,
     p_country: input.country,
-    p_tax_rate_id: input.taxRateId,
-    p_tax_percentage: input.taxPercentage,
+    p_automatic_tax_status: input.automaticTaxStatus,
     p_tax_behavior: input.taxBehavior,
     p_subtotal_excluding_tax_cents: input.subtotalExcludingTaxCents,
     p_tax_amount_cents: input.taxAmountCents,
@@ -369,7 +351,7 @@ export async function applyVerifiedCheckoutPayment(input: {
     p_invoice_status: input.invoiceStatus,
     p_invoice_country: input.invoiceCountry,
     p_invoice_currency: input.invoiceCurrency,
-    p_invoice_tax_rate_id: input.invoiceTaxRateId,
+    p_invoice_automatic_tax_status: input.invoiceAutomaticTaxStatus,
     p_invoice_tax_behavior: input.invoiceTaxBehavior,
     p_invoice_subtotal_excluding_tax_cents: input.invoiceSubtotalExcludingTaxCents,
     p_invoice_tax_amount_cents: input.invoiceTaxAmountCents,

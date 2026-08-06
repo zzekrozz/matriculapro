@@ -26,11 +26,11 @@ curl -X POST https://staging.example/api/admin/payment-incidents \
 
 Acciones: `retry` recupera directamente la Checkout Session en Stripe, repite todas las validaciones y ejecuta una activación con evento administrativo idempotente; `resolve` cierra con motivo; `refunded` registra que el reembolso se comprobó en Stripe; `ignore` exige un motivo. Nunca se debe marcar `refunded` antes de comprobar el objeto en Stripe.
 
-Procedimiento: comprobar Event, Session, PaymentIntent, Customer, Price, importe, moneda, país, Tax Rate, porcentaje, comportamiento inclusivo, base, IVA, total e invoice pagada; corregir solo datos autorizados; reintentar una vez; si no procede conceder acceso, reembolsar desde Stripe test y esperar su webhook; cerrar con evidencia y motivo. No editar manualmente `user_licenses` ni importes.
+Procedimiento: comprobar Event, Session, PaymentIntent, Customer, Price, importe, moneda, país, `automatic_tax.status=complete`, comportamiento inclusivo, base, IVA, total e Invoice pagada; corregir solo datos autorizados; reintentar una vez; si no procede conceder acceso, reembolsar desde Stripe Test y esperar su webhook; cerrar con evidencia y motivo. No editar manualmente `user_licenses` ni importes.
 
 Incidencias finales:
 
-- `tax_mismatch`: tasa, porcentaje, modo inclusivo o redondeo distinto; conserva valores esperados y recibidos.
+- `tax_mismatch`: cálculo automático incompleto, impuesto cero, modo no inclusivo o redondeo distinto; conserva valores esperados y recibidos.
 - `invoice_mismatch`: falta factura pagada o su país/moneda/base/IVA/total no coincide.
 - `upgrade_refund_restore_failure`: falta una relación explícita u otra invariancia impide restaurar de forma segura.
 - `upgrade_original_purchase_refunded`: se devolvió el pago original ya acreditado; contiene neto total pagado, precio del plan ampliado y déficit para resolución administrativa.

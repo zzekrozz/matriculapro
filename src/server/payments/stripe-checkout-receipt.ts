@@ -18,10 +18,12 @@ export async function retrieveVerifiedCheckoutSnapshot(
   const invoice = invoiceId ? await stripe.invoices.retrieve(invoiceId) : null;
   const lineItems = session.line_items?.data ?? [];
   const lineItem = lineItems.length === 1 ? lineItems[0] : null;
-  const taxes = lineItem?.taxes ?? [];
-  const tax = taxes.length === 1 ? taxes[0] : null;
   const invoiceTaxes = invoice?.total_taxes ?? [];
-  const invoiceTax = invoiceTaxes.length === 1 ? invoiceTaxes[0] : null;
+  const invoiceTaxBehavior = invoiceTaxes.length > 0
+    && invoiceTaxes.every((tax) => tax.tax_behavior === 'inclusive') ? 'inclusive' : null;
+  const invoiceLineItems = invoice?.lines.data ?? [];
+  const invoiceLineItem = invoiceLineItems.length === 1 ? invoiceLineItems[0] : null;
+  const invoicePrice = invoiceLineItem?.pricing?.price_details?.price;
   const total = lineItem?.amount_total ?? null;
   const taxAmount = lineItem?.amount_tax ?? null;
 
@@ -42,10 +44,9 @@ export async function retrieveVerifiedCheckoutSnapshot(
         : null,
       customerId: objectId(session.customer),
       taxCountry: session.customer_details?.address?.country ?? null,
-      taxRateId: tax?.rate.id ?? null,
-      taxPercentage: tax?.rate.percentage ?? null,
-      taxInclusive: tax?.rate.inclusive ?? null,
-      taxRateLivemode: tax?.rate.livemode ?? null,
+      automaticTaxEnabled: session.automatic_tax.enabled,
+      automaticTaxStatus: session.automatic_tax.status,
+      taxBehavior: lineItem?.price?.tax_behavior ?? null,
       subtotalExcludingTaxCents: total === null || taxAmount === null ? null : total - taxAmount,
       taxAmountCents: taxAmount,
       totalIncludingTaxCents: total,
@@ -54,10 +55,14 @@ export async function retrieveVerifiedCheckoutSnapshot(
       invoiceStatus: invoice?.status ?? null,
       invoiceCurrency: invoice?.currency ?? null,
       invoiceCountry: invoice?.customer_address?.country ?? null,
-      invoiceTaxRateId: invoiceTax?.tax_rate_details?.tax_rate ?? null,
-      invoiceTaxBehavior: invoiceTax?.tax_behavior ?? null,
+      invoicePriceId: objectId(invoicePrice),
+      invoiceAutomaticTaxEnabled: invoice?.automatic_tax.enabled ?? null,
+      invoiceAutomaticTaxStatus: invoice?.automatic_tax.status ?? null,
+      invoiceTaxBehavior,
       invoiceSubtotalExcludingTaxCents: invoice?.total_excluding_tax ?? null,
-      invoiceTaxAmountCents: invoiceTax?.amount ?? null,
+      invoiceTaxAmountCents: invoiceTaxes.length > 0
+        ? invoiceTaxes.reduce((totalTax, tax) => totalTax + tax.amount, 0)
+        : null,
       invoiceTotalIncludingTaxCents: invoice?.total ?? null,
     },
   };

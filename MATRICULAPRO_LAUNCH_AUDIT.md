@@ -164,7 +164,7 @@ Checkout acepta exclusivamente `sk_test_`, eventos `livemode=false` y seis Price
 
 La sesión es `payment`, recoge dirección de facturación y Tax ID y habilita `invoice_creation`. La UI previa muestra nivel, duración, base, tasa, IVA, total, moneda, país fiscal y crédito. La configuración reproducible está en `docs/STRIPE_TEST_SETUP.md`.
 
-**PENDING:** validar en Stripe staging que la factura test aplica y muestra realmente el IVA, emisor, NIF, numeración y datos del cliente. `tax_behavior=inclusive` no sustituye por sí solo la revisión de Stripe Tax/Tax Rates ni la revisión fiscal del documento.
+**PENDING:** validar en Stripe staging que Stripe Tax está activo y que la factura Test muestra realmente IVA, emisor, NIF, numeración y datos del cliente. Cada Price es inclusivo y cada Product tiene un tax code SaaS oficial.
 
 ## 19. Webhooks.
 
@@ -432,7 +432,7 @@ El propietario debe aportar, sin inventar:
 2. **Bloqueante para afirmar RLS/DB:** migraciones, seed, RPC y 145 pgTAP no se han ejecutado contra PostgreSQL real.
 3. **Bloqueante para Auth/email:** no se han probado Supabase Auth, SMTP, Resend API, cron ni entrega con dominio real.
 4. **Bloqueante para pagos:** Stripe sigue en Test mode sin Prices, Coupons, webhook ni facturas validados externamente.
-5. La factura requiere confirmar Stripe Tax/Tax Rates, IVA, emisor, NIF y numeración; `invoice_creation` no basta.
+5. La factura requiere confirmar Stripe Tax automático, IVA, emisor, NIF y numeración; `invoice_creation` no basta.
 6. Upstash debe configurarse y probarse bajo carga. El proxy debe sanear/sobrescribir `x-forwarded-for` de forma fiable.
 7. La QA autenticada, teclado completo y lectores de pantalla reales debe repetirse con cuentas Gratis/Particular/Profesional/vencida.
 8. El catálogo y tipos fiscales requieren revisión anual o ante cambio normativo; casos especiales siguen deliberadamente bloqueados.
@@ -621,7 +621,7 @@ Auditoría registrada **antes de modificar esta fase**:
 
 | Estado anterior | Problema detectado | Riesgo comercial o fiscal | Archivos afectados | Solución que se implementará | Pruebas que se añadirán | Resultado previo |
 | --- | --- | --- | --- | --- | --- | --- |
-| Los seis Prices se validaban como EUR, one-time e `inclusive`; Checkout generaba factura, pero la línea no aplicaba una Tax Rate manual y el webhook no contrastaba su desglose. | `tax_behavior=inclusive` por sí solo no prueba que Stripe haya aplicado IVA español del 21 %. | Factura sin cuota fiscal real o activación pese a una divergencia entre Stripe y el catálogo interno. | `.env.example`, validador de entorno, configuración/doctor Stripe, checkout, webhook, repositorio de pagos y compras SQL. | Tax Rate test única configurada por servidor, aplicada a la línea, verificación de tasa/desglose/factura y persistencia fiscal atómica. | Seis precios, tasa inválida/live/10 %/exclusive, país, moneda, factura, desglose, duplicado y retry. | **Confirmado; corrección pendiente.** |
+| Los seis Prices se validaban como EUR, one-time e `inclusive`; faltaba cerrar el cálculo fiscal automático y contrastar su desglose. | Un Price inclusivo por sí solo no prueba que Stripe Tax haya completado el cálculo. | Factura sin cuota fiscal real o activación pese a una divergencia entre Stripe y el catálogo interno. | `.env.example`, doctor Stripe, Checkout, webhook, repositorio de pagos y compras SQL. | Stripe Tax automático, tax codes SaaS oficiales, verificación Session/Invoice y persistencia fiscal atómica. | Seis precios, cálculo incompleto, impuesto cero, país, moneda, factura, desglose, duplicado y retry. | **Corregido localmente; validación remota pendiente.** |
 | El refund total de la compra de ampliación marcaba la licencia ampliada como reembolsada e invalidaba la elegibilidad, pero no restauraba el periodo original aún pagado. | Se perdía el tiempo restante de la compra inicial de un mes. | El usuario podía quedar sin acceso pese a conservar un pago válido de 79 € o 129 €. | Migraciones 006/009, `upgrade_eligibility`, `purchases`, `user_licenses`, RPC de refund y pgTAP. | Relación explícita, estado de restauración, locks, restauración de la fila original hasta su vencimiento original y reglas para original vencida/reembolsada. | Particular/Profesional, 6/12 meses, parcial/total, vencida, original parcial/total, duplicado, orden y concurrencia. | **Confirmado; corrección pendiente.** |
 | Dominio, SQL y `PlanSelector` restaban 720 horas (`30 * 24h` o `interval '30 days'`). | La frontera comercial no conservaba la hora de pared al cruzar DST. | Renovación abierta una hora antes o después de lo anunciado en Europe/Madrid y discrepancia cliente/servidor. | `renewal.ts`, `PlanSelector.tsx`, checkout y nueva función SQL de frontera. | Centralizar Europe/Madrid con Luxon, compartir la frontera calculada y persistir/validar el instante enviado por servidor. | Bordes ±1 ms, marzo/octubre DST, fin de mes, bisiesto, medianoche, servidor UTC, navegador en otra zona y licencia programada. | **Confirmado; corrección pendiente.** |
 
@@ -629,7 +629,15 @@ Auditoría registrada **antes de modificar esta fase**:
 
 | Bloque | Solución implementada | Pruebas añadidas | Resultado final |
 | --- | --- | --- | --- |
-| IVA Stripe | `STRIPE_TAX_RATE_ES_IVA_21` server-only, doctor de objetos test, Tax Rate manual por línea, Invoice de pago único y validación/persistencia atómica de tasa, país, base, IVA, total e invoice. | Tasa válida/inactiva/10 %/exclusive/live/país, seis precios, moneda, redondeo, invoice ausente/divergente, duplicado y retry. | **Implementado. Validación local aprobada; comprobación remota Stripe Test pendiente de credenciales.** |
+| IVA Stripe | `automatic_tax.enabled=true`, seis Prices inclusivos, dos tax codes SaaS oficiales, Invoice de pago único y validación/persistencia atómica de estado automático, país, base, IVA, total e invoice. | Cálculo incompleto, impuesto cero, país no ES, seis precios, moneda, redondeo, invoice ausente/divergente, duplicado y retry. | **Implementado localmente; comprobación remota Stripe Test pendiente de credenciales.** |
+
+## 32. Sustitución de tasa manual por Stripe Tax automático (6 de agosto de 2026)
+
+La migración `202608060012_stripe_automatic_tax.sql` conserva evidencia histórica, añade `automatic_tax_status` y deja como único RPC operativo `process_verified_automatic_tax_payment`. El backend ya no exige, enlaza ni compara IDs `txr_`; la variable manual desaparece de ejemplo, validación y build.
+
+Checkout mantiene pago único, Customer persistente, dirección de facturación, EUR e Invoice, y añade `automatic_tax.enabled=true`. El webhook recupera directamente Session, línea, Price e Invoice y exige cálculo completo, país ES, Customer/Price esperados, Invoice pagada, comportamiento inclusivo, impuesto positivo y suma exacta de base, IVA y total. País distinto, cálculo incompleto o divergencia crean incidencia y no activan licencia.
+
+Los Products se clasifican con códigos oficiales Stripe: Particular `txcd_10103000` (SaaS personal) y Profesional `txcd_10103001` (SaaS business). Los seis Prices mantienen 79/179/279 y 129/299/449 € finales. `stripe:doctor` valida estos objetos, Stripe Tax Test activo y la ausencia de la variable retirada. La verificación remota no se declara aprobada sin credenciales y objetos Test reales.
 | Refund de ampliación | `upgrade_relationships`, locks por usuario/compra, estados explícitos y restauración de la misma licencia original solo mientras conserva pago y tiempo. Refund original tras crédito crea incidencia con neto/precio/déficit sin mutación automática. | Particular 79→179, Profesional 129→299/449, parcial, acumulado total, original vigente/vencida/reembolsada, idempotencia, RLS y auditoría. | **Implementado. Dominio aprobado y 51 aserciones pgTAP preparadas; ejecución PostgreSQL pendiente de CLI/Docker.** |
 | Renovación | Luxon y `LICENSE_BUSINESS_TIME_ZONE=Europe/Madrid`; resta de 30 días civiles con hora de pared compartida por servidor/UI y función SQL equivalente. | Borde ±1 ms, fin de ventana, enero/marzo/octubre, DST verano/invierno, bisiesto, medianoche, 23:59:59, vencida y programada. | **Implementado y aprobado en pruebas locales.** |
 

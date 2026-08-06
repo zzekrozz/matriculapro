@@ -11,6 +11,6 @@
     "rootDir": "../../../src",
     "plugins": []
   },
-  "include": ["./**/*.ts", "../../../src/lib/payments/catalog.ts", "../../../src/lib/payments/spanish-vat.ts"],
+  "include": ["./**/*.ts", "../../../src/lib/payments/catalog.ts", "../../../src/lib/payments/stripe-tax.ts"],
   "exclude": ["../../../node_modules"]
 }

@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 import { PLAN_PRICES, splitVatInclusiveCents } from '../../src/lib/payments/catalog';
-import { validateSpanishVatTaxRate } from '../../src/lib/payments/spanish-vat';
+import { STRIPE_PRODUCT_TAX_CODES } from '../../src/lib/payments/stripe-tax';
 
 const priceEnvironmentNames = {
   particular: {
@@ -35,16 +35,17 @@ for (const tier of ['particular', 'professional'] as const) {
 console.log('STRIPE_DOCTOR_STATIC=OK (6 plans, EUR, ES, IVA 21% incluido)');
 
 const secretKey = process.env.STRIPE_SECRET_KEY?.trim() ?? '';
-const taxRateId = process.env.STRIPE_TAX_RATE_ES_IVA_21?.trim() ?? '';
+if (process.env.STRIPE_TAX_RATE_ES_IVA_21 !== undefined) {
+  fail('STRIPE_TAX_RATE_ES_IVA_21 must be absent when Stripe Tax automatic is enabled');
+}
 const configuredPriceIds = Object.values(priceEnvironmentNames)
   .flatMap((tier) => Object.values(tier).map((name) => process.env[name]?.trim() ?? ''));
 
-if (!secretKey && !taxRateId && configuredPriceIds.every((value) => !value)) {
+if (!secretKey && configuredPriceIds.every((value) => !value)) {
   console.log('STRIPE_DOCTOR_LIVE=PENDING (configure test Stripe variables to verify remote objects)');
   process.exit(0);
 }
 if (!secretKey.startsWith('sk_test_')) fail('STRIPE_SECRET_KEY must use sk_test_');
-if (!/^txr_[A-Za-z0-9]+$/.test(taxRateId)) fail('STRIPE_TAX_RATE_ES_IVA_21 is missing or invalid');
 if (configuredPriceIds.some((value) => !/^price_[A-Za-z0-9]+$/.test(value))) {
   fail('all six Stripe Price IDs are required');
 }
@@ -52,9 +53,12 @@ if (new Set(configuredPriceIds).size !== configuredPriceIds.length) fail('Stripe
 
 async function verifyRemoteStripeConfiguration() {
   const stripe = new Stripe(secretKey);
-  const taxRate = await stripe.taxRates.retrieve(taxRateId);
-  const taxRateReason = validateSpanishVatTaxRate(taxRate);
-  if (taxRateReason) fail(`tax rate rejected: ${taxRateReason}`);
+  const settings = await stripe.tax.settings.retrieve();
+  if (settings.livemode || settings.status !== 'active') {
+    fail('Stripe Tax must be active in test mode');
+  }
+
+  const productIdsByTier: Partial<Record<'particular' | 'professional', string>> = {};
 
   for (const tier of ['particular', 'professional'] as const) {
     for (const duration of ['one_month', 'six_months', 'twelve_months'] as const) {
@@ -67,10 +71,24 @@ async function verifyRemoteStripeConfiguration() {
         || remote.currency.toUpperCase() !== 'EUR' || remote.unit_amount !== expected.totalCents
         || remote.tax_behavior !== 'inclusive'
       ) fail(`${environmentName} is not an active test one-time inclusive EUR Price for ${expected.totalCents} cents`);
+      const productId = typeof remote.product === 'string' ? remote.product : remote.product.id;
+      const product = await stripe.products.retrieve(productId);
+      const taxCode = typeof product.tax_code === 'string' ? product.tax_code : product.tax_code?.id;
+      if (product.deleted || !product.active || product.livemode
+        || taxCode !== STRIPE_PRODUCT_TAX_CODES[tier]) {
+        fail(`${environmentName} Product must be active in test mode and use ${STRIPE_PRODUCT_TAX_CODES[tier]}`);
+      }
+      productIdsByTier[tier] ??= product.id;
+      if (productIdsByTier[tier] !== product.id) {
+        fail(`the three ${tier} Prices must share one Product`);
+      }
     }
   }
+  if (productIdsByTier.particular === productIdsByTier.professional) {
+    fail('Particular and Professional must use two different Products');
+  }
 
-  console.log('STRIPE_DOCTOR_LIVE=OK (Tax Rate + 6 Prices verified in test mode)');
+  console.log('STRIPE_DOCTOR_LIVE=OK (Stripe Tax active + 2 Products + 6 inclusive Prices verified in test mode)');
   console.log('STRIPE_DOCTOR_STATUS=VALID');
 }
 

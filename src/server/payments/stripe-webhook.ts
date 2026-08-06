@@ -99,12 +99,14 @@ async function processCheckoutEvent(
   if (
     !validation.valid || !checkout.paymentIntentId || !checkout.chargeId || !checkout.priceId
     || !checkout.customerId || !checkout.taxCountry || checkout.amountTotalCents === null
-    || !checkout.taxRateId || checkout.taxPercentage === null
-    || checkout.taxInclusive !== true
+    || checkout.automaticTaxEnabled !== true || checkout.automaticTaxStatus !== 'complete'
+    || checkout.taxBehavior !== 'inclusive'
     || checkout.subtotalExcludingTaxCents === null || checkout.taxAmountCents === null
     || checkout.totalIncludingTaxCents === null || !checkout.invoiceId
     || !checkout.invoiceNumber || !checkout.invoiceStatus || !checkout.invoiceCountry
-    || !checkout.invoiceCurrency || !checkout.invoiceTaxRateId
+    || !checkout.invoiceCurrency || !checkout.invoicePriceId
+    || checkout.invoiceAutomaticTaxEnabled !== true
+    || checkout.invoiceAutomaticTaxStatus !== 'complete'
     || checkout.invoiceTaxBehavior !== 'inclusive'
     || checkout.invoiceSubtotalExcludingTaxCents === null
     || checkout.invoiceTaxAmountCents === null || checkout.invoiceTotalIncludingTaxCents === null
@@ -115,8 +117,7 @@ async function processCheckoutEvent(
       country_mismatch: 'country_mismatch',
       customer_mismatch: 'customer_mismatch',
       price_mismatch: 'unknown_price',
-      tax_rate_mismatch: 'tax_mismatch',
-      tax_percentage_mismatch: 'tax_mismatch',
+      automatic_tax_incomplete: 'tax_mismatch',
       tax_behavior_mismatch: 'tax_mismatch',
       tax_breakdown_mismatch: 'tax_mismatch',
       invoice_missing: 'invoice_mismatch',
@@ -133,8 +134,7 @@ async function processCheckoutEvent(
           currency: purchase.currency,
           customerId: purchase.stripeCustomerId,
           country: 'ES',
-          taxRateId: purchase.expectedStripeTaxRateId,
-          taxPercentage: 21,
+          automaticTaxStatus: 'complete',
           taxBehavior: 'inclusive',
           subtotalExcludingTaxCents: purchase.amountDueBaseCents,
           taxAmountCents: purchase.amountDueVatCents,
@@ -145,15 +145,17 @@ async function processCheckoutEvent(
           currency: checkout.currency,
           customerId: checkout.customerId,
           country: checkout.taxCountry,
-          taxRateId: checkout.taxRateId,
-          taxPercentage: checkout.taxPercentage,
-          taxInclusive: checkout.taxInclusive,
+          automaticTaxEnabled: checkout.automaticTaxEnabled,
+          automaticTaxStatus: checkout.automaticTaxStatus,
+          taxBehavior: checkout.taxBehavior,
           subtotalExcludingTaxCents: checkout.subtotalExcludingTaxCents,
           taxAmountCents: checkout.taxAmountCents,
           invoiceId: checkout.invoiceId,
           invoiceNumber: checkout.invoiceNumber,
           invoiceStatus: checkout.invoiceStatus,
-          invoiceTaxRateId: checkout.invoiceTaxRateId,
+          invoicePriceId: checkout.invoicePriceId,
+          invoiceAutomaticTaxEnabled: checkout.invoiceAutomaticTaxEnabled,
+          invoiceAutomaticTaxStatus: checkout.invoiceAutomaticTaxStatus,
           invoiceTaxBehavior: checkout.invoiceTaxBehavior,
         },
       },
@@ -191,8 +193,7 @@ async function processCheckoutEvent(
     currency: checkout.currency ?? '',
     customerId: checkout.customerId,
     country: checkout.taxCountry,
-    taxRateId: checkout.taxRateId,
-    taxPercentage: checkout.taxPercentage,
+    automaticTaxStatus: 'complete',
     taxBehavior: 'inclusive',
     subtotalExcludingTaxCents: checkout.subtotalExcludingTaxCents,
     taxAmountCents: checkout.taxAmountCents,
@@ -202,7 +203,7 @@ async function processCheckoutEvent(
     invoiceStatus: checkout.invoiceStatus,
     invoiceCountry: checkout.invoiceCountry,
     invoiceCurrency: checkout.invoiceCurrency,
-    invoiceTaxRateId: checkout.invoiceTaxRateId,
+    invoiceAutomaticTaxStatus: 'complete',
     invoiceTaxBehavior: 'inclusive',
     invoiceSubtotalExcludingTaxCents: checkout.invoiceSubtotalExcludingTaxCents,
     invoiceTaxAmountCents: checkout.invoiceTaxAmountCents,

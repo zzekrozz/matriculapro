@@ -4,7 +4,7 @@ Fecha de cierre local: 6 de agosto de 2026. Alcance limitado a IVA español en S
 
 ## 1. Resumen ejecutivo
 
-Se aplicó una Tax Rate manual española inclusiva del 21 % a Checkout, se hizo obligatoria la factura pagada y su validación antes de activar, se añadió restauración transaccional del periodo original al devolver únicamente una ampliación y se sustituyeron las 720 horas por 30 días civiles en `Europe/Madrid` con Luxon.
+La implementación fiscal vigente usa Stripe Tax automático con Prices inclusivos, factura pagada y validación previa a la activación. La restauración transaccional de ampliaciones y la regla civil de 30 días en `Europe/Madrid` permanecen sin cambios.
 
 ## 2. Archivos modificados
 
@@ -12,19 +12,19 @@ Configuración: `.env.example`, `package.json`, `package-lock.json`. Dominio/UI/
 
 ## 3. Archivos nuevos
 
-`spanish-vat.ts` en librería y servidor, `stripe-checkout-receipt.ts`, `stripe-doctor.ts`, E2E de reglas finales, migración 010, pgTAP final, guía `STRIPE_ES_VAT_SETUP.md` y este informe.
+La integración vigente usa `stripe-tax.ts`, `stripe-checkout-receipt.ts`, `stripe-doctor.ts`, el contrato E2E de Stripe Tax, la migración 012 y la guía `STRIPE_ES_VAT_SETUP.md`. Los validadores de Tax Rate manual se retiraron.
 
 ## 4. Migraciones
 
-Se añadió únicamente `202608060010_final_vat_refund_renewal.sql`. Las migraciones 001–009 no se editaron. La 010 añade evidencia fiscal, relación explícita de upgrade, estados de restauración, incidencias, frontera Madrid y RPC estrictos; retira de `service_role` los RPC legacy menos estrictos.
+La migración fiscal inicial 010 permanece histórica e inalterada. La migración aditiva vigente es `202608060012_stripe_automatic_tax.sql`: añade estado automático, conserva registros históricos y sustituye la superficie operativa manual por un RPC de Stripe Tax.
 
 ## 5. Configuración de IVA Stripe
 
-Checkout usa `line_items[].tax_rates=[STRIPE_TAX_RATE_ES_IVA_21]`, no activa Stripe Tax automático, recoge dirección de facturación, reutiliza Customer y crea Invoice en modo `payment`.
+Checkout usa `automatic_tax.enabled=true`, no envía `line_items[].tax_rates`, recoge dirección de facturación, reutiliza Customer y crea Invoice en modo `payment`.
 
-## 6. Tax Rate verificada
+## 6. Stripe Tax verificado
 
-El validador exige ID `txr_…`; el doctor exige test mode, activa, 21 %, inclusiva y país ES. La parte estática pasó. La consulta remota quedó `PENDING` por ausencia de claves/objetos Stripe Test, sin usar Live Mode.
+El doctor exige `sk_test_`, Stripe Tax activo, dos Products con códigos SaaS oficiales y seis Prices one-time EUR inclusivos por los importes exactos. La comprobación remota permanece `PENDING` mientras falten claves u objetos Stripe Test.
 
 ## 7. Desglose de los seis precios
 
@@ -39,11 +39,11 @@ El validador exige ID `txr_…`; el doctor exige test mode, activa, 21 %, inclus
 
 ## 8. Factura de prueba
 
-El código crea Invoice y exige ID, número, estado `paid`, ES, EUR, Tax Rate esperada, impuesto inclusivo y desglose idéntico. No se descargó una factura remota: falta Stripe Test configurado. La revisión manual de IvanImports/datos legales sigue bloqueada hasta recibir datos reales revisados.
+El código crea Invoice y exige ID, número, estado `paid`, ES, EUR, cálculo automático completo, impuesto inclusivo y desglose idéntico. No se descargó una factura remota: falta Stripe Test configurado. La revisión manual de IvanImports/datos legales sigue bloqueada hasta recibir datos reales revisados.
 
 ## 9. Validaciones del webhook
 
-Session, estado paid, modo payment, Price, cantidad, PaymentIntent, Customer, compra pending, ES, EUR, total, Tax Rate, 21 %, inclusive, no-live, base, IVA, total e Invoice completa. Recupera Session, líneas/taxes e Invoice directamente desde Stripe; metadata no es autoridad.
+Session `paid`, modo payment, Price, cantidad, PaymentIntent, Customer, compra pending, ES, EUR, total, `automatic_tax.status=complete`, Price inclusive, base, IVA mayor que cero, total e Invoice completa. Recupera Session, líneas e Invoice directamente desde Stripe; metadata no es autoridad.
 
 ## 10. Restricción a España
 
@@ -83,7 +83,7 @@ El autenticado solo consulta compras/licencias/relaciones propias. No puede inse
 
 ## 19. pgTAP
 
-Hay 240 aserciones declaradas: 102 acceso, 7 Storage, 15 fiscal, 44 ciclo staging, 21 email y 51 finales. Las 51 nuevas cubren columnas/grants/RLS, IVA/Invoice, retry, refund/restauración, vencimiento, incidencia original y DST. Estado: no ejecutadas por `supabase=NOT_FOUND`, `docker=NOT_FOUND`, `psql=NOT_FOUND`.
+Hay 286 aserciones pgTAP declaradas en el conjunto actual; 52 pertenecen al cierre fiscal y 45 al orden de reversión. Cubren estado automático, grants, IVA/Invoice, retry, refund/restauración, vencimiento, incidencias y DST. Estado local SQL: no ejecutadas por `supabase=NOT_FOUND`, `docker=NOT_FOUND`, `psql=NOT_FOUND`.
 
 ## 20. E2E
 
@@ -111,7 +111,7 @@ Hay 240 aserciones declaradas: 102 acceso, 7 Storage, 15 fiscal, 44 ciclo stagin
 
 ## 22. Resultado Stripe Test
 
-`stripe=NOT_FOUND`; faltan `sk_test_`, `whsec_`, Tax Rate y Prices reales. No ejecutado y no declarado aprobado. Los checks estáticos y de dominio pasan; la guía contiene el comando CLI exacto.
+`stripe=NOT_FOUND`; faltan `sk_test_`, `whsec_` y Prices reales. No ejecutado y no declarado aprobado. Los checks estáticos y de dominio pasan; la guía contiene el comando CLI exacto.
 
 ## 23. Resultado Supabase
 
@@ -119,11 +119,11 @@ Hay 240 aserciones declaradas: 102 acceso, 7 Storage, 15 fiscal, 44 ciclo stagin
 
 ## 24. Variables nuevas
 
-`STRIPE_TAX_RATE_ES_IVA_21`, obligatoria server-only en staging/producción. No usa `NEXT_PUBLIC_`.
+`STRIPE_TAX_RATE_ES_IVA_21` fue eliminada y no existe variable manual equivalente.
 
 ## 25. Pasos manuales pendientes
 
-Crear Tax Rate/Prices test, completar datos comerciales reales, ejecutar doctor remoto, aplicar 001–010 en Supabase staging, correr 240 pgTAP, crear webhook test, comprar con dirección española, descargar factura, probar país incorrecto y reembolsos, y ejecutar E2E staging con cuenta sintética.
+Activar/revisar Stripe Tax Test, crear dos Products con tax codes SaaS y seis Prices inclusivos, completar datos comerciales reales, ejecutar doctor remoto, aplicar 001–012 en Supabase staging, correr pgTAP, crear webhook Test, comprar con dirección española, descargar factura, probar país incorrecto y reembolsos, y ejecutar E2E staging con cuenta sintética.
 
 ## 26. Riesgos restantes
 

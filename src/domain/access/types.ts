@@ -111,8 +111,7 @@ export type PaymentDisputeStatus = 'none' | 'warning' | 'open' | 'won' | 'lost';
 
 export interface PurchaseTaxBreakdown {
   country: 'ES';
-  taxRateId: string;
-  taxPercentage: 21;
+  automaticTaxStatus: 'complete';
   taxBehavior: 'inclusive';
   subtotalExcludingTaxCents: number;
   taxAmountCents: number;
@@ -140,9 +139,7 @@ export interface PurchaseSnapshot {
   checkoutSessionId: string | null;
   paymentIntentId: string | null;
   stripeCustomerId: string | null;
-  expectedStripeTaxRateId: string | null;
-  appliedStripeTaxRateId: string | null;
-  taxPercentage: number | null;
+  automaticTaxStatus: 'complete' | null;
   taxBehavior: 'inclusive' | 'exclusive' | null;
   subtotalExcludingTaxCents: number | null;
   taxAmountCents: number | null;

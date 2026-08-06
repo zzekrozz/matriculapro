@@ -13,10 +13,9 @@ export interface VerifiedCheckoutSnapshot {
   chargeId: string | null;
   customerId: string | null;
   taxCountry: string | null;
-  taxRateId: string | null;
-  taxPercentage: number | null;
-  taxInclusive: boolean | null;
-  taxRateLivemode: boolean | null;
+  automaticTaxEnabled: boolean;
+  automaticTaxStatus: string | null;
+  taxBehavior: string | null;
   subtotalExcludingTaxCents: number | null;
   taxAmountCents: number | null;
   totalIncludingTaxCents: number | null;
@@ -25,7 +24,9 @@ export interface VerifiedCheckoutSnapshot {
   invoiceStatus: string | null;
   invoiceCurrency: string | null;
   invoiceCountry: string | null;
-  invoiceTaxRateId: string | null;
+  invoicePriceId: string | null;
+  invoiceAutomaticTaxEnabled: boolean | null;
+  invoiceAutomaticTaxStatus: string | null;
   invoiceTaxBehavior: string | null;
   invoiceSubtotalExcludingTaxCents: number | null;
   invoiceTaxAmountCents: number | null;
@@ -44,8 +45,7 @@ export type CheckoutRejectionReason =
   | 'missing_payment_intent'
   | 'customer_mismatch'
   | 'country_mismatch'
-  | 'tax_rate_mismatch'
-  | 'tax_percentage_mismatch'
+  | 'automatic_tax_incomplete'
   | 'tax_behavior_mismatch'
   | 'tax_breakdown_mismatch'
   | 'invoice_missing'
@@ -84,18 +84,16 @@ export function validateCompletedCheckout(
   if (checkout.taxCountry?.toUpperCase() !== 'ES') {
     return { valid: false, reason: 'country_mismatch' };
   }
-  if (!purchase.expectedStripeTaxRateId || checkout.taxRateId !== purchase.expectedStripeTaxRateId) {
-    return { valid: false, reason: 'tax_rate_mismatch' };
+  if (!checkout.automaticTaxEnabled || checkout.automaticTaxStatus !== 'complete') {
+    return { valid: false, reason: 'automatic_tax_incomplete' };
   }
-  if (checkout.taxPercentage !== 21) {
-    return { valid: false, reason: 'tax_percentage_mismatch' };
-  }
-  if (checkout.taxInclusive !== true || checkout.taxRateLivemode !== false) {
+  if (checkout.taxBehavior !== 'inclusive') {
     return { valid: false, reason: 'tax_behavior_mismatch' };
   }
   if (
     checkout.subtotalExcludingTaxCents !== purchase.amountDueBaseCents
     || checkout.taxAmountCents !== purchase.amountDueVatCents
+    || (checkout.taxAmountCents ?? 0) <= 0
     || checkout.totalIncludingTaxCents !== purchase.amountDueCents
     || (checkout.subtotalExcludingTaxCents ?? 0) + (checkout.taxAmountCents ?? 0)
       !== checkout.totalIncludingTaxCents
@@ -107,7 +105,9 @@ export function validateCompletedCheckout(
     checkout.invoiceStatus !== 'paid'
     || checkout.invoiceCurrency?.toUpperCase() !== purchase.currency
     || checkout.invoiceCountry?.toUpperCase() !== 'ES'
-    || checkout.invoiceTaxRateId !== checkout.taxRateId
+    || checkout.invoicePriceId !== checkout.priceId
+    || checkout.invoiceAutomaticTaxEnabled !== true
+    || checkout.invoiceAutomaticTaxStatus !== 'complete'
     || checkout.invoiceTaxBehavior !== 'inclusive'
     || checkout.invoiceSubtotalExcludingTaxCents !== checkout.subtotalExcludingTaxCents
     || checkout.invoiceTaxAmountCents !== checkout.taxAmountCents

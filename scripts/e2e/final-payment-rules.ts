@@ -17,8 +17,7 @@ const purchase: PurchaseSnapshot = {
   upgradeCreditCents: 0, amountDueCents: 7_900,
   amountDueBaseCents: 6_529, amountDueVatCents: 1_371, currency: 'EUR',
   checkoutSessionId: 'cs_test_fixture', paymentIntentId: null,
-  stripeCustomerId: 'cus_fixture', expectedStripeTaxRateId: 'txr_fixture_iva21',
-  appliedStripeTaxRateId: null, taxPercentage: null, taxBehavior: null,
+  stripeCustomerId: 'cus_fixture', automaticTaxStatus: null, taxBehavior: null,
   subtotalExcludingTaxCents: null, taxAmountCents: null,
   totalIncludingTaxCents: null, stripeInvoiceId: null, stripeInvoiceNumber: null,
   sourceLicenseId: null, renewalOfLicenseId: null, resultingLicenseId: null,
@@ -31,12 +30,13 @@ const checkout: VerifiedCheckoutSnapshot = {
   id: 'cs_test_fixture', livemode: false, mode: 'payment', paymentStatus: 'paid',
   amountTotalCents: 7_900, currency: 'eur', priceId: 'price_fixture_79', quantity: 1,
   paymentIntentId: 'pi_fixture', chargeId: 'ch_fixture', customerId: 'cus_fixture', taxCountry: 'ES',
-  taxRateId: 'txr_fixture_iva21', taxPercentage: 21, taxInclusive: true,
-  taxRateLivemode: false, subtotalExcludingTaxCents: 6_529,
+  automaticTaxEnabled: true, automaticTaxStatus: 'complete', taxBehavior: 'inclusive',
+  subtotalExcludingTaxCents: 6_529,
   taxAmountCents: 1_371, totalIncludingTaxCents: 7_900,
   invoiceId: 'in_fixture', invoiceNumber: 'MPR-FIXTURE', invoiceStatus: 'paid',
   invoiceCurrency: 'eur', invoiceCountry: 'ES',
-  invoiceTaxRateId: 'txr_fixture_iva21', invoiceTaxBehavior: 'inclusive',
+  invoicePriceId: 'price_fixture_79', invoiceAutomaticTaxEnabled: true,
+  invoiceAutomaticTaxStatus: 'complete', invoiceTaxBehavior: 'inclusive',
   invoiceSubtotalExcludingTaxCents: 6_529, invoiceTaxAmountCents: 1_371,
   invoiceTotalIncludingTaxCents: 7_900,
 };
@@ -66,4 +66,4 @@ for (const expiry of ['2026-03-31T18:00:00+02:00', '2026-10-31T18:00:00+01:00'])
   assert.equal(isWithinRenewalWindow(expiry, expiry), false);
 }
 
-console.log('FINAL_PAYMENT_RULES_E2E_STATUS=VALID (IVA 79/299, invoice, ES, DST March/October)');
+console.log('FINAL_PAYMENT_RULES_E2E_STATUS=VALID (Stripe Tax, IVA 79/299, invoice, ES, DST March/October)');
