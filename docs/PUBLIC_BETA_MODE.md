@@ -1,55 +1,36 @@
-# Modo beta pública
+# Beta pública temporal
 
-`PUBLIC_BETA_MODE` es el único interruptor de la apertura temporal de MatriculaPro. Se evalúa exclusivamente en el servidor. Son valores activos `true`, `1`, `yes` y `on`; cualquier otro valor mantiene el modo comercial.
+MatriculaPro está abierto por defecto durante la fase de desarrollo. `PUBLIC_BETA_MODE` es la única fuente de verdad: `true`, `1`, `yes` y `on` mantienen la beta; `false`, `0`, `no` y `off` restauran el flujo comercial. Si la variable no existe, la beta queda activa deliberadamente.
 
-## Activación
+## Sin login ni registro
 
-Configura en el entorno de despliegue:
+La landing enlaza directamente con `/app/expedientes/nuevo`. Durante la beta `AuthProvider` queda inactivo: no muestra formularios, no consulta una sesión existente y no ejecuta `signInAnonymously`. Las rutas `/entrar` y `/registro` redirigen al producto.
 
-```env
-PUBLIC_BETA_MODE=true
-```
+Los expedientes, documentos, cálculos guardados, checklists, clientes, costes y configuración profesional permanecen exclusivamente en `localStorage` del navegador. No se envían a Supabase y no pueden verse desde otro navegador o dispositivo. Borrar los datos del navegador elimina este contenido y no existe recuperación remota.
 
-Después crea un nuevo despliegue. No hace falta alterar Stripe, Products, Prices, webhooks, tablas de compras, licencias ni políticas RLS.
+Las operaciones fiscales y de comprobación que necesitan cálculo servidor siguen disponibles sin cuenta. Conservan validación de entrada y rate limiting por IP. La comprobación gratuita devuelve el resultado pero no crea una fila de usuario. Admin, pagos, persistencia privada y endpoints profesionales de base de datos continúan protegidos.
 
-Cuando la beta está activa:
+## Qué se conserva
 
-- la landing muestra un aviso discreto y dirige a crear un expediente;
-- se ocultan precios, comparación de planes, renovaciones y llamadas al checkout;
-- una cuenta autenticada recibe las capacidades Particular y Profesional sin que se fabrique una licencia de pago;
-- el backend aplica el mismo contexto beta en APIs fiscales y profesionales;
-- los expedientes se leen y escriben a través de `/api/public-beta/cases`, que autentica la sesión, impone el `user_id`, comprueba la propiedad y conserva rate limiting;
-- Supabase RLS no se relaja y el navegador no recibe `service_role`;
-- Stripe Tax, webhooks, compras y ciclo de licencias permanecen en el código; el checkout se cierra temporalmente antes de contactar con Stripe.
+No se elimina código de Supabase Auth, pantallas de acceso, recuperación, RLS, Stripe, Prices, pagos, licencias, incidencias ni reconciliación. Quedan invisibles o cerrados mientras la beta está activa y vuelven a utilizarse al desactivar el interruptor.
 
-En staging o producción beta, `env:validate` no bloquea el build si faltan las credenciales y los seis Prices de Stripe, porque el checkout devuelve una respuesta cerrada antes de tocar Stripe. Si esas variables están presentes, continúan validándose y nunca deben contener objetos live en staging. Al volver al modo comercial pasan de nuevo a ser obligatorias.
+El validador legal permite construir la beta sin cobros y muestra advertencias. Antes de volver al modo comercial deben completarse todos los campos legales y `LEGAL_REVIEW_COMPLETED=true`.
 
-El login continúa siendo obligatorio en `/app` porque los expedientes, documentos, cálculos, clientes y márgenes se guardan por usuario. Las páginas públicas y guías permanecen accesibles sin sesión.
+## Despliegue
 
-## Protecciones que siguen activas
+No hay migración de base de datos ni ajuste de Anonymous Sign-Ins. En Vercel no es necesario crear `PUBLIC_BETA_MODE`; opcionalmente puede fijarse a `true`. Tras desplegar, comprueba en una ventana privada que el CTA abre el producto, que no aparecen enlaces de cuenta y que un expediente sobrevive a una recarga en el mismo navegador.
 
-- autenticación SSR y cookies seguras;
-- separación por `user_id` en cada lectura y escritura privilegiada;
-- validación Zod y listas explícitas de campos mutables;
-- límites por usuario para rutas de expedientes, fiscalidad y área profesional;
-- roles administrativos, middleware, RLS y secretos solo de servidor;
-- avisos sobre el carácter orientativo de cálculos y resultados.
+## Volver al modo comercial
 
-No se añade analítica durante la beta. El proyecto mantiene su comprobación `launch:no-tracking`.
+1. Configura `PUBLIC_BETA_MODE=false` en Vercel para Production y Preview.
+2. Completa la configuración legal, Auth y comercial exigida por los validadores.
+3. Haz redeploy.
 
-## Volver al modelo comercial
-
-1. Cambia `PUBLIC_BETA_MODE=false` (o elimina la variable).
-2. Crea un nuevo despliegue.
-3. Ejecuta `npm run env:validate`, `npm run stripe:doctor`, `npm test` y `npm run build`.
-4. Comprueba que reaparecen precios y selector de licencias, y que una cuenta sin licencia solo conserva la comprobación previa.
-
-No hay migración de reversión: las políticas y el esquema comercial nunca se modifican. Los datos creados durante la beta permanecen asociados a su propietario y, al desactivar el modo, vuelven a quedar sujetos a las reglas de licencia ya existentes.
+Con el interruptor desactivado vuelven el login, la persistencia Supabase, las capacidades por licencia, precios y checkout. Los datos locales creados durante la beta no se migran automáticamente a una cuenta.
 
 ## Validación local
 
 ```powershell
-$env:PUBLIC_BETA_MODE = 'true'
 npm run env:validate
 npm run test:public-beta
 npm run typecheck

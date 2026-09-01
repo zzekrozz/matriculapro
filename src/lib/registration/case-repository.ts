@@ -364,17 +364,14 @@ export async function savePersistedDocument(
 
 type PublicBetaResource = 'cases' | 'documents' | 'tax-calculations' | 'checklist-items';
 type PublicBetaMutation = 'save-case' | 'save-document' | 'save-tax-calculation' | 'save-checklist-item';
+type PublicBetaStore = Record<PublicBetaResource, UnknownRow[]>;
+const PUBLIC_BETA_STORAGE_KEY = 'matriculapro.public-beta.cases.v1';
 
 async function loadPublicBetaRows(resource: PublicBetaResource, caseIds: string[] = []): Promise<UnknownRow[]> {
-  const params = new URLSearchParams({ resource });
-  if (caseIds.length > 0) params.set('caseIds', caseIds.join(','));
-  const response = await fetch(`/api/public-beta/cases?${params.toString()}`, {
-    credentials: 'same-origin',
-    cache: 'no-store',
-  });
-  const payload = await readPublicBetaPayload(response);
-  if (!Array.isArray(payload.data)) throw new Error('La respuesta de persistencia no es válida.');
-  return payload.data.filter((value): value is UnknownRow => asRecord(value) !== null);
+  const rows = readPublicBetaStore()[resource];
+  if (resource === 'cases' || caseIds.length === 0) return rows;
+  const allowed = new Set(caseIds);
+  return rows.filter((row) => allowed.has(asString(row.case_id) ?? ''));
 }
 
 async function mutatePublicBetaRows(
@@ -382,25 +379,73 @@ async function mutatePublicBetaRows(
   row: UnknownRow,
   relatedRow?: UnknownRow,
 ): Promise<UnknownRow> {
-  const response = await fetch('/api/public-beta/cases', {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action, row, ...(relatedRow ? { relatedRow } : {}) }),
-  });
-  const payload = await readPublicBetaPayload(response);
-  if (action === 'save-case') return {};
-  const data = asRecord(payload.data);
-  if (!data) throw new Error('La respuesta de persistencia no es válida.');
-  return data;
+  const store = readPublicBetaStore();
+  if (action === 'save-case') {
+    const id = asString(row.id);
+    if (!id) throw new Error('El expediente no tiene identificador.');
+    const existing = store.cases.find((item) => item.id === id);
+    const saved = {
+      ...existing,
+      ...row,
+      created_at: asString(existing?.created_at) ?? new Date().toISOString(),
+      vehicles: relatedRow ? [{ ...relatedRow, created_at: new Date().toISOString() }] : [],
+    };
+    store.cases = [saved, ...store.cases.filter((item) => item.id !== id)];
+    writePublicBetaStore(store);
+    return saved;
+  }
+
+  const resource: PublicBetaResource = action === 'save-document'
+    ? 'documents'
+    : action === 'save-tax-calculation'
+      ? 'tax-calculations'
+      : 'checklist-items';
+  const id = asString(row.id) ?? crypto.randomUUID();
+  const saved: UnknownRow = { ...row, id, updated_at: new Date().toISOString() };
+  const matches = (item: UnknownRow) => action === 'save-checklist-item'
+    ? item.case_id === saved.case_id
+      && item.checklist_key === saved.checklist_key
+      && item.item_key === saved.item_key
+    : action === 'save-document' && !asString(row.id)
+      ? item.case_id === saved.case_id && item.document_type === saved.document_type
+      : item.id === id;
+  store[resource] = [saved, ...store[resource].filter((item) => !matches(item))];
+  writePublicBetaStore(store);
+  return saved;
 }
 
-async function readPublicBetaPayload(response: Response): Promise<UnknownRow> {
-  const payload = asRecord(await response.json().catch(() => null));
-  if (!response.ok || !payload?.ok) {
-    throw new Error(asString(payload?.message) ?? 'No se han podido guardar los datos.');
+function readPublicBetaStore(): PublicBetaStore {
+  const empty: PublicBetaStore = {
+    cases: [],
+    documents: [],
+    'tax-calculations': [],
+    'checklist-items': [],
+  };
+  if (typeof window === 'undefined') return empty;
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(PUBLIC_BETA_STORAGE_KEY) ?? 'null') as unknown;
+    const record = asRecord(parsed);
+    if (!record) return empty;
+    return {
+      cases: arrayOfRows(record.cases),
+      documents: arrayOfRows(record.documents),
+      'tax-calculations': arrayOfRows(record['tax-calculations']),
+      'checklist-items': arrayOfRows(record['checklist-items']),
+    };
+  } catch {
+    return empty;
   }
-  return payload;
+}
+
+function writePublicBetaStore(store: PublicBetaStore) {
+  if (typeof window === 'undefined') throw new Error('El almacenamiento local no está disponible.');
+  window.localStorage.setItem(PUBLIC_BETA_STORAGE_KEY, JSON.stringify(store));
+}
+
+function arrayOfRows(value: unknown): UnknownRow[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is UnknownRow => asRecord(item) !== null)
+    : [];
 }
 
 function mapCaseRow(row: UnknownRow, userId: string): RegistrationCase {

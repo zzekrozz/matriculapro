@@ -47,7 +47,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children, disabled = false }: { children: ReactNode; disabled?: boolean }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -79,6 +79,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [fetchProfile]);
 
   useEffect(() => {
+    if (disabled) {
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+      setLoading(false);
+      return;
+    }
     if (!isSupabaseBrowserConfigured()) {
       setLoading(false);
       return;
@@ -98,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [syncSession]);
+  }, [disabled, syncSession]);
 
   const signIn = useCallback(async (
     email: string,

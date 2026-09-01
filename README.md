@@ -6,7 +6,7 @@ La aplicación organiza documentación, fiscalidad, ITV, DGT, costes y decisione
 
 ## Producto y acceso
 
-La configuración actual incluye una beta pública reversible mediante `PUBLIC_BETA_MODE=true`. Con ella, cualquier usuario autenticado puede utilizar las funciones Particular y Profesional sin comprar una licencia; el inicio de sesión se mantiene para guardar e aislar sus datos. Stripe, los planes, las licencias y sus reglas permanecen intactos para poder volver al modo comercial cambiando únicamente el interruptor. Consulta `docs/PUBLIC_BETA_MODE.md`.
+La configuración actual incluye una beta pública reversible, activa por defecto salvo que se configure `PUBLIC_BETA_MODE=false`. El visitante entra sin login, registro ni sesión anónima; los expedientes y datos profesionales se guardan localmente en su navegador y puede utilizar las funciones Particular y Profesional sin comprar una licencia. Stripe, Auth, los planes, las licencias y sus reglas permanecen intactos para poder volver al modo comercial cambiando únicamente el interruptor. Consulta `docs/PUBLIC_BETA_MODE.md`.
 
 Solo existen tres niveles de producto:
 

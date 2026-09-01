@@ -69,7 +69,7 @@ export default function Landing({ publicBeta = false }: { publicBeta?: boolean }
                 Analiza la documentación de un vehículo extranjero, detecta riesgos y prepara su matriculación en España con cálculos explicados y fuentes oficiales.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link href={publicBeta ? '/registro?next=/app/expedientes/nuevo' : '/registro?next=/app/comprobar'} className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[14px] font-semibold text-white shadow-lg">
+                <Link href={publicBeta ? '/app/expedientes/nuevo' : '/registro?next=/app/comprobar'} className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[14px] font-semibold text-white shadow-lg">
                   {publicBeta ? 'Probar MatriculaPro' : 'Comprobar un vehículo gratis'} <ArrowRight size={15} aria-hidden="true" />
                 </Link>
                 <a href="#como-funciona" className="inline-flex items-center justify-center gap-2 rounded-full border border-line bg-white px-6 py-3.5 text-[14px] font-semibold text-ink">
@@ -141,7 +141,7 @@ export default function Landing({ publicBeta = false }: { publicBeta?: boolean }
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-deep">{publicBeta ? 'Primer paso del expediente' : 'Gratis y con valor real'}</p>
               <h2 className="mt-3 font-serif text-[40px] leading-tight">Comprobación previa a la compra.</h2>
               <p className="mt-4 text-[15px] leading-7 text-ink-soft">Introduce país, vendedor, fechas, kilometraje, categoría, COC, campo K, CO₂ y reformas. El sistema explica la ruta probable, contradicciones, documentos que pedir y preguntas concretas para el vendedor.</p>
-              <Link href={publicBeta ? '/registro?next=/app/expedientes/nuevo' : '/registro?next=/app/comprobar'} className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[13px] font-semibold text-white">{publicBeta ? 'Analizar un vehículo' : 'Crear cuenta gratis'} <ArrowRight size={14} /></Link>
+              <Link href={publicBeta ? '/app/expedientes/nuevo' : '/registro?next=/app/comprobar'} className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[13px] font-semibold text-white">{publicBeta ? 'Analizar un vehículo' : 'Crear cuenta gratis'} <ArrowRight size={14} /></Link>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {['Nuevo o usado para IVA', 'Ruta técnica preliminar', 'Nivel de riesgo detectado', 'Contradicciones visibles', 'Documentos que pedir', 'Casos especiales bloqueados'].map((item) => (
@@ -226,7 +226,7 @@ export default function Landing({ publicBeta = false }: { publicBeta?: boolean }
           </div>
         </section>}
 
-        {publicBeta && <section className="border-y border-line bg-white py-16 lg:py-20"><div className="mx-auto max-w-[900px] px-5 text-center lg:px-8"><p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-deep">Acceso durante el desarrollo</p><h2 className="mt-3 font-serif text-[40px] leading-tight sm:text-[50px]">Explora la plataforma completa.</h2><p className="mx-auto mt-4 max-w-2xl text-[14px] leading-7 text-ink-soft">Crea una cuenta para guardar tus expedientes de forma separada y utiliza comprobaciones, cálculo fiscal, seguimiento y espacio profesional mientras MatriculaPro está en beta.</p><Link href="/registro?next=/app/expedientes/nuevo" className="mt-7 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[14px] font-semibold text-white">Probar MatriculaPro <ArrowRight size={15} /></Link></div></section>}
+        {publicBeta && <section className="border-y border-line bg-white py-16 lg:py-20"><div className="mx-auto max-w-[900px] px-5 text-center lg:px-8"><p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-deep">Acceso durante el desarrollo</p><h2 className="mt-3 font-serif text-[40px] leading-tight sm:text-[50px]">Explora la plataforma completa.</h2><p className="mx-auto mt-4 max-w-2xl text-[14px] leading-7 text-ink-soft">Entra sin login ni registro y utiliza comprobaciones, cálculo fiscal, seguimiento y espacio profesional. Los datos que guardes permanecen únicamente en este navegador durante la beta.</p><Link href="/app/expedientes/nuevo" className="mt-7 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[14px] font-semibold text-white">Probar MatriculaPro <ArrowRight size={15} /></Link></div></section>}
 
         <section className="py-20 lg:py-24">
           <div className="mx-auto grid max-w-[1180px] gap-5 px-5 md:grid-cols-2 lg:px-8">
@@ -256,8 +256,8 @@ export default function Landing({ publicBeta = false }: { publicBeta?: boolean }
           <div className="mx-auto max-w-[1000px] px-5 lg:px-8">
             <div className="rounded-[30px] bg-[linear-gradient(135deg,#0B1F3A,#16335E)] p-8 text-center text-white shadow-xl sm:p-14">
               <Users className="mx-auto text-accent" size={26} /><h2 className="mx-auto mt-5 max-w-2xl font-serif text-[40px] leading-tight sm:text-[50px]">Comprueba el coche antes de convertirlo en un problema.</h2>
-              <p className="mx-auto mt-4 max-w-2xl text-[14px] leading-7 text-[#C7D0DE]">{publicBeta ? 'Crea una cuenta, introduce los datos manualmente y utiliza las herramientas de la plataforma durante el desarrollo.' : 'Crea una cuenta gratuita, introduce los datos manualmente y recibe una revisión preliminar clara. Sin tarjeta y sin ocultar riesgos críticos.'}</p>
-              <Link href={publicBeta ? '/registro?next=/app/expedientes/nuevo' : '/registro?next=/app/comprobar'} className="mt-7 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-[14px] font-semibold text-ink">{publicBeta ? 'Probar MatriculaPro' : 'Comprobar un vehículo gratis'} <ArrowRight size={15} /></Link>
+              <p className="mx-auto mt-4 max-w-2xl text-[14px] leading-7 text-[#C7D0DE]">{publicBeta ? 'Entra directamente, introduce los datos manualmente y utiliza las herramientas de la plataforma durante el desarrollo.' : 'Crea una cuenta gratuita, introduce los datos manualmente y recibe una revisión preliminar clara. Sin tarjeta y sin ocultar riesgos críticos.'}</p>
+              <Link href={publicBeta ? '/app/expedientes/nuevo' : '/registro?next=/app/comprobar'} className="mt-7 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-[14px] font-semibold text-ink">{publicBeta ? 'Probar MatriculaPro' : 'Comprobar un vehículo gratis'} <ArrowRight size={15} /></Link>
             </div>
           </div>
         </section>

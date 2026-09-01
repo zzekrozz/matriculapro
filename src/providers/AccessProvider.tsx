@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { createPublicBetaAccessContext, type AccessContext as ServerAccessContext, type AccessTier, type UserLicense } from '@/domain/access';
 import { createSupabaseBrowserClient, isSupabaseBrowserConfigured } from '@/lib/supabase/browser';
 import { useAuth } from '@/providers/AuthProvider';
+import { PUBLIC_BETA_LOCAL_USER_ID } from '@/config/public-beta';
 
 interface AccessContextValue {
   publicBeta: boolean;
@@ -89,7 +90,7 @@ export function AccessProvider({
 
   const refresh = useCallback(async () => {
     if (!user) {
-      setAccess({ ...FREE_ACCESS, publicBeta: publicBetaEnabled });
+      setAccess(publicBetaEnabled ? betaAccess(PUBLIC_BETA_LOCAL_USER_ID) : FREE_ACCESS);
       setLoading(false);
       return;
     }

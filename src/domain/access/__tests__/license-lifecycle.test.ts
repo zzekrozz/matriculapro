@@ -14,9 +14,10 @@ import { parsePublicBetaMode } from '../../../config/public-beta';
 const USER_ID = '00000000-0000-4000-8000-000000000001';
 
 describe('reversible public beta access', () => {
-  it('only enables the switch for explicit true values', () => {
+  it('keeps the temporary launch open by default and supports an explicit rollback', () => {
     for (const value of ['true', 'TRUE', '1', 'yes', 'on']) assert.equal(parsePublicBetaMode(value), true);
-    for (const value of [undefined, '', 'false', '0', 'no', 'production']) assert.equal(parsePublicBetaMode(value), false);
+    for (const value of [undefined, '']) assert.equal(parsePublicBetaMode(value), true);
+    for (const value of ['false', '0', 'no', 'off', 'production']) assert.equal(parsePublicBetaMode(value), false);
   });
 
   it('opens every user capability without fabricating a paid licence', () => {

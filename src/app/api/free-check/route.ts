@@ -10,6 +10,7 @@ import {
   saveAuthoritativeFreeVehicleCheck,
 } from '@/server/access';
 import { rateLimitedResponse } from '@/server/security/http';
+import { PUBLIC_BETA_LOCAL_USER_ID } from '@/config/public-beta';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -38,6 +39,12 @@ export async function POST(request: Request) {
   }
   try {
     const result = runFreeVehicleCheck(parsed.data);
+    if (userId === PUBLIC_BETA_LOCAL_USER_ID) {
+      return NextResponse.json(
+        { ok: true, checkId: null, result },
+        { headers: { 'Cache-Control': 'no-store' } },
+      );
+    }
     const checkId = await saveAuthoritativeFreeVehicleCheck({
       userId,
       title: `Comprobación ${parsed.data.registrationCountry} · ${parsed.data.firstRegistrationDate}`,

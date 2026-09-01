@@ -1,3 +1,5 @@
+import { isPublicBetaEnabled } from '../../src/config/public-beta';
+
 type EnvironmentRule = {
   name: string;
   scope: 'public' | 'server';
@@ -62,9 +64,7 @@ const booleanRule = (value: string) =>
     ? undefined
     : 'debe ser un booleano (true/false)';
 
-const publicBetaMode = ['true', '1', 'yes', 'on'].includes(
-  process.env.PUBLIC_BETA_MODE?.trim().toLowerCase() ?? '',
-);
+const publicBetaMode = isPublicBetaEnabled();
 
 const rules: EnvironmentRule[] = [
   { name: 'PUBLIC_BETA_MODE', scope: 'server', requiredFor: [], validate: booleanRule },
@@ -102,6 +102,7 @@ for (const rule of rules) {
     && !(publicBetaMode && rule.commercialOnly);
 
   if (!value) {
+    if (rule.name === 'PUBLIC_BETA_MODE') continue;
     (required ? errors : warnings).push(`${rule.name}: no configurada (${rule.scope}).`);
     continue;
   }

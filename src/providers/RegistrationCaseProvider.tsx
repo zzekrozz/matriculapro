@@ -19,6 +19,7 @@ import {
 } from '@/lib/registration/case-repository';
 import { useAccess } from '@/providers/AccessProvider';
 import { useAuth } from '@/providers/AuthProvider';
+import { PUBLIC_BETA_LOCAL_USER_ID } from '@/config/public-beta';
 
 interface RegistrationCaseContextValue {
   cases: RegistrationCase[];
@@ -46,7 +47,7 @@ const RegistrationCaseContext = createContext<RegistrationCaseContextValue | nul
 export function RegistrationCaseProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const { canViewPaidCases, canManageFullCases, publicBeta, loading: accessLoading } = useAccess();
-  const persistent = Boolean(user && canManageFullCases);
+  const persistent = Boolean(canManageFullCases && (publicBeta || user));
   const [cases, setCases] = useState<RegistrationCase[]>([]);
   const [documents, setDocuments] = useState<CaseDocumentRecord[]>([]);
   const [taxCalculations, setTaxCalculations] = useState<StoredTaxCalculation[]>([]);
@@ -59,7 +60,8 @@ export function RegistrationCaseProvider({ children }: { children: ReactNode }) 
     setLoading(true);
     setError(null);
     try {
-      if (!user || !canViewPaidCases) {
+      const ownerId = publicBeta ? PUBLIC_BETA_LOCAL_USER_ID : user?.id;
+      if (!ownerId || !canViewPaidCases) {
         setCases([]);
         setDocuments([]);
         setTaxCalculations([]);
@@ -67,14 +69,14 @@ export function RegistrationCaseProvider({ children }: { children: ReactNode }) 
         setActiveCaseId('');
         return;
       }
-      const loaded = await loadPersistedCases(user.id, publicBeta);
+      const loaded = await loadPersistedCases(ownerId, publicBeta);
       setCases(loaded);
       setActiveCaseId((current) => loaded.some((item) => item.id === current) ? current : (loaded[0]?.id ?? ''));
       const caseIds = loaded.map((item) => item.id);
       const [nextDocuments, nextTaxes, nextChecklist] = await Promise.all([
-        loadPersistedDocuments(user.id, caseIds, publicBeta),
-        loadPersistedTaxCalculations(user.id, caseIds, publicBeta),
-        loadPersistedChecklistItems(user.id, caseIds, publicBeta),
+        loadPersistedDocuments(ownerId, caseIds, publicBeta),
+        loadPersistedTaxCalculations(ownerId, caseIds, publicBeta),
+        loadPersistedChecklistItems(ownerId, caseIds, publicBeta),
       ]);
       setDocuments(nextDocuments);
       setTaxCalculations(nextTaxes);
@@ -91,9 +93,10 @@ export function RegistrationCaseProvider({ children }: { children: ReactNode }) 
   }, [accessLoading, refresh]);
 
   const requireWritable = useCallback(() => {
-    if (!persistent || !user) throw new Error('Tu cuenta no puede modificar expedientes en este momento.');
-    return user;
-  }, [persistent, user]);
+    const ownerId = publicBeta ? PUBLIC_BETA_LOCAL_USER_ID : user?.id;
+    if (!persistent || !ownerId) throw new Error('No puedes modificar expedientes en este momento.');
+    return { id: ownerId };
+  }, [persistent, publicBeta, user]);
 
   const saveCase = useCallback(async (registrationCase: RegistrationCase) => {
     const currentUser = requireWritable();

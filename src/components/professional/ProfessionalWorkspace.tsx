@@ -28,6 +28,7 @@ import {
   type ProfessionalWorkspaceData,
 } from '@/domain/professional/contracts';
 import { useAccess } from '@/providers/AccessProvider';
+import { isLocalPublicBeta, localProfessionalRequest } from '@/lib/professional/local-workspace';
 
 type View = 'overview' | 'clients' | 'reports';
 type FilterStatus = ProfessionalOperationStatus | '';
@@ -160,7 +161,7 @@ function OverviewView({ workspace, onRefresh, error }: { workspace: Professional
   const actualMargin = workspace.financials.reduce((sum, row) => sum + Number(row.actual_margin || 0), 0);
   const activeOperations = workspace.operations.filter((operation) => !['archived', 'completed', 'registered'].includes(operation.status));
 
-  return <Page title="Operaciones y márgenes" subtitle="Control comercial para una sola persona, con acceso y propiedad comprobados por el servidor.">
+  return <Page title="Operaciones y márgenes" subtitle={isLocalPublicBeta() ? 'Control comercial guardado únicamente en este navegador durante la beta.' : 'Control comercial para una sola persona, con acceso y propiedad comprobados por el servidor.'}>
     {error && <ErrorMessage>{error}</ErrorMessage>}
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <Metric label="Operaciones activas" value={activeOperations.length} />
@@ -382,6 +383,13 @@ function ReportsView({ workspace, error }: { workspace: ProfessionalWorkspaceDat
     if (exportBusy) return;
     setExportBusy(true);
     try {
+      if (isLocalPublicBeta()) {
+        downloadBlob(
+          new Blob([professionalCsv(workspace, filteredOperations, financials)], { type: 'text/csv;charset=utf-8' }),
+          `matriculapro-operaciones-${new Date().toISOString().slice(0, 10)}.csv`,
+        );
+        return;
+      }
       const params = new URLSearchParams();
       if (clientFilter) params.set('client_id', clientFilter);
       if (statusFilter) params.set('status', statusFilter);
@@ -391,12 +399,7 @@ function ReportsView({ workspace, error }: { workspace: ProfessionalWorkspaceDat
         const payload = await response.json().catch(() => null) as { message?: string } | null;
         throw new Error(payload?.message || 'No se ha podido preparar la exportación.');
       }
-      const url = URL.createObjectURL(await response.blob());
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = `matriculapro-operaciones-${new Date().toISOString().slice(0, 10)}.csv`;
-      anchor.click();
-      URL.revokeObjectURL(url);
+      downloadBlob(await response.blob(), `matriculapro-operaciones-${new Date().toISOString().slice(0, 10)}.csv`);
     } catch (cause) {
       window.alert(messageFrom(cause, 'No se ha podido preparar la exportación.'));
     } finally {
@@ -470,6 +473,7 @@ function normalizeProfile(profile: ProfessionalProfile): ProfessionalProfile {
 }
 
 async function apiRequest<T = unknown>(url: string, init?: RequestInit): Promise<T> {
+  if (isLocalPublicBeta()) return localProfessionalRequest<T>(url, init);
   const response = await fetch(url, {
     ...init,
     cache: 'no-store',
@@ -480,6 +484,44 @@ async function apiRequest<T = unknown>(url: string, init?: RequestInit): Promise
   const payload = await response.json().catch(() => null) as { data?: T; message?: string } | null;
   if (!response.ok) throw new Error(payload?.message || 'La operación no se ha podido completar.');
   return payload?.data as T;
+}
+
+function professionalCsv(
+  workspace: ProfessionalWorkspaceData,
+  operations: ProfessionalOperation[],
+  financials: ProfessionalFinancial[],
+) {
+  const header = ['Operación', 'Estado', 'Cliente', 'Coste total', 'Precio objetivo', 'Margen previsto', 'Precio real', 'Margen real'];
+  const rows = financials.map((financial) => {
+    const operation = operations.find((item) => item.id === financial.case_id);
+    const client = workspace.clients.find((item) => item.id === financial.client_id);
+    return [
+      operation ? operationName(operation) : financial.case_id,
+      operation ? PROFESSIONAL_OPERATION_STATUS_LABELS[operation.status] : '',
+      client?.display_name ?? '',
+      financial.total_cost,
+      financial.target_sale_price ?? '',
+      financial.planned_margin ?? '',
+      financial.actual_sale_price ?? '',
+      financial.actual_margin ?? '',
+    ];
+  });
+  return `\uFEFF${[header, ...rows].map((row) => row.map(csvCell).join(';')).join('\r\n')}`;
+}
+
+function csvCell(value: string | number) {
+  let text = String(value);
+  if (/^[=+\-@]/.test(text)) text = `'${text}`;
+  return `"${text.replace(/"/g, '""')}"`;
+}
+
+function downloadBlob(blob: Blob, fileName: string) {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = fileName;
+  anchor.click();
+  URL.revokeObjectURL(url);
 }
 
 function operationName(operation: ProfessionalOperation) {

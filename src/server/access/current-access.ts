@@ -6,7 +6,7 @@ import {
   type AccessContext,
   type UserLicense,
 } from '@/domain/access';
-import { isPublicBetaEnabled } from '@/config/public-beta';
+import { isPublicBetaEnabled, PUBLIC_BETA_LOCAL_USER_ID } from '@/config/public-beta';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 interface AccessContextRpc {
@@ -120,19 +120,19 @@ function normalizeAccessContext(value: unknown, authenticatedUserId: string): Ac
 }
 
 export async function getCurrentServerAccess(): Promise<AccessContext> {
+  if (isPublicBetaEnabled()) {
+    return createPublicBetaAccessContext(PUBLIC_BETA_LOCAL_USER_ID);
+  }
   const supabase = await createSupabaseServerClient();
   const { data: authData, error: authError } = await supabase.auth.getUser();
-  if (authError || !authData.user?.email_confirmed_at) {
+  const user = authData.user;
+  if (authError || !user?.email_confirmed_at) {
     throw new AuthenticationRequiredError();
-  }
-
-  if (isPublicBetaEnabled()) {
-    return createPublicBetaAccessContext(authData.user.id);
   }
 
   const { data, error } = await supabase.rpc('get_my_access_context');
   if (error) throw new Error(`Could not read access context: ${error.message}`);
-  return normalizeAccessContext(data, authData.user.id);
+  return normalizeAccessContext(data, user.id);
 }
 
 export async function requireServerCapability(

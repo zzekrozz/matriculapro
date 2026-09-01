@@ -1,4 +1,5 @@
 import { getLegalConfigurationIssues } from '../../src/config/legal';
+import { isPublicBetaEnabled } from '../../src/config/public-beta';
 
 const args = new Set(process.argv.slice(2));
 const productionLike =
@@ -9,10 +10,20 @@ const productionLike =
   process.env.APP_ENV === 'production';
 
 const issues = getLegalConfigurationIssues(process.env);
+const publicBeta = isPublicBetaEnabled();
 
 if (issues.length === 0) {
   console.log('LEGAL_CONFIG_STATUS=VALID');
   console.log('LEGAL_REVIEW_COMPLETED=true');
+  process.exit(0);
+}
+
+if (publicBeta) {
+  console.warn('LEGAL_CONFIG_STATUS=PUBLIC_BETA_WITH_WARNINGS');
+  for (const issue of issues) {
+    console.warn(`- ${issue}`);
+  }
+  console.warn('La beta pública sin cobros puede construirse; estos datos siguen siendo obligatorios antes de reactivar el modo comercial.');
   process.exit(0);
 }
 

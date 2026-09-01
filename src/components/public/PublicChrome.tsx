@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, CarFront, ChevronRight } from 'lucide-react';
 import { legalOwnerConfig, isPendingLegalValue } from '@/config/legal';
+import { isPublicBetaEnabled } from '@/config/public-beta';
 
 export function PublicHeader({ publicBeta = false }: { publicBeta?: boolean }) {
   return (
@@ -25,11 +26,11 @@ export function PublicHeader({ publicBeta = false }: { publicBeta?: boolean }) {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link href="/entrar" className="hidden rounded-full px-3 py-2 text-[12px] text-ink-soft hover:bg-bg-deep sm:inline-flex">
+          {!publicBeta && <Link href="/entrar" className="hidden rounded-full px-3 py-2 text-[12px] text-ink-soft hover:bg-bg-deep sm:inline-flex">
             Entrar
-          </Link>
+          </Link>}
           <Link
-            href={publicBeta ? '/registro?next=/app/expedientes/nuevo' : '/registro?next=/app/comprobar'}
+            href={publicBeta ? '/app/expedientes/nuevo' : '/registro?next=/app/comprobar'}
             className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-[12px] font-semibold text-white"
           >
             {publicBeta ? 'Probar MatriculaPro' : 'Comprobar gratis'} <ChevronRight size={13} aria-hidden="true" />
@@ -85,21 +86,25 @@ export function PublicFooter({ publicBeta = false }: { publicBeta?: boolean }) {
 
 export function PublicCta({
   title = 'Comprueba el vehículo antes de comprarlo',
-  body = 'Regístrate gratis e introduce los datos manualmente. Recibirás una revisión preliminar de documentación y riesgos sin aportar tarjeta.',
+  body,
 }: {
   title?: string;
   body?: string;
 }) {
+  const publicBeta = isPublicBetaEnabled();
+  const resolvedBody = body ?? (publicBeta
+    ? 'Entra directamente e introduce los datos manualmente. Recibirás una revisión preliminar de documentación y riesgos sin aportar tarjeta.'
+    : 'Regístrate gratis e introduce los datos manualmente. Recibirás una revisión preliminar de documentación y riesgos sin aportar tarjeta.');
   return (
     <aside className="rounded-[28px] bg-ink p-7 text-white shadow-xl sm:p-10">
       <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">Comprobación previa gratuita</p>
       <h2 className="mt-3 font-serif text-3xl leading-tight sm:text-4xl">{title}</h2>
-      <p className="mt-4 max-w-2xl text-[14px] leading-relaxed text-[#C7D0DE]">{body}</p>
+      <p className="mt-4 max-w-2xl text-[14px] leading-relaxed text-[#C7D0DE]">{resolvedBody}</p>
       <Link
-        href="/registro?next=/app/comprobar"
+        href={publicBeta ? '/app/expedientes/nuevo' : '/registro?next=/app/comprobar'}
         className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-[13px] font-semibold text-ink"
       >
-        Comprobar un vehículo gratis <ArrowRight size={15} aria-hidden="true" />
+        {publicBeta ? 'Probar MatriculaPro' : 'Comprobar un vehículo gratis'} <ArrowRight size={15} aria-hidden="true" />
       </Link>
     </aside>
   );

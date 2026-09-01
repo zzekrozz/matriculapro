@@ -72,10 +72,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const publicBetaEnabled = isPublicBetaEnabled();
   return (
-    <html lang="es">
+    <html lang="es" data-public-beta={publicBetaEnabled ? 'true' : 'false'}>
       <body>
         <I18nProvider>
-          <AuthProvider>
+          <AuthProvider disabled={publicBetaEnabled}>
             <AccessProvider publicBetaEnabled={publicBetaEnabled}>
               <RegistrationCaseProvider>
                 <CourseProvider>
