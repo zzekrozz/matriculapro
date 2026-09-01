@@ -13,6 +13,7 @@
   },
   "include": [
     "./**/*.ts",
+    "../../../src/config/public-beta.ts",
     "../../../src/lib/payments/catalog.ts",
     "../../../src/lib/payments/stripe-tax.ts",
     "../../../src/server/payments/stripe-webhook-policy.ts"

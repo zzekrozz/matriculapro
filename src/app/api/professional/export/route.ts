@@ -3,6 +3,7 @@ import {
   PROFESSIONAL_OPERATION_STATUS_LABELS,
   ProfessionalExportQuerySchema,
 } from '@/domain/professional/contracts';
+import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { requireServerCapability } from '@/server/access';
 import { rateLimitedResponse } from '@/server/security/http';
@@ -12,8 +13,11 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   let userId: string;
+  let publicBeta = false;
   try {
-    userId = (await requireServerCapability('export_data')).userId;
+    const access = await requireServerCapability('export_data');
+    userId = access.userId;
+    publicBeta = access.publicBeta;
   } catch {
     return NextResponse.json(
       { ok: false, message: 'Necesitas una licencia Profesional activa.' },
@@ -39,7 +43,7 @@ export async function GET(request: Request) {
     );
   }
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = publicBeta ? createSupabaseAdminClient() : await createSupabaseServerClient();
   let operationsQuery = supabase
     .from('registration_cases')
     .select('id, title, status, vehicles(make, model)')

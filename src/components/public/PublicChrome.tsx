@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { ArrowRight, CarFront, ChevronRight } from 'lucide-react';
 import { legalOwnerConfig, isPendingLegalValue } from '@/config/legal';
 
-export function PublicHeader() {
+export function PublicHeader({ publicBeta = false }: { publicBeta?: boolean }) {
   return (
     <header className="border-b border-line bg-white/95 backdrop-blur">
       <div className="mx-auto flex min-h-16 max-w-[1180px] items-center justify-between gap-4 px-5 lg:px-8">
@@ -20,7 +20,7 @@ export function PublicHeader() {
 
         <nav className="hidden items-center gap-6 text-[13px] text-ink-soft md:flex" aria-label="Navegación pública">
           <Link href="/#como-funciona" className="hover:text-ink">Cómo funciona</Link>
-          <Link href="/#precios" className="hover:text-ink">Precios</Link>
+          {!publicBeta && <Link href="/#precios" className="hover:text-ink">Precios</Link>}
           <Link href="/calcular-modelo-576" className="hover:text-ink">Guías</Link>
         </nav>
 
@@ -29,10 +29,10 @@ export function PublicHeader() {
             Entrar
           </Link>
           <Link
-            href="/registro?next=/app/comprobar"
+            href={publicBeta ? '/registro?next=/app/expedientes/nuevo' : '/registro?next=/app/comprobar'}
             className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-[12px] font-semibold text-white"
           >
-            Comprobar gratis <ChevronRight size={13} aria-hidden="true" />
+            {publicBeta ? 'Probar MatriculaPro' : 'Comprobar gratis'} <ChevronRight size={13} aria-hidden="true" />
           </Link>
         </div>
       </div>
@@ -40,7 +40,7 @@ export function PublicHeader() {
   );
 }
 
-export function PublicFooter() {
+export function PublicFooter({ publicBeta = false }: { publicBeta?: boolean }) {
   const supportConfigured = !isPendingLegalValue(legalOwnerConfig.supportEmail);
 
   return (
@@ -57,7 +57,7 @@ export function PublicFooter() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">Producto</p>
             <ul className="mt-3 space-y-2 text-[13px]">
               <li><Link href="/#como-funciona" className="hover:text-white">Cómo funciona</Link></li>
-              <li><Link href="/#precios" className="hover:text-white">Precios</Link></li>
+              {!publicBeta && <li><Link href="/#precios" className="hover:text-white">Precios</Link></li>}
               <li><Link href="/comprobar-documentacion-coche-importado" className="hover:text-white">Guías públicas</Link></li>
               <li><Link href="/legal/aviso-fiscal-tecnico" className="hover:text-white">Límites fiscales y técnicos</Link></li>
             </ul>
@@ -104,4 +104,3 @@ export function PublicCta({
     </aside>
   );
 }
-

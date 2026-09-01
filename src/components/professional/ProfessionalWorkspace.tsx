@@ -76,7 +76,7 @@ const EMPTY_WORKSPACE: ProfessionalWorkspaceData = {
 
 export function ProfessionalWorkspace({ view }: { view: View }) {
   const access = useAccess();
-  const canViewProfessionalHistory = access.tier === 'professional' && access.canViewPaidCases;
+  const canViewProfessionalHistory = access.publicBeta || (access.tier === 'professional' && access.canViewPaidCases);
   const [workspace, setWorkspace] = useState<ProfessionalWorkspaceData>(EMPTY_WORKSPACE);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

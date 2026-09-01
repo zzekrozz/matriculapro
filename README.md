@@ -6,6 +6,8 @@ La aplicación organiza documentación, fiscalidad, ITV, DGT, costes y decisione
 
 ## Producto y acceso
 
+La configuración actual incluye una beta pública reversible mediante `PUBLIC_BETA_MODE=true`. Con ella, cualquier usuario autenticado puede utilizar las funciones Particular y Profesional sin comprar una licencia; el inicio de sesión se mantiene para guardar e aislar sus datos. Stripe, los planes, las licencias y sus reglas permanecen intactos para poder volver al modo comercial cambiando únicamente el interruptor. Consulta `docs/PUBLIC_BETA_MODE.md`.
+
 Solo existen tres niveles de producto:
 
 - **Gratis:** comprobación previa registrada en `/app/comprobar`, con introducción manual de datos, nivel de riesgo y siguientes pasos.
@@ -43,6 +45,7 @@ La configuración de desarrollo puede conservar los campos legales vacíos. Prod
 Usa `.env.example` como inventario canónico. Los grupos principales son:
 
 - entorno y origen público: `MATRICULAPRO_DEPLOY_TARGET`, `NEXT_PUBLIC_SITE_URL`, `APP_BASE_URL`;
+- apertura temporal: `PUBLIC_BETA_MODE=true` para beta o `false` para recuperar el flujo comercial;
 - Supabase: URL, clave pública y `SUPABASE_SERVICE_ROLE_KEY` solo en servidor;
 - titular y contacto legal: variables `LEGAL_*`;
 - seis precios Stripe de prueba y, si se habilita la ampliación, dos cupones de crédito;

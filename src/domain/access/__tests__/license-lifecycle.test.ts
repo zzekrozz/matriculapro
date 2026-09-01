@@ -5,11 +5,35 @@ import {
   addCalendarMonthsUtc,
   assertCapability,
   calculateLicenseExpiration,
+  createPublicBetaAccessContext,
   evaluateAccess,
   type UserLicense,
 } from '..';
+import { parsePublicBetaMode } from '../../../config/public-beta';
 
 const USER_ID = '00000000-0000-4000-8000-000000000001';
+
+describe('reversible public beta access', () => {
+  it('only enables the switch for explicit true values', () => {
+    for (const value of ['true', 'TRUE', '1', 'yes', 'on']) assert.equal(parsePublicBetaMode(value), true);
+    for (const value of [undefined, '', 'false', '0', 'no', 'production']) assert.equal(parsePublicBetaMode(value), false);
+  });
+
+  it('opens every user capability without fabricating a paid licence', () => {
+    const context = createPublicBetaAccessContext(USER_ID);
+    assert.equal(context.publicBeta, true);
+    assert.equal(context.userId, USER_ID);
+    assert.equal(context.tier, 'free');
+    assert.equal(context.mode, 'free');
+    assert.equal(context.license, null);
+    assert.equal(context.canViewPaidCases, true);
+    assert.equal(context.canCreateFullCases, true);
+    assert.equal(context.canManageFullCases, true);
+    assert.equal(context.canRunFiscalCalculations, true);
+    assert.equal(context.canUseProfessional, true);
+    assert.equal(context.canExport, true);
+  });
+});
 
 function paidLicense(overrides: Partial<UserLicense> = {}): UserLicense {
   return {

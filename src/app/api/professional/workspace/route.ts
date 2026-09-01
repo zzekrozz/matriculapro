@@ -5,6 +5,7 @@ import {
   ProfessionalProfileMutationSchema,
   type ProfessionalOperation,
 } from '@/domain/professional/contracts';
+import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { AuthenticationRequiredError, getCurrentServerAccess } from '@/server/access';
 import { rateLimitedResponse } from '@/server/security/http';
@@ -14,12 +15,14 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   let userId: string;
+  let publicBeta = false;
   try {
     const access = await getCurrentServerAccess();
-    if (access.tier !== 'professional' || !['full', 'read_only'].includes(access.mode)) {
+    if (!access.publicBeta && (access.tier !== 'professional' || !['full', 'read_only'].includes(access.mode))) {
       throw new Error('Professional history unavailable');
     }
     userId = access.userId;
+    publicBeta = access.publicBeta;
   } catch (error) {
     return accessError(error);
   }
@@ -31,7 +34,7 @@ export async function GET(request: Request) {
   );
   if (limited) return limited;
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = publicBeta ? createSupabaseAdminClient() : await createSupabaseServerClient();
   const [profileResult, clientsResult, financialsResult, operationsResult] = await Promise.all([
     supabase
       .from('professional_profiles')

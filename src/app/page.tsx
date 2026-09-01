@@ -4,8 +4,10 @@ import { isPendingLegalValue, legalOwnerConfig } from '@/config/legal';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, TRADE_NAME, absoluteUrl } from '@/config/site';
 import { PLAN_PRICES } from '@/lib/payments/catalog';
 import { StructuredData } from '@/components/public/StructuredData';
+import { isPublicBetaEnabled } from '@/config/public-beta';
 
 export default function HomePage() {
+  const publicBeta = isPublicBetaEnabled();
   const durationLabels = {
     one_month: '1 mes',
     six_months: '6 meses',
@@ -42,16 +44,16 @@ export default function HomePage() {
       operatingSystem: 'Navegador web moderno',
       description: SITE_DESCRIPTION,
       brand: { '@id': absoluteUrl('/#brand') },
-      offers,
+      ...(!publicBeta ? { offers } : {}),
     },
-    {
+    ...(!publicBeta ? [{
       '@type': 'FAQPage',
       mainEntity: LANDING_FAQS.map(({ question, answer }) => ({
         '@type': 'Question',
         name: question,
         acceptedAnswer: { '@type': 'Answer', text: answer },
       })),
-    },
+    }] : []),
   ];
 
   if (
@@ -69,7 +71,7 @@ export default function HomePage() {
   return (
     <>
       <StructuredData data={{ '@context': 'https://schema.org', '@graph': graph }} />
-      <Landing />
+      <Landing publicBeta={publicBeta} />
     </>
   );
 }

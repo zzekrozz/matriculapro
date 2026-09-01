@@ -10,8 +10,11 @@ export const dynamic = 'force-dynamic';
 
 export async function PATCH(request: Request) {
   let userId: string;
+  let publicBeta = false;
   try {
-    userId = (await requireServerCapability('use_professional_tools')).userId;
+    const access = await requireServerCapability('use_professional_tools');
+    userId = access.userId;
+    publicBeta = access.publicBeta;
   } catch {
     return NextResponse.json(
       { ok: false, message: 'Necesitas una licencia Profesional activa.' },
@@ -34,7 +37,7 @@ export async function PATCH(request: Request) {
     );
   }
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = publicBeta ? createSupabaseAdminClient() : await createSupabaseServerClient();
   const existing = await supabase
     .from('registration_cases')
     .select('id, metadata')
