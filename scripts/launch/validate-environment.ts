@@ -2,6 +2,7 @@ type EnvironmentRule = {
   name: string;
   scope: 'public' | 'server';
   requiredFor: Array<'staging' | 'production'>;
+  commercialOnly?: boolean;
   validate?: (value: string) => string | undefined;
 };
 
@@ -56,7 +57,17 @@ const mailboxRule = (value: string) => {
 const cronSecretRule = (value: string) =>
   value.length >= 32 ? undefined : 'debe tener al menos 32 caracteres aleatorios';
 
+const booleanRule = (value: string) =>
+  ['true', 'false', '1', '0', 'yes', 'no', 'on', 'off'].includes(value.toLowerCase())
+    ? undefined
+    : 'debe ser un booleano (true/false)';
+
+const publicBetaMode = ['true', '1', 'yes', 'on'].includes(
+  process.env.PUBLIC_BETA_MODE?.trim().toLowerCase() ?? '',
+);
+
 const rules: EnvironmentRule[] = [
+  { name: 'PUBLIC_BETA_MODE', scope: 'server', requiredFor: [], validate: booleanRule },
   { name: 'NEXT_PUBLIC_SITE_URL', scope: 'public', requiredFor: ['staging', 'production'], validate: urlRule },
   { name: 'APP_BASE_URL', scope: 'server', requiredFor: ['staging', 'production'], validate: urlRule },
   { name: 'NEXT_PUBLIC_SUPABASE_URL', scope: 'public', requiredFor: ['staging', 'production'], validate: urlRule },
@@ -68,15 +79,15 @@ const rules: EnvironmentRule[] = [
   { name: 'RESEND_API_KEY', scope: 'server', requiredFor: ['staging', 'production'], validate: resendApiKeyRule },
   { name: 'EMAIL_FROM', scope: 'server', requiredFor: ['staging', 'production'], validate: mailboxRule },
   { name: 'TRANSACTIONAL_EMAIL_CRON_SECRET', scope: 'server', requiredFor: ['staging', 'production'], validate: cronSecretRule },
-  { name: 'STRIPE_SECRET_KEY', scope: 'server', requiredFor: ['staging', 'production'], validate: stripeSecretRule },
-  { name: 'STRIPE_WEBHOOK_SECRET', scope: 'server', requiredFor: ['staging', 'production'], validate: stripeWebhookRule },
-  { name: 'STRIPE_PRICE_PARTICULAR_1M', scope: 'server', requiredFor: ['staging', 'production'], validate: stripePriceRule },
-  { name: 'STRIPE_PRICE_PARTICULAR_6M', scope: 'server', requiredFor: ['staging', 'production'], validate: stripePriceRule },
-  { name: 'STRIPE_PRICE_PARTICULAR_12M', scope: 'server', requiredFor: ['staging', 'production'], validate: stripePriceRule },
-  { name: 'STRIPE_PRICE_PROFESSIONAL_1M', scope: 'server', requiredFor: ['staging', 'production'], validate: stripePriceRule },
-  { name: 'STRIPE_PRICE_PROFESSIONAL_6M', scope: 'server', requiredFor: ['staging', 'production'], validate: stripePriceRule },
-  { name: 'STRIPE_PRICE_PROFESSIONAL_12M', scope: 'server', requiredFor: ['staging', 'production'], validate: stripePriceRule },
-  { name: 'PAYMENT_INCIDENT_ADMIN_SECRET', scope: 'server', requiredFor: ['staging', 'production'], validate: cronSecretRule },
+  { name: 'STRIPE_SECRET_KEY', scope: 'server', requiredFor: ['staging', 'production'], commercialOnly: true, validate: stripeSecretRule },
+  { name: 'STRIPE_WEBHOOK_SECRET', scope: 'server', requiredFor: ['staging', 'production'], commercialOnly: true, validate: stripeWebhookRule },
+  { name: 'STRIPE_PRICE_PARTICULAR_1M', scope: 'server', requiredFor: ['staging', 'production'], commercialOnly: true, validate: stripePriceRule },
+  { name: 'STRIPE_PRICE_PARTICULAR_6M', scope: 'server', requiredFor: ['staging', 'production'], commercialOnly: true, validate: stripePriceRule },
+  { name: 'STRIPE_PRICE_PARTICULAR_12M', scope: 'server', requiredFor: ['staging', 'production'], commercialOnly: true, validate: stripePriceRule },
+  { name: 'STRIPE_PRICE_PROFESSIONAL_1M', scope: 'server', requiredFor: ['staging', 'production'], commercialOnly: true, validate: stripePriceRule },
+  { name: 'STRIPE_PRICE_PROFESSIONAL_6M', scope: 'server', requiredFor: ['staging', 'production'], commercialOnly: true, validate: stripePriceRule },
+  { name: 'STRIPE_PRICE_PROFESSIONAL_12M', scope: 'server', requiredFor: ['staging', 'production'], commercialOnly: true, validate: stripePriceRule },
+  { name: 'PAYMENT_INCIDENT_ADMIN_SECRET', scope: 'server', requiredFor: ['staging', 'production'], commercialOnly: true, validate: cronSecretRule },
   { name: 'PAYMENT_INCIDENT_ALERT_WEBHOOK_URL', scope: 'server', requiredFor: [], validate: urlRule },
   { name: 'PAYMENT_INCIDENT_ALERT_EMAIL', scope: 'server', requiredFor: [], validate: mailboxRule },
 ];
@@ -86,7 +97,9 @@ const warnings: string[] = [];
 
 for (const rule of rules) {
   const value = process.env[rule.name]?.trim();
-  const required = requestedEnvironment && rule.requiredFor.includes(requestedEnvironment);
+  const required = requestedEnvironment
+    && rule.requiredFor.includes(requestedEnvironment)
+    && !(publicBetaMode && rule.commercialOnly);
 
   if (!value) {
     (required ? errors : warnings).push(`${rule.name}: no configurada (${rule.scope}).`);
@@ -111,6 +124,7 @@ for (const name of Object.keys(process.env)) {
 
 if (
   requestedEnvironment
+  && !publicBetaMode
   && !process.env.PAYMENT_INCIDENT_ALERT_WEBHOOK_URL?.trim()
   && !process.env.PAYMENT_INCIDENT_ALERT_EMAIL?.trim()
 ) {

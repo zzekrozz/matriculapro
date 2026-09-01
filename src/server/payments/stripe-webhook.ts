@@ -20,6 +20,11 @@ import {
 import { getStripeTestClient } from './stripe-test-client';
 import { notifyPaymentIncident } from './payment-incident-alert';
 import { retrieveVerifiedCheckoutSnapshot } from './stripe-checkout-receipt';
+import {
+  checkoutFailureRequiresStripeRetry,
+  resolvePaidInvoicePaymentIntent,
+  stripeWebhookAction,
+} from './stripe-webhook-policy';
 
 export interface WebhookHandlingResult {
   httpStatus: 200 | 400;
@@ -75,9 +80,11 @@ async function ignored(input: {
 async function processCheckoutEvent(
   event: Stripe.Event,
   payloadSha256: string,
+  checkoutSessionId?: string,
 ): Promise<WebhookHandlingResult> {
   const eventSession = event.data.object as Stripe.Checkout.Session;
-  const { session, checkout } = await retrieveVerifiedCheckoutSnapshot(eventSession.id);
+  const sessionId = checkoutSessionId ?? eventSession.id;
+  const { session, checkout } = await retrieveVerifiedCheckoutSnapshot(sessionId);
   const purchase = await getPurchaseByCheckoutSession(session.id);
   if (!purchase) {
     await recordPaymentIncident({
@@ -171,6 +178,9 @@ async function processCheckoutEvent(
       purchaseId: purchase.id,
       reason: validation.reason ?? 'incomplete_checkout_snapshot',
     });
+    if (checkoutFailureRequiresStripeRetry(validation.reason, checkout.invoiceStatus)) {
+      throw new Error(`Checkout invoice is not ready: ${validation.reason}`);
+    }
     return ignored({
       event,
       payloadSha256,
@@ -181,7 +191,9 @@ async function processCheckoutEvent(
 
   const transition = await applyVerifiedCheckoutPayment({
     providerEventId: event.id,
-    eventType: event.type,
+    // invoice.paid is a signal to re-read the Checkout Session. The guarded
+    // database transition accepts Checkout activation types only.
+    eventType: event.type === 'invoice.paid' ? 'checkout.session.completed' : event.type,
     eventCreatedAt: eventCreatedAt(event),
     payloadSha256,
     purchase,
@@ -214,6 +226,22 @@ async function processCheckoutEvent(
     paymentIntentId: checkout.paymentIntentId, chargeId: checkout.chargeId,
     processed: transition.processed, reason: transition.reason,
   });
+  if (!transition.processed && !transition.duplicate) {
+    await recordPaymentIncident({
+      stripeEventId: event.id,
+      kind: 'paid_without_license',
+      details: {
+        reason: transition.reason ?? 'activation_failed',
+        eventType: event.type,
+        invoiceId: checkout.invoiceId,
+      },
+      userId: purchase.userId,
+      purchaseId: purchase.id,
+      checkoutSessionId: session.id,
+      paymentIntentId: checkout.paymentIntentId,
+      customerId: checkout.customerId,
+    });
+  }
   if (
     !transition.processed
     || transition.reason === 'fully_refunded_before_activation'
@@ -237,6 +265,65 @@ async function processCheckoutEvent(
     duplicate: transition.duplicate,
     reason: transition.reason,
   };
+}
+
+async function processInvoicePaidEvent(
+  event: Stripe.Event,
+  payloadSha256: string,
+): Promise<WebhookHandlingResult> {
+  const invoice = event.data.object as Stripe.Invoice;
+  const stripe = getStripeTestClient();
+  const invoicePayments = await stripe.invoicePayments.list({
+    invoice: invoice.id,
+    status: 'paid',
+    limit: 2,
+  });
+  const paymentIntent = resolvePaidInvoicePaymentIntent(invoicePayments.data);
+  if (!paymentIntent.paymentIntentId) {
+    const reason = paymentIntent.reason ?? 'invoice_payment_intent_missing';
+    await recordPaymentIncident({
+      stripeEventId: event.id,
+      kind: 'paid_without_license',
+      details: { reason, invoiceId: invoice.id },
+      paymentIntentId: null,
+      customerId: objectId(invoice.customer),
+    });
+    await notifyPaymentIncident({
+      stripeEventId: event.id,
+      kind: 'paid_without_license',
+      reason,
+    });
+    return ignored({ event, payloadSha256, reason });
+  }
+
+  const sessions = await stripe.checkout.sessions.list({
+    payment_intent: paymentIntent.paymentIntentId,
+    limit: 2,
+  });
+  if (sessions.data.length !== 1) {
+    const reason = sessions.data.length === 0
+      ? 'invoice_checkout_session_missing'
+      : 'invoice_checkout_session_ambiguous';
+    await recordPaymentIncident({
+      stripeEventId: event.id,
+      kind: 'paid_without_license',
+      details: {
+        reason,
+        invoiceId: invoice.id,
+        checkoutSessionCount: sessions.data.length,
+      },
+      paymentIntentId: paymentIntent.paymentIntentId,
+      customerId: objectId(invoice.customer),
+    });
+    await notifyPaymentIncident({
+      stripeEventId: event.id,
+      kind: 'paid_without_license',
+      reason,
+    });
+    return ignored({ event, payloadSha256, reason });
+  }
+
+  return processCheckoutEvent(event, payloadSha256, sessions.data[0].id);
 }
 
 async function processCheckoutExpiration(
@@ -468,26 +555,12 @@ export async function handleStripeTestWebhook(
   });
 
   try {
-    if (
-      event.type === 'checkout.session.completed'
-      || event.type === 'checkout.session.async_payment_succeeded'
-    ) {
-      return await processCheckoutEvent(event, payloadSha256);
-    }
-    if (event.type === 'checkout.session.expired') {
-      return await processCheckoutExpiration(event, payloadSha256);
-    }
-    if (event.type === 'charge.refunded' || event.type === 'refund.updated') {
-      return await processRefundEvent(event, payloadSha256);
-    }
-    if (
-      event.type === 'charge.dispute.created'
-      || event.type === 'charge.dispute.updated'
-      || event.type === 'charge.dispute.closed'
-    ) {
-      return await processDisputeEvent(event, payloadSha256);
-    }
-
+    const action = stripeWebhookAction(event.type);
+    if (action === 'checkout_payment') return await processCheckoutEvent(event, payloadSha256);
+    if (action === 'invoice_payment') return await processInvoicePaidEvent(event, payloadSha256);
+    if (action === 'checkout_expiration') return await processCheckoutExpiration(event, payloadSha256);
+    if (action === 'refund') return await processRefundEvent(event, payloadSha256);
+    if (action === 'dispute') return await processDisputeEvent(event, payloadSha256);
     return await ignored({ event, payloadSha256, reason: 'event_type_not_handled' });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown processing failure';

@@ -1,10 +1,12 @@
 import 'server-only';
 import {
   AccessDeniedError,
+  createPublicBetaAccessContext,
   type AccessCapability,
   type AccessContext,
   type UserLicense,
 } from '@/domain/access';
+import { isPublicBetaEnabled } from '@/config/public-beta';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 interface AccessContextRpc {
@@ -95,6 +97,7 @@ function normalizeAccessContext(value: unknown, authenticatedUserId: string): Ac
 
   return {
     userId,
+    publicBeta: false,
     tier: tier as AccessContext['tier'],
     mode: mode as AccessContext['mode'],
     license: normalizeLicense(row.license),
@@ -121,6 +124,10 @@ export async function getCurrentServerAccess(): Promise<AccessContext> {
   const { data: authData, error: authError } = await supabase.auth.getUser();
   if (authError || !authData.user?.email_confirmed_at) {
     throw new AuthenticationRequiredError();
+  }
+
+  if (isPublicBetaEnabled()) {
+    return createPublicBetaAccessContext(authData.user.id);
   }
 
   const { data, error } = await supabase.rpc('get_my_access_context');

@@ -5,6 +5,12 @@ import {
   recoveryRequestSchema,
   registrationSchema,
 } from '../validation';
+import {
+  emailAuthFlow,
+  emailOtpDestination,
+  isEmailOtpTokenHash,
+  parseEmailOtpType,
+} from '../../../lib/auth/email-otp';
 import { safeInternalPath } from '../../../lib/auth/redirect';
 
 const validRegistration = {
@@ -81,4 +87,28 @@ test('auth redirects reject external, protocol-relative, callback and loop desti
   ]) {
     assert.equal(safeInternalPath(candidate), '/app/comprobar');
   }
+});
+
+test('email OTP accepts only the supported Supabase email link types', () => {
+  assert.equal(parseEmailOtpType('signup'), 'signup');
+  assert.equal(parseEmailOtpType('recovery'), 'recovery');
+  assert.equal(parseEmailOtpType('email_change'), 'email_change');
+  assert.equal(parseEmailOtpType('magiclink'), null);
+  assert.equal(parseEmailOtpType('code'), null);
+});
+
+test('email OTP destinations are safe and recovery cannot leave the reset flow', () => {
+  assert.equal(emailOtpDestination('signup', '/app/planes?duration=12'), '/app/planes?duration=12');
+  assert.equal(emailOtpDestination('signup', 'https://evil.example'), '/app/comprobar');
+  assert.equal(emailOtpDestination('email_change', undefined), '/app/cuenta');
+  assert.equal(emailOtpDestination('recovery', '/app/dashboard'), '/restablecer-contrasena');
+  assert.equal(emailAuthFlow('recovery'), 'recovery');
+  assert.equal(emailAuthFlow('email_change'), 'email_change');
+});
+
+test('email OTP token hashes reject missing, short and whitespace-bearing values', () => {
+  assert.equal(isEmailOtpTokenHash('a'.repeat(64)), true);
+  assert.equal(isEmailOtpTokenHash('a'.repeat(31)), false);
+  assert.equal(isEmailOtpTokenHash(`a${'b'.repeat(62)} `), false);
+  assert.equal(isEmailOtpTokenHash(undefined), false);
 });

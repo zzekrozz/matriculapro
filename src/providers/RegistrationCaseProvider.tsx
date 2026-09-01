@@ -25,7 +25,7 @@ interface RegistrationCaseContextValue {
   activeCase: RegistrationCase | null;
   loading: boolean;
   error: string | null;
-  /** True only while a paid licence can mutate full cases. */
+  /** True while the authenticated user can persist full cases. */
   persistent: boolean;
   refresh: () => Promise<void>;
   getCase: (id: string) => RegistrationCase | null;
@@ -45,7 +45,7 @@ const RegistrationCaseContext = createContext<RegistrationCaseContextValue | nul
 
 export function RegistrationCaseProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const { canViewPaidCases, canManageFullCases, loading: accessLoading } = useAccess();
+  const { canViewPaidCases, canManageFullCases, publicBeta, loading: accessLoading } = useAccess();
   const persistent = Boolean(user && canManageFullCases);
   const [cases, setCases] = useState<RegistrationCase[]>([]);
   const [documents, setDocuments] = useState<CaseDocumentRecord[]>([]);
@@ -67,14 +67,14 @@ export function RegistrationCaseProvider({ children }: { children: ReactNode }) 
         setActiveCaseId('');
         return;
       }
-      const loaded = await loadPersistedCases(user.id);
+      const loaded = await loadPersistedCases(user.id, publicBeta);
       setCases(loaded);
       setActiveCaseId((current) => loaded.some((item) => item.id === current) ? current : (loaded[0]?.id ?? ''));
       const caseIds = loaded.map((item) => item.id);
       const [nextDocuments, nextTaxes, nextChecklist] = await Promise.all([
-        loadPersistedDocuments(user.id, caseIds),
-        loadPersistedTaxCalculations(user.id, caseIds),
-        loadPersistedChecklistItems(user.id, caseIds),
+        loadPersistedDocuments(user.id, caseIds, publicBeta),
+        loadPersistedTaxCalculations(user.id, caseIds, publicBeta),
+        loadPersistedChecklistItems(user.id, caseIds, publicBeta),
       ]);
       setDocuments(nextDocuments);
       setTaxCalculations(nextTaxes);
@@ -84,14 +84,14 @@ export function RegistrationCaseProvider({ children }: { children: ReactNode }) 
     } finally {
       setLoading(false);
     }
-  }, [canViewPaidCases, user]);
+  }, [canViewPaidCases, publicBeta, user]);
 
   useEffect(() => {
     if (!accessLoading) void refresh();
   }, [accessLoading, refresh]);
 
   const requireWritable = useCallback(() => {
-    if (!persistent || !user) throw new Error('Necesitas una licencia activa para modificar expedientes.');
+    if (!persistent || !user) throw new Error('Tu cuenta no puede modificar expedientes en este momento.');
     return user;
   }, [persistent, user]);
 
@@ -105,30 +105,30 @@ export function RegistrationCaseProvider({ children }: { children: ReactNode }) 
       updatedAt: now,
       createdAt: registrationCase.createdAt || now,
     };
-    await savePersistedCase(normalized, currentUser.id);
+    await savePersistedCase(normalized, currentUser.id, publicBeta);
     setCases((current) => [normalized, ...current.filter((item) => item.id !== normalized.id)]);
     setActiveCaseId(normalized.id);
     return normalized;
-  }, [requireWritable]);
+  }, [publicBeta, requireWritable]);
 
   const getCase = useCallback((id: string) => cases.find((item) => item.id === id) ?? null, [cases]);
   const getDocument = useCallback((caseId: string, type: DocumentType) => documents.find((item) => item.caseId === caseId && item.type === type) ?? null, [documents]);
   const updateDocument = useCallback(async (document: CaseDocumentRecord) => {
     const currentUser = requireWritable();
-    const saved = await savePersistedDocument(document, currentUser.id);
+    const saved = await savePersistedDocument(document, currentUser.id, publicBeta);
     setDocuments((current) => [saved, ...current.filter((item) => item.id ? item.id !== saved.id : !(item.caseId === saved.caseId && item.type === saved.type))]);
     return saved;
-  }, [requireWritable]);
+  }, [publicBeta, requireWritable]);
 
   const getLatestTaxCalculation = useCallback((caseId: string) => taxCalculations.filter((item) => item.caseId === caseId).sort((a, b) => b.calculatedAt.localeCompare(a.calculatedAt))[0] ?? null, [taxCalculations]);
   const getTaxCalculationHistory = useCallback((caseId: string) => taxCalculations.filter((item) => item.caseId === caseId).sort((a, b) => b.calculatedAt.localeCompare(a.calculatedAt)), [taxCalculations]);
   const saveTaxCalculation = useCallback(async (calculation: TaxCalculation) => {
     if (!calculation.caseId) throw new Error('Falta el expediente asociado al cálculo.');
     const currentUser = requireWritable();
-    const saved = await savePersistedTaxCalculation(calculation, currentUser.id);
+    const saved = await savePersistedTaxCalculation(calculation, currentUser.id, undefined, publicBeta);
     setTaxCalculations((current) => [saved, ...current.filter((item) => item.id !== saved.id)]);
     return saved;
-  }, [requireWritable]);
+  }, [publicBeta, requireWritable]);
   const saveFiscalCalculation = useCallback(async (caseId: string, input: Model576ApiRequest, calculation: Model576Calculation) => {
     const currentUser = requireWritable();
     const legacy: TaxCalculation = {
@@ -144,18 +144,18 @@ export function RegistrationCaseProvider({ children }: { children: ReactNode }) 
       calculatedAt: calculation.calculatedAt,
       sourceIds: calculation.sourceIds,
     };
-    const saved = await savePersistedTaxCalculation(legacy, currentUser.id, { input, calculation });
+    const saved = await savePersistedTaxCalculation(legacy, currentUser.id, { input, calculation }, publicBeta);
     setTaxCalculations((current) => [saved, ...current.filter((item) => item.id !== saved.id)]);
     return saved;
-  }, [requireWritable]);
+  }, [publicBeta, requireWritable]);
 
   const getChecklistItem = useCallback((caseId: string, checklistKey: string, itemKey: string) => checklistItems.find((item) => item.caseId === caseId && item.checklistKey === checklistKey && item.itemKey === itemKey) ?? null, [checklistItems]);
   const updateChecklistItem = useCallback(async (item: CaseChecklistRecord) => {
     const currentUser = requireWritable();
-    const saved = await savePersistedChecklistItem(item, currentUser.id);
+    const saved = await savePersistedChecklistItem(item, currentUser.id, publicBeta);
     setChecklistItems((current) => [saved, ...current.filter((existing) => !(existing.caseId === saved.caseId && existing.checklistKey === saved.checklistKey && existing.itemKey === saved.itemKey))]);
     return saved;
-  }, [requireWritable]);
+  }, [publicBeta, requireWritable]);
 
   const activeCase = cases.find((item) => item.id === activeCaseId) ?? cases[0] ?? null;
   const value = useMemo<RegistrationCaseContextValue>(() => ({
@@ -190,4 +190,3 @@ export function useRegistrationCases() {
 export function createDocumentDraft(caseId: string, type: DocumentType, status: DocumentStatus = 'pending'): CaseDocumentRecord {
   return { caseId, type, status, fileName: null, storagePath: null, issuer: null, documentNumber: null, documentDate: null, notes: '', incident: '', manuallyVerified: false };
 }
-

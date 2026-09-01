@@ -50,6 +50,7 @@ export type AccessCapability =
 
 export interface AccessContext {
   userId: string;
+  publicBeta: boolean;
   tier: AccessTier;
   mode: AccessMode;
   license: UserLicense | null;

@@ -60,7 +60,11 @@ export interface CaseChecklistRecord {
   sortOrder: number;
 }
 
-export async function loadPersistedCases(userId: string): Promise<RegistrationCase[]> {
+export async function loadPersistedCases(userId: string, publicBeta = false): Promise<RegistrationCase[]> {
+  if (publicBeta) {
+    const data = await loadPublicBetaRows('cases');
+    return data.map((row) => mapCaseRow(row, userId));
+  }
   const supabase = createSupabaseBrowserClient();
   const { data, error } = await supabase
     .from('registration_cases')
@@ -72,8 +76,11 @@ export async function loadPersistedCases(userId: string): Promise<RegistrationCa
   return ((data ?? []) as unknown as UnknownRow[]).map((row) => mapCaseRow(row, userId));
 }
 
-export async function savePersistedCase(registrationCase: RegistrationCase, userId: string): Promise<void> {
-  const supabase = createSupabaseBrowserClient();
+export async function savePersistedCase(
+  registrationCase: RegistrationCase,
+  userId: string,
+  publicBeta = false,
+): Promise<void> {
   const normalized: RegistrationCase = {
     ...registrationCase,
     userId,
@@ -81,7 +88,7 @@ export async function savePersistedCase(registrationCase: RegistrationCase, user
     updatedAt: new Date().toISOString(),
   };
   const decision = buildRegistrationDecision(normalized);
-  const { error: caseError } = await supabase.from('registration_cases').upsert({
+  const caseRow = {
     id: normalized.id,
     user_id: userId,
     title: normalized.title,
@@ -102,11 +109,9 @@ export async function savePersistedCase(registrationCase: RegistrationCase, user
     decision_version: '2026.1',
     updated_at: normalized.updatedAt,
     metadata: { domain_case: normalized },
-  }, { onConflict: 'id' });
-  if (caseError) throw new Error(caseError.message);
-
+  };
   const vehicle = normalized.vehicle;
-  const { error: vehicleError } = await supabase.from('vehicles').upsert({
+  const vehicleRow = {
     case_id: normalized.id,
     user_id: userId,
     make: vehicle.brand,
@@ -135,15 +140,26 @@ export async function savePersistedCase(registrationCase: RegistrationCase, user
     possible_modifications: vehicle.reforms,
     updated_at: normalized.updatedAt,
     metadata: { domain_vehicle: vehicle },
-  }, { onConflict: 'case_id' });
+  };
+  if (publicBeta) {
+    await mutatePublicBetaRows('save-case', caseRow, vehicleRow);
+    return;
+  }
+
+  const supabase = createSupabaseBrowserClient();
+  const { error: caseError } = await supabase.from('registration_cases').upsert(caseRow, { onConflict: 'id' });
+  if (caseError) throw new Error(caseError.message);
+  const { error: vehicleError } = await supabase.from('vehicles').upsert(vehicleRow, { onConflict: 'case_id' });
   if (vehicleError) throw new Error(vehicleError.message);
 }
 
 export async function loadPersistedDocuments(
   userId: string,
   caseIds: string[],
+  publicBeta = false,
 ): Promise<CaseDocumentRecord[]> {
   if (caseIds.length === 0) return [];
+  if (publicBeta) return (await loadPublicBetaRows('documents', caseIds)).map(mapDocumentRow);
   const supabase = createSupabaseBrowserClient();
   const { data, error } = await supabase
     .from('case_documents')
@@ -158,8 +174,10 @@ export async function loadPersistedDocuments(
 export async function loadPersistedTaxCalculations(
   userId: string,
   caseIds: string[],
+  publicBeta = false,
 ): Promise<StoredTaxCalculation[]> {
   if (caseIds.length === 0) return [];
+  if (publicBeta) return (await loadPublicBetaRows('tax-calculations', caseIds)).map(mapTaxCalculationRow);
   const supabase = createSupabaseBrowserClient();
   const { data, error } = await supabase
     .from('case_tax_calculations')
@@ -176,8 +194,10 @@ export async function loadPersistedTaxCalculations(
 export async function loadPersistedChecklistItems(
   userId: string,
   caseIds: string[],
+  publicBeta = false,
 ): Promise<CaseChecklistRecord[]> {
   if (caseIds.length === 0) return [];
+  if (publicBeta) return (await loadPublicBetaRows('checklist-items', caseIds)).map(mapChecklistRow);
   const supabase = createSupabaseBrowserClient();
   const { data, error } = await supabase
     .from('case_checklist_items')
@@ -192,8 +212,8 @@ export async function loadPersistedChecklistItems(
 export async function savePersistedChecklistItem(
   item: CaseChecklistRecord,
   userId: string,
+  publicBeta = false,
 ): Promise<CaseChecklistRecord> {
-  const supabase = createSupabaseBrowserClient();
   const row = {
     case_id: item.caseId,
     user_id: userId,
@@ -215,6 +235,10 @@ export async function savePersistedChecklistItem(
       linked_document_type: item.linkedDocumentType,
     },
   };
+  if (publicBeta) {
+    return mapChecklistRow(await mutatePublicBetaRows('save-checklist-item', row));
+  }
+  const supabase = createSupabaseBrowserClient();
   const { data, error } = await supabase
     .from('case_checklist_items')
     .upsert(row, { onConflict: 'case_id,checklist_key,item_key' })
@@ -228,13 +252,14 @@ export async function savePersistedTaxCalculation(
   calculation: TaxCalculation,
   userId: string,
   fiscalSnapshot?: FiscalCalculationSnapshot,
+  publicBeta = false,
 ): Promise<StoredTaxCalculation> {
   if (!calculation.caseId) throw new Error('Falta el identificador del expediente.');
-  const supabase = createSupabaseBrowserClient();
   const decisionRoute = calculation.estimatedQuota === null ? 'special-review' : 'model-576';
   const reviewedByUser = fiscalSnapshot?.input.confirmation.reviewedByUser ?? false;
   const fiscalStatus = fiscalSnapshot?.calculation.status;
   const row = {
+    ...(calculation.id ? { id: calculation.id } : {}),
     case_id: calculation.caseId,
     user_id: userId,
     tax_kind: 'registration-tax',
@@ -273,6 +298,10 @@ export async function savePersistedTaxCalculation(
       confirmed_at: fiscalSnapshot?.input.confirmation.confirmedAt ?? null,
     },
   };
+  if (publicBeta) {
+    return mapTaxCalculationRow(await mutatePublicBetaRows('save-tax-calculation', row));
+  }
+  const supabase = createSupabaseBrowserClient();
   const query = calculation.id
     ? supabase.from('case_tax_calculations').update(row).eq('id', calculation.id).eq('user_id', userId)
     : supabase.from('case_tax_calculations').insert(row);
@@ -281,9 +310,13 @@ export async function savePersistedTaxCalculation(
   return mapTaxCalculationRow(data as unknown as UnknownRow);
 }
 
-export async function savePersistedDocument(document: CaseDocumentRecord, userId: string): Promise<CaseDocumentRecord> {
-  const supabase = createSupabaseBrowserClient();
+export async function savePersistedDocument(
+  document: CaseDocumentRecord,
+  userId: string,
+  publicBeta = false,
+): Promise<CaseDocumentRecord> {
   const row = {
+    ...(document.id ? { id: document.id } : {}),
     case_id: document.caseId,
     user_id: userId,
     requirement_key: document.type,
@@ -301,6 +334,12 @@ export async function savePersistedDocument(document: CaseDocumentRecord, userId
     verified_at: document.manuallyVerified ? new Date().toISOString() : null,
     metadata: {},
   };
+
+  if (publicBeta) {
+    return mapDocumentRow(await mutatePublicBetaRows('save-document', row));
+  }
+
+  const supabase = createSupabaseBrowserClient();
 
   if (document.id) {
     const { data, error } = await supabase
@@ -321,6 +360,47 @@ export async function savePersistedDocument(document: CaseDocumentRecord, userId
     .single();
   if (error) throw new Error(error.message);
   return mapDocumentRow(data as unknown as UnknownRow);
+}
+
+type PublicBetaResource = 'cases' | 'documents' | 'tax-calculations' | 'checklist-items';
+type PublicBetaMutation = 'save-case' | 'save-document' | 'save-tax-calculation' | 'save-checklist-item';
+
+async function loadPublicBetaRows(resource: PublicBetaResource, caseIds: string[] = []): Promise<UnknownRow[]> {
+  const params = new URLSearchParams({ resource });
+  if (caseIds.length > 0) params.set('caseIds', caseIds.join(','));
+  const response = await fetch(`/api/public-beta/cases?${params.toString()}`, {
+    credentials: 'same-origin',
+    cache: 'no-store',
+  });
+  const payload = await readPublicBetaPayload(response);
+  if (!Array.isArray(payload.data)) throw new Error('La respuesta de persistencia no es válida.');
+  return payload.data.filter((value): value is UnknownRow => asRecord(value) !== null);
+}
+
+async function mutatePublicBetaRows(
+  action: PublicBetaMutation,
+  row: UnknownRow,
+  relatedRow?: UnknownRow,
+): Promise<UnknownRow> {
+  const response = await fetch('/api/public-beta/cases', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, row, ...(relatedRow ? { relatedRow } : {}) }),
+  });
+  const payload = await readPublicBetaPayload(response);
+  if (action === 'save-case') return {};
+  const data = asRecord(payload.data);
+  if (!data) throw new Error('La respuesta de persistencia no es válida.');
+  return data;
+}
+
+async function readPublicBetaPayload(response: Response): Promise<UnknownRow> {
+  const payload = asRecord(await response.json().catch(() => null));
+  if (!response.ok || !payload?.ok) {
+    throw new Error(asString(payload?.message) ?? 'No se han podido guardar los datos.');
+  }
+  return payload;
 }
 
 function mapCaseRow(row: UnknownRow, userId: string): RegistrationCase {

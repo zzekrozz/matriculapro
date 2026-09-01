@@ -15,6 +15,7 @@ import {
 import type { FreeVehicleCheckInput, FreeVehicleCheckResult } from '@/domain/free-check';
 import { sourcesForIds } from '@/domain/registration';
 import { cn } from '@/lib/cn';
+import { useAccess } from '@/providers/AccessProvider';
 
 const today = () => new Date().toISOString();
 
@@ -57,6 +58,7 @@ interface ApiResult {
 }
 
 export function FreeVehicleChecker() {
+  const access = useAccess();
   const [input, setInput] = useState<FreeVehicleCheckInput>(INITIAL_INPUT);
   const [otherCountryCode, setOtherCountryCode] = useState('');
   const [result, setResult] = useState<FreeVehicleCheckResult | null>(null);
@@ -170,12 +172,12 @@ export function FreeVehicleChecker() {
         </div>
       </form>
 
-      {result && <CheckResult result={result} />}
+      {result && <CheckResult result={result} publicBeta={access.publicBeta} />}
     </div>
   );
 }
 
-function CheckResult({ result }: { result: FreeVehicleCheckResult }) {
+function CheckResult({ result, publicBeta }: { result: FreeVehicleCheckResult; publicBeta: boolean }) {
   const sources = useMemo(() => sourcesForIds(result.sourceIds), [result.sourceIds]);
   const risk = {
     low: { label: 'Bajo', className: 'bg-ok-soft text-ok', icon: CheckCircle2 },
@@ -227,8 +229,8 @@ function CheckResult({ result }: { result: FreeVehicleCheckResult }) {
 
       <section className="mt-5 rounded-[20px] border border-accent/25 bg-accent-soft p-5 sm:p-6">
         <h3 className="font-serif text-[23px] text-ink">¿Necesitas completar el expediente?</h3>
-        <p className="mt-2 max-w-2xl text-[11.5px] leading-relaxed text-ink-soft">Con acceso completo podrás consultar el valor oficial, calcular el impuesto, preparar las casillas y seguir ITV, fiscalidad y DGT. Los riesgos críticos mostrados arriba no se ocultan por el plan.</p>
-        <Link href="/#precios" className="mt-4 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-[11.5px] font-medium text-white">Comparar Particular y Profesional <ArrowRight size={12} /></Link>
+        <p className="mt-2 max-w-2xl text-[11.5px] leading-relaxed text-ink-soft">{publicBeta ? 'Crea un expediente para consultar el valor oficial, calcular el impuesto y seguir ITV, fiscalidad y DGT con todas las herramientas de la beta.' : 'Con acceso completo podrás consultar el valor oficial, calcular el impuesto, preparar las casillas y seguir ITV, fiscalidad y DGT. Los riesgos críticos mostrados arriba no se ocultan por el plan.'}</p>
+        <Link href={publicBeta ? '/app/expedientes/nuevo' : '/#precios'} className="mt-4 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-[11.5px] font-medium text-white">{publicBeta ? 'Crear un expediente' : 'Comparar Particular y Profesional'} <ArrowRight size={12} /></Link>
       </section>
     </section>
   );

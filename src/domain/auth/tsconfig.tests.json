@@ -11,6 +11,6 @@
     "rootDir": "../../../src",
     "plugins": []
   },
-  "include": ["./**/*.ts", "../../lib/auth/redirect.ts"],
+  "include": ["./**/*.ts", "../../lib/auth/redirect.ts", "../../lib/auth/email-otp.ts"],
   "exclude": ["../../../node_modules"]
 }

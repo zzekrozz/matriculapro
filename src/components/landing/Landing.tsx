@@ -43,10 +43,18 @@ const comparison = [
   ['Informes profesionales y CSV', false, false, true],
 ] as const;
 
-export default function Landing() {
+export default function Landing({ publicBeta = false }: { publicBeta?: boolean }) {
+  const faqs = publicBeta
+    ? [
+      { question: '¿Qué significa que MatriculaPro está en beta?', answer: 'La plataforma está en desarrollo activo. Durante esta fase puedes utilizar sus herramientas con una cuenta, sabiendo que algunas funciones pueden cambiar o mejorar.' },
+      { question: '¿Por qué tengo que crear una cuenta?', answer: 'La sesión permite guardar tus expedientes y mantener los datos de cada usuario separados. No se solicita una compra para utilizar las herramientas durante la beta.' },
+      { question: '¿Sustituye a una gestoría, ITV o Administración?', answer: 'No. MatriculaPro organiza información y cálculos orientativos con fuentes oficiales, pero no garantiza el resultado de un trámite ni sustituye la revisión profesional o administrativa.' },
+    ]
+    : LANDING_FAQS;
   return (
     <div className="overflow-x-hidden bg-bg text-ink">
-      <PublicHeader />
+      <PublicHeader publicBeta={publicBeta} />
+      {publicBeta && <div className="border-b border-accent/25 bg-accent-soft px-5 py-2.5 text-center text-[11px] text-accent-deep"><strong>MatriculaPro Beta.</strong> Estamos desarrollando y mejorando la plataforma; durante esta fase todas las herramientas están abiertas.</div>}
       <main>
         <section className="relative overflow-hidden border-b border-line bg-[radial-gradient(circle_at_80%_10%,#F5E9D4_0,transparent_32%),linear-gradient(180deg,#FFFFFF_0%,#F4F6FA_100%)] py-16 sm:py-20 lg:py-24">
           <div className="mx-auto grid max-w-[1180px] items-center gap-12 px-5 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
@@ -61,8 +69,8 @@ export default function Landing() {
                 Analiza la documentación de un vehículo extranjero, detecta riesgos y prepara su matriculación en España con cálculos explicados y fuentes oficiales.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link href="/registro?next=/app/comprobar" className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[14px] font-semibold text-white shadow-lg">
-                  Comprobar un vehículo gratis <ArrowRight size={15} aria-hidden="true" />
+                <Link href={publicBeta ? '/registro?next=/app/expedientes/nuevo' : '/registro?next=/app/comprobar'} className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[14px] font-semibold text-white shadow-lg">
+                  {publicBeta ? 'Probar MatriculaPro' : 'Comprobar un vehículo gratis'} <ArrowRight size={15} aria-hidden="true" />
                 </Link>
                 <a href="#como-funciona" className="inline-flex items-center justify-center gap-2 rounded-full border border-line bg-white px-6 py-3.5 text-[14px] font-semibold text-ink">
                   Ver cómo funciona <ChevronRight size={15} aria-hidden="true" />
@@ -116,11 +124,11 @@ export default function Landing() {
               <p className="mt-4 text-[15px] leading-7 text-ink-soft">La dificultad no es encontrar un formulario. Es saber qué información falta, qué ruta corresponde y de dónde sale cada cálculo.</p>
             </div>
             <div className="mt-10 grid gap-4 md:grid-cols-3">
-              {productSteps.map(({ icon: Icon, title, body }) => (
+              {productSteps.map(({ icon: Icon, title, body }, index) => (
                 <article key={title} className="rounded-[24px] border border-line bg-white p-6 shadow-sm">
                   <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent-soft text-accent-deep"><Icon size={20} /></div>
                   <h3 className="mt-5 text-[17px] font-semibold">{title}</h3>
-                  <p className="mt-3 text-[13px] leading-6 text-ink-soft">{body}</p>
+                  <p className="mt-3 text-[13px] leading-6 text-ink-soft">{publicBeta && index === 1 ? 'Prepara la valoración, la minoración y las casillas fiscales con trazabilidad dentro de tu expediente.' : body}</p>
                 </article>
               ))}
             </div>
@@ -130,10 +138,10 @@ export default function Landing() {
         <section className="border-y border-line bg-white py-20 lg:py-24">
           <div className="mx-auto grid max-w-[1180px] gap-10 px-5 lg:grid-cols-2 lg:px-8">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-deep">Gratis y con valor real</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-deep">{publicBeta ? 'Primer paso del expediente' : 'Gratis y con valor real'}</p>
               <h2 className="mt-3 font-serif text-[40px] leading-tight">Comprobación previa a la compra.</h2>
               <p className="mt-4 text-[15px] leading-7 text-ink-soft">Introduce país, vendedor, fechas, kilometraje, categoría, COC, campo K, CO₂ y reformas. El sistema explica la ruta probable, contradicciones, documentos que pedir y preguntas concretas para el vendedor.</p>
-              <Link href="/registro?next=/app/comprobar" className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[13px] font-semibold text-white">Crear cuenta gratis <ArrowRight size={14} /></Link>
+              <Link href={publicBeta ? '/registro?next=/app/expedientes/nuevo' : '/registro?next=/app/comprobar'} className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[13px] font-semibold text-white">{publicBeta ? 'Analizar un vehículo' : 'Crear cuenta gratis'} <ArrowRight size={14} /></Link>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {['Nuevo o usado para IVA', 'Ruta técnica preliminar', 'Nivel de riesgo detectado', 'Contradicciones visibles', 'Documentos que pedir', 'Casos especiales bloqueados'].map((item) => (
@@ -188,7 +196,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="py-20 lg:py-28">
+        {!publicBeta && <section className="py-20 lg:py-28">
           <div className="mx-auto max-w-[1050px] px-5 lg:px-8">
             <div className="text-center">
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-deep">Gratis · Particular · Profesional</p>
@@ -204,9 +212,9 @@ export default function Landing() {
             </div>
             <p className="mt-4 text-center text-[12px] text-muted">Profesional está pensado inicialmente para una sola persona: autónomo, compraventa, importador, gestoría pequeña o profesional del automóvil.</p>
           </div>
-        </section>
+        </section>}
 
-        <section id="precios" className="border-y border-line bg-white py-20 lg:py-28">
+        {!publicBeta && <section id="precios" className="border-y border-line bg-white py-20 lg:py-28">
           <div className="mx-auto max-w-[1180px] px-5 lg:px-8">
             <div className="text-center">
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-deep">Precios públicos</p>
@@ -216,7 +224,9 @@ export default function Landing() {
             </div>
             <div className="mt-10"><LandingPricing /></div>
           </div>
-        </section>
+        </section>}
+
+        {publicBeta && <section className="border-y border-line bg-white py-16 lg:py-20"><div className="mx-auto max-w-[900px] px-5 text-center lg:px-8"><p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-deep">Acceso durante el desarrollo</p><h2 className="mt-3 font-serif text-[40px] leading-tight sm:text-[50px]">Explora la plataforma completa.</h2><p className="mx-auto mt-4 max-w-2xl text-[14px] leading-7 text-ink-soft">Crea una cuenta para guardar tus expedientes de forma separada y utiliza comprobaciones, cálculo fiscal, seguimiento y espacio profesional mientras MatriculaPro está en beta.</p><Link href="/registro?next=/app/expedientes/nuevo" className="mt-7 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[14px] font-semibold text-white">Probar MatriculaPro <ArrowRight size={15} /></Link></div></section>}
 
         <section className="py-20 lg:py-24">
           <div className="mx-auto grid max-w-[1180px] gap-5 px-5 md:grid-cols-2 lg:px-8">
@@ -227,7 +237,7 @@ export default function Landing() {
             </article>
             <article className="rounded-[26px] border border-line bg-white p-7">
               <LockKeyhole className="text-accent-deep" size={24} /><h2 className="mt-5 font-serif text-[32px]">Privacidad sin vigilancia añadida.</h2>
-              <p className="mt-3 text-[13px] leading-7 text-ink-soft">No se incorporan analítica, píxeles, grabaciones, OCR o IA. Solo cookies necesarias de sesión, seguridad y pago, descritas en un inventario público.</p>
+              <p className="mt-3 text-[13px] leading-7 text-ink-soft">No se incorporan analítica, píxeles, grabaciones, OCR o IA. Solo cookies necesarias de sesión{publicBeta ? ' y seguridad' : ', seguridad y pago'}, descritas en un inventario público.</p>
               <Link href="/legal/cookies" className="mt-5 inline-flex items-center gap-1 text-[12px] font-semibold text-accent-deep">Consultar cookies <ChevronRight size={13} /></Link>
             </article>
           </div>
@@ -236,7 +246,7 @@ export default function Landing() {
         <section id="faq" className="border-y border-line bg-white py-20 lg:py-24">
           <div className="mx-auto max-w-[850px] px-5 lg:px-8">
             <div className="text-center"><p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-deep">Preguntas frecuentes</p><h2 className="mt-3 font-serif text-[40px]">Antes de empezar.</h2></div>
-            <div className="mt-9 space-y-3">{LANDING_FAQS.map(({ question, answer }) => (
+            <div className="mt-9 space-y-3">{faqs.map(({ question, answer }) => (
               <details key={question} className="group rounded-2xl border border-line bg-bg p-5"><summary className="cursor-pointer list-none pr-6 text-[14px] font-semibold">{question}</summary><p className="mt-3 text-[13px] leading-6 text-ink-soft">{answer}</p></details>
             ))}</div>
           </div>
@@ -246,13 +256,13 @@ export default function Landing() {
           <div className="mx-auto max-w-[1000px] px-5 lg:px-8">
             <div className="rounded-[30px] bg-[linear-gradient(135deg,#0B1F3A,#16335E)] p-8 text-center text-white shadow-xl sm:p-14">
               <Users className="mx-auto text-accent" size={26} /><h2 className="mx-auto mt-5 max-w-2xl font-serif text-[40px] leading-tight sm:text-[50px]">Comprueba el coche antes de convertirlo en un problema.</h2>
-              <p className="mx-auto mt-4 max-w-2xl text-[14px] leading-7 text-[#C7D0DE]">Crea una cuenta gratuita, introduce los datos manualmente y recibe una revisión preliminar clara. Sin tarjeta y sin ocultar riesgos críticos.</p>
-              <Link href="/registro?next=/app/comprobar" className="mt-7 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-[14px] font-semibold text-ink">Comprobar un vehículo gratis <ArrowRight size={15} /></Link>
+              <p className="mx-auto mt-4 max-w-2xl text-[14px] leading-7 text-[#C7D0DE]">{publicBeta ? 'Crea una cuenta, introduce los datos manualmente y utiliza las herramientas de la plataforma durante el desarrollo.' : 'Crea una cuenta gratuita, introduce los datos manualmente y recibe una revisión preliminar clara. Sin tarjeta y sin ocultar riesgos críticos.'}</p>
+              <Link href={publicBeta ? '/registro?next=/app/expedientes/nuevo' : '/registro?next=/app/comprobar'} className="mt-7 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-[14px] font-semibold text-ink">{publicBeta ? 'Probar MatriculaPro' : 'Comprobar un vehículo gratis'} <ArrowRight size={15} /></Link>
             </div>
           </div>
         </section>
       </main>
-      <PublicFooter />
+      <PublicFooter publicBeta={publicBeta} />
     </div>
   );
 }

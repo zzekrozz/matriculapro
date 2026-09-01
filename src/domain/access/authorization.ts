@@ -1,6 +1,48 @@
 import { isInstantInHalfOpenRange } from './calendar';
 import type { AccessCapability, AccessContext, AccessTier, UserLicense } from './types';
 
+export const PUBLIC_BETA_CAPABILITIES: readonly AccessCapability[] = [
+  'use_free_checker',
+  'view_historical_paid_data',
+  'create_full_cases',
+  'edit_full_cases',
+  'run_fiscal_calculations',
+  'use_advanced_simulators',
+  'generate_reports',
+  'export_data',
+  'use_professional_tools',
+  'view_paid_cases',
+  'create_paid_cases',
+  'edit_paid_cases',
+  'recalculate_paid_cases',
+  'use_fiscal_catalog',
+];
+
+export function createPublicBetaAccessContext(userId: string): AccessContext {
+  return {
+    userId,
+    publicBeta: true,
+    tier: 'free',
+    mode: 'free',
+    license: null,
+    scheduledLicense: null,
+    expiredAt: null,
+    canUseFreeChecker: true,
+    canViewHistoricalPaidData: true,
+    canCreateFullCases: true,
+    canEditFullCases: true,
+    canRunFiscalCalculations: true,
+    canUseAdvancedSimulators: true,
+    canGenerateReports: true,
+    canExport: true,
+    canUseProfessionalTools: true,
+    canViewPaidCases: true,
+    canManageFullCases: true,
+    canUseProfessional: true,
+    capabilities: PUBLIC_BETA_CAPABILITIES,
+  };
+}
+
 function isCurrentlyActive(license: UserLicense, now: string | Date): boolean {
   return (license.status === 'active' || license.status === 'scheduled')
     && license.tier !== 'free'
@@ -77,6 +119,7 @@ export function evaluateAccess(input: {
 
   return {
     userId: input.userId,
+    publicBeta: false,
     tier,
     mode,
     license: active ?? paidHistory,

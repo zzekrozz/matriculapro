@@ -3,8 +3,8 @@ import { safeInternalPath } from '@/lib/auth/redirect';
 import { createSupabaseMiddlewareClient } from '@/lib/supabase/middleware';
 import { jsonWithSupabaseCookies, redirectWithSupabaseCookies } from '@/lib/supabase/response';
 
-const PROTECTED_PREFIXES = ['/app', '/api/free-check', '/api/fiscal', '/api/payments', '/api/professional', '/api/account'];
-const API_PREFIXES = ['/api/free-check', '/api/fiscal', '/api/payments', '/api/professional', '/api/account'];
+const PROTECTED_PREFIXES = ['/app', '/api/free-check', '/api/fiscal', '/api/payments', '/api/professional', '/api/public-beta', '/api/account'];
+const API_PREFIXES = ['/api/free-check', '/api/fiscal', '/api/payments', '/api/professional', '/api/public-beta', '/api/account'];
 const AUTH_ENTRY_PATHS = ['/entrar', '/registro'];
 
 function matches(pathname: string, prefix: string) {

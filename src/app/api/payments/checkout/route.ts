@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { isPublicBetaEnabled } from '@/config/public-beta';
 import { getCurrentServerAccess } from '@/server/access';
 import { CheckoutRequestError, createCheckoutForCurrentUser } from '@/server/payments';
 import { rateLimitedResponse } from '@/server/security/http';
@@ -21,6 +22,12 @@ const schema = z.object({
 });
 
 export async function POST(request: Request) {
+  if (isPublicBetaEnabled()) {
+    return NextResponse.json(
+      { ok: false, message: 'No necesitas realizar un pago mientras MatriculaPro está en beta.' },
+      { status: 409, headers: { 'Cache-Control': 'no-store' } },
+    );
+  }
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ ok: false, message: 'Revisa el plan y las aceptaciones requeridas.' }, { status: 400 });
   let userId: string;

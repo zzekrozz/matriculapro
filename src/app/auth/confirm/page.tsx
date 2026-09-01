@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { AlertTriangle } from 'lucide-react';
 import { AuthPageFrame } from '@/components/auth/AuthPageFrame';
+import { emailOtpDestination, parseEmailOtpType } from '@/lib/auth/email-otp';
 import { safeInternalPath } from '@/lib/auth/redirect';
 
 export const metadata: Metadata = {
@@ -20,9 +22,28 @@ type ConfirmationStatus = keyof typeof explanations;
 export default async function ConfirmPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; next?: string; flow?: string }>;
+  searchParams: Promise<{
+    status?: string;
+    next?: string;
+    flow?: string;
+    token_hash?: string;
+    type?: string;
+    state?: string;
+  }>;
 }) {
   const params = await searchParams;
+  const otpType = parseEmailOtpType(params.type);
+
+  // Existing Supabase templates point here. Keep the user-facing error page,
+  // but relay token links to the Route Handler that can write SSR cookies.
+  if (params.token_hash) {
+    const callback = new URLSearchParams({ token_hash: params.token_hash });
+    if (otpType) callback.set('type', otpType);
+    if (params.state) callback.set('state', params.state);
+    if (otpType) callback.set('next', emailOtpDestination(otpType, params.next));
+    redirect(`/auth/callback?${callback.toString()}`);
+  }
+
   const status: ConfirmationStatus = params.status === 'expired' || params.status === 'provider'
     ? params.status
     : 'invalid';

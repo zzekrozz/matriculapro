@@ -14,6 +14,7 @@ const required = [
   'src/app/api/auth/recover/route.ts',
   'src/app/api/auth/reset-password/route.ts',
   'src/app/api/auth/resend-confirmation/route.ts',
+  'src/lib/auth/email-otp.ts',
   'src/lib/auth/recovery-flow.ts',
   'src/domain/auth/validation.ts',
   'src/app/restablecer-contrasena/page.tsx',
@@ -54,6 +55,43 @@ if (existsSync(registrationPath)) {
   const registration = readFileSync(registrationPath, 'utf8');
   if (!/registration_authorizations/.test(registration) || !/registration_token/.test(registration)) {
     errors.push('El registro no usa una autorización efímera consumida por el trigger.');
+  }
+}
+
+const callbackPath = join(root, 'src/app/auth/callback/route.ts');
+if (existsSync(callbackPath)) {
+  const callback = readFileSync(callbackPath, 'utf8');
+  if (!/auth\.verifyOtp\s*\(\s*\{[\s\S]*?token_hash\s*:/m.test(callback)) {
+    errors.push('El callback de email no verifica token_hash mediante auth.verifyOtp().');
+  }
+  if (/exchangeCodeForSession/.test(callback)) {
+    errors.push('El callback de email conserva el intercambio PKCE basado en code.');
+  }
+  for (const type of ['signup', 'recovery', 'email_change']) {
+    if (!new RegExp(`['\"]${type}['\"]`).test(callback)
+      && !readFileSync(join(root, 'src/lib/auth/email-otp.ts'), 'utf8').includes(`'${type}'`)) {
+      errors.push(`El callback no admite el tipo OTP ${type}.`);
+    }
+  }
+}
+
+for (const [file, type] of [
+  ['supabase/email-templates/confirm-signup.html', 'signup'],
+  ['supabase/email-templates/resend-confirmation.html', 'signup'],
+  ['supabase/email-templates/recovery.html', 'recovery'],
+  ['supabase/email-templates/change-email.html', 'email_change'],
+] as const) {
+  const path = join(root, file);
+  if (!existsSync(path)) {
+    errors.push(`Falta ${file}.`);
+    continue;
+  }
+  const template = readFileSync(path, 'utf8');
+  if (!template.includes('{{ .TokenHash }}') || !template.includes(`type=${type}`)) {
+    errors.push(`${file} no entrega token_hash con type=${type}.`);
+  }
+  if (template.includes('{{ .ConfirmationURL }}')) {
+    errors.push(`${file} conserva ConfirmationURL en lugar del flujo token_hash SSR.`);
   }
 }
 

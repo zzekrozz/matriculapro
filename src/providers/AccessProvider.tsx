@@ -1,11 +1,12 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { AccessContext as ServerAccessContext, AccessTier, UserLicense } from '@/domain/access';
+import { createPublicBetaAccessContext, type AccessContext as ServerAccessContext, type AccessTier, type UserLicense } from '@/domain/access';
 import { createSupabaseBrowserClient, isSupabaseBrowserConfigured } from '@/lib/supabase/browser';
 import { useAuth } from '@/providers/AuthProvider';
 
 interface AccessContextValue {
+  publicBeta: boolean;
   tier: AccessTier;
   mode: ServerAccessContext['mode'];
   license: UserLicense | null;
@@ -34,6 +35,7 @@ const AccessContext = createContext<AccessContextValue | null>(null);
 const MAX_TIMEOUT_MS = 2_147_483_647;
 
 const FREE_ACCESS: Omit<AccessContextValue, 'loading' | 'hydrated' | 'refresh'> = {
+  publicBeta: false,
   tier: 'free',
   mode: 'free',
   license: null,
@@ -55,13 +57,48 @@ const FREE_ACCESS: Omit<AccessContextValue, 'loading' | 'hydrated' | 'refresh'> 
   readOnly: false,
 };
 
-export function AccessProvider({ children }: { children: ReactNode }) {
+function betaAccess(userId: string) {
+  const beta = createPublicBetaAccessContext(userId);
+  return {
+    ...FREE_ACCESS,
+    publicBeta: beta.publicBeta,
+    canViewHistoricalPaidData: beta.canViewHistoricalPaidData,
+    canCreateFullCases: beta.canCreateFullCases,
+    canEditFullCases: beta.canEditFullCases,
+    canRunFiscalCalculations: beta.canRunFiscalCalculations,
+    canUseAdvancedSimulators: beta.canUseAdvancedSimulators,
+    canGenerateReports: beta.canGenerateReports,
+    canExport: beta.canExport,
+    canUseProfessionalTools: beta.canUseProfessionalTools,
+    canViewPaidCases: beta.canViewPaidCases,
+    canManageFullCases: beta.canManageFullCases,
+    canUseProfessional: beta.canUseProfessional,
+  };
+}
+
+export function AccessProvider({
+  children,
+  publicBetaEnabled = false,
+}: {
+  children: ReactNode;
+  publicBetaEnabled?: boolean;
+}) {
   const { user, loading: authLoading } = useAuth();
   const [access, setAccess] = useState<Omit<AccessContextValue, 'loading' | 'hydrated' | 'refresh'>>(FREE_ACCESS);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
-    if (!user || !isSupabaseBrowserConfigured()) {
+    if (!user) {
+      setAccess({ ...FREE_ACCESS, publicBeta: publicBetaEnabled });
+      setLoading(false);
+      return;
+    }
+    if (publicBetaEnabled) {
+      setAccess(betaAccess(user.id));
+      setLoading(false);
+      return;
+    }
+    if (!isSupabaseBrowserConfigured()) {
       setAccess(FREE_ACCESS);
       setLoading(false);
       return;
@@ -78,7 +115,7 @@ export function AccessProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [publicBetaEnabled, user]);
 
   useEffect(() => {
     if (!authLoading) void refresh();
@@ -149,6 +186,7 @@ function normalizeAccess(value: unknown, expectedUserId: string): Omit<AccessCon
   const license = normalizeLicense(row.license, expectedUserId);
   const scheduledLicense = normalizeLicense(row.scheduledLicense, expectedUserId);
   return {
+    publicBeta: false,
     tier: tier as AccessTier,
     mode: mode as ServerAccessContext['mode'],
     license,

@@ -14,9 +14,7 @@ begin
 
     -- Keep the existing owner-only SELECT policy for recovery of historical
     -- objects. There is intentionally no authenticated write policy.
-    comment on table storage.objects is
-      'Supabase-managed objects. MatriculaPro document writes retired by migration 202608050007; legacy reads remain owner-scoped.';
-  else
+else
     raise notice 'Supabase Storage schema is unavailable; write-policy retirement was skipped';
   end if;
 

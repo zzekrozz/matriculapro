@@ -18,7 +18,7 @@ interface ModuleGateProps {
 
 export function ModuleGate({ requiredTier = 'particular', requiredCapability, moduleName, moduleCode, description, icon: Icon, children }: ModuleGateProps) {
   const access = useAccess();
-  if (!access.hydrated) return <div className="min-h-screen bg-bg px-4 py-12"><div className="mx-auto max-w-[900px] rounded-2xl border border-line bg-surface p-6 text-[12px] text-muted" aria-busy="true">Comprobando la licencia…</div></div>;
+  if (!access.hydrated) return <div className="min-h-screen bg-bg px-4 py-12"><div className="mx-auto max-w-[900px] rounded-2xl border border-line bg-surface p-6 text-[12px] text-muted" aria-busy="true">Preparando tu acceso…</div></div>;
   const capabilityAllowed: Record<AccessCapability, boolean> = {
     use_free_checker: access.canUseFreeChecker,
     view_historical_paid_data: access.canViewHistoricalPaidData,
@@ -35,7 +35,8 @@ export function ModuleGate({ requiredTier = 'particular', requiredCapability, mo
     recalculate_paid_cases: access.canRunFiscalCalculations,
     use_fiscal_catalog: access.canRunFiscalCalculations,
   };
-  const tierAllowed = requiredTier === 'professional' ? access.tier === 'professional' : true;
+  const tierAllowed = access.publicBeta
+    || (requiredTier === 'professional' ? access.tier === 'professional' : true);
   const allowed = tierAllowed && capabilityAllowed[requiredCapability];
   if (allowed) return <>{children}</>;
   const accessMessage = access.readOnly
