@@ -10,6 +10,7 @@ const caseRepository = read('src/lib/registration/case-repository.ts');
 const professionalRepository = read('src/lib/professional/local-workspace.ts');
 const freeCheck = read('src/app/api/free-check/route.ts');
 const checkout = read('src/app/api/payments/checkout/route.ts');
+const nextConfig = read('next.config.js');
 
 assert.match(serverAccess, /isPublicBetaEnabled\(\)/, 'El acceso servidor debe consultar el interruptor central.');
 assert.match(serverAccess, /createPublicBetaAccessContext\(PUBLIC_BETA_LOCAL_USER_ID\)/, 'Las APIs abiertas deben usar la identidad técnica local sin consultar Auth.');
@@ -28,5 +29,7 @@ assert.match(professionalRepository, /window\.localStorage/, 'El espacio profesi
 
 assert.match(checkout, /isPublicBetaEnabled\(\)/, 'El checkout debe impedir cobros accidentales durante la beta.');
 assert.doesNotMatch(checkout, /process\.env\.PUBLIC_BETA_MODE/, 'Las rutas no deben leer el entorno fuera de la fuente central.');
+assert.match(nextConfig, /productionTarget && !publicBetaMode/, 'El segundo guard de build debe respetar la beta pública.');
+assert.match(nextConfig, /!publicBetaValue/, 'La configuración de Vercel debe mantener la beta activa cuando la variable no existe.');
 
 console.log('PUBLIC_BETA_CONTRACT=VALID');

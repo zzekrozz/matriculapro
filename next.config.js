@@ -2,8 +2,10 @@
 
 const productionTarget = process.env.VERCEL_ENV === 'production'
   || process.env.MATRICULAPRO_DEPLOY_TARGET === 'production';
+const publicBetaValue = process.env.PUBLIC_BETA_MODE?.trim().toLowerCase();
+const publicBetaMode = !publicBetaValue || ['true', '1', 'yes', 'on'].includes(publicBetaValue);
 
-if (productionTarget) {
+if (productionTarget && !publicBetaMode) {
   const required = [
     'NEXT_PUBLIC_SITE_URL', 'APP_BASE_URL',
     'NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY',
